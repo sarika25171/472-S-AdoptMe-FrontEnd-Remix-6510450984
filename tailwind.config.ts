@@ -21,6 +21,7 @@ export default {
         'primary-cream': '#D8D2C2',
         'primary-white-tone': '#FAF7F0',
         'primary-gray': '#4A4947',
+        
       },
     },
   },
