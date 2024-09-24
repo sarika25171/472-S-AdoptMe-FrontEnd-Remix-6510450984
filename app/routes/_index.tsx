@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import Header from "./header";
 import Card from "./card";
+import Search from "./search_box";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,8 +15,9 @@ export default function Index() {
   return (
     <div className="bg-white h-svh justify-center items-center">
 
-      {/* <Header name="Adopt Me" page="Main Page"/> */}
-      <Card name="Thong" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="resources\images\golden-puppy.jpg"/>
+      <Header name="Adopt Me" page="Main Page"/>
+      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="resources\images\golden-puppy.jpg"/>
+      {/* <Search/> */}
     </div>
   );
 }
