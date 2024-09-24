@@ -16,7 +16,7 @@ export default function Index() {
     <div className="bg-white h-svh justify-center items-center">
 
       <Header name="Adopt Me" page="Main Page"/>
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/puppy.jpg"/>
+      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg"/>
       {/* <Search/> */}
     </div>
   );
