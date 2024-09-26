@@ -1,5 +1,3 @@
-import { Children } from "react";
-
 interface props {
     name:string;
     gender:string;
