@@ -9,7 +9,10 @@ interface props {
 
 export default function FilterButton({text, children, select, setSelect} : props) {
     return(
-        <button type="button" onClick={()=>{setSelect(text)}} 
+        <button type="button" 
+        onClick={()=>{
+            setSelect(text)
+        }} 
         className={`flex flex-row hover:scale-110 duration-200 space-x-2 text-black font-bold shadow-lg 
         bg-primary-cream rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 ${select===text?"bg-primary-orange text-white":""}`}>
             {children}

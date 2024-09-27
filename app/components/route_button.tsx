@@ -9,7 +9,6 @@ interface props {
 }
 
 export default function RouteButton({text, destination, select, setSelect} : props) {
-    // useEffect(()=>{setSelect(text)});
     return(
         <Link to={destination}>
             <button onClick={()=>{setSelect(text)}} type="button" className={`hover:scale-110 duration-200 text-primary-orange font-extrabold text-2xl select-none ${select===text?"underline":""}`}>{text}</button>

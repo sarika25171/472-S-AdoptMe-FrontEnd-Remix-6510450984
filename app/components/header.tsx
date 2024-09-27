@@ -13,11 +13,21 @@ interface props {
 export default function Header() {
     const [select, setSelect] = useState("home");
     return (
-        <div className="relative overflow-hidden flex flex-row w-svw h-auto justify-evenly items-center bg-primary-cream drop-shadow-xl pr-20 pl-5">
+        // Home
+        <div className="relative overflow-hidden flex flex-row w-svw h-auto justify-between items-center bg-primary-cream drop-shadow-xl px-12 ">
             <Link onClick={()=>{setSelect("home")}} to="/" className="flex flex-col items-center">
                 <img src="https://cdn.prakasitj.com/proxy/get/logo-dog-paw.png" className="w-20 h-20 hover:scale-110 duration-200" />
                 <h1 className={`text-black -translate-y-2 ${select==="home"?"underline":""}`}>Home</h1>
             </Link>
+
+            {/* Text Buttons */}
+            <div className="justify-evenly items-center space-x-32">
+                <RouteButton text="Pets" destination="/pets" setSelect={setSelect} select={select}/>
+                <RouteButton text="Behavior" destination="/behavior" setSelect={setSelect} select={select}/>
+                <RouteButton text="Pet Help" destination="" setSelect={setSelect} select={select}/>
+            </div>
+
+            {/* Icon Buttons */}
             <div className="justify-evenly items-center space-x-6">
                 <button className="hover:scale-110 duration-200">
                     <IconSearch/>
@@ -28,11 +38,7 @@ export default function Header() {
                 {/* <Search /> */}
             </div>
 
-            <div className="justify-evenly items-center space-x-32">
-                <RouteButton text="Pets" destination="/pets" setSelect={setSelect} select={select}/>
-                <RouteButton text="Behavior" destination="/behavior" setSelect={setSelect} select={select}/>
-                <RouteButton text="Sign In" destination="" setSelect={setSelect} select={select}/>
-            </div>
+            
         </div>
     );
 }
