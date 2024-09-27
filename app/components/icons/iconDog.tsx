@@ -1,3 +1,6 @@
+interface props {
+}
+
 export default function IconDog() {
     return(
         <svg

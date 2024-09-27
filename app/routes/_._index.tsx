@@ -4,7 +4,9 @@ import Card from "../components/card";
 import FilterButton from "../components/filter_button";
 import Search from "../components/search_box";
 import Body from "~/components/body";
-import CustomButton from "~/components/button";
+import CustomButton from "~/components/custom_button";
+import SignIn from "~/components/signin";
+import SignUp from "~/components/signup";
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,7 +22,9 @@ export default function Index() {
       <div className="absolute inset-0 flex flex-col space-y-2 justify-center items-start px-20 py-60">
         <h1 className="text-[64px] text-black">Pet Adoption</h1>
         <h3 className="text-[32px] text-gray-500">Find your new best friend and give a pet a loving home.</h3>
-        <CustomButton destination="/pets" text="Find a pet"/>
+        <CustomButton destination="/pets" text="Find a pet" color="bg-primary-orange"/>
+        {/* <SignIn />
+        <SignUp /> */}
       </div>
     </div>
   );
