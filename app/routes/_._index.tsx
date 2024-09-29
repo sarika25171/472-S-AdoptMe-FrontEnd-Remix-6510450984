@@ -1,13 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
-import Header from "../components/header";
-import Card from "../components/card";
-import FilterButton from "../components/filter_button";
-import Search from "../components/search_box";
-import Body from "~/components/body";
 import CustomButton from "~/components/custom_button";
 import SignIn from "~/components/signin";
 import SignUp from "~/components/signup";
-import { useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
