@@ -1,13 +1,12 @@
-interface props {
-}
+import props from "./icon_props"
 
-export default function IconPaw() {
+export default function IconPaw({colorCode, width, height} : props) {
     return (
         <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-            width="24.000000pt" height="24.000000pt" viewBox="0 0 1280.000000 1280.000000"
+            width={width} height={height} viewBox="0 0 1280 1280"
             preserveAspectRatio="xMidYMid meet">
-            <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
-                fill="#000000" stroke="none">
+            <g transform="translate(0.000000,1280) scale(0.100000,-0.100000)"
+                fill={colorCode??"#000000"} stroke="none">
                 <path d="M4615 12476 c-167 -39 -293 -112 -436 -255 -116 -115 -199 -232 -279
                         -391 -477 -954 -316 -2528 353 -3430 91 -123 249 -285 357 -366 354 -267 752
                         -281 1071 -38 327 250 551 732 636 1369 21 164 25 672 5 840 -82 702 -291

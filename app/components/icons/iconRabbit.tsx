@@ -1,18 +1,17 @@
-interface props {
-}
+import props from "./icon_props"
 
-export default function IconRabbit() {
+export default function IconRabbit({colorCode, width, height} : props) {
     return (
         <svg
             role="img"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="24px"
-            height="24px"
+            viewBox={`0 0 ${width} ${height}`}
+            width={width}
+            height={height}
         >
             <g
                 fill="none"
-                stroke="#000000"
+                stroke={colorCode??"#000000"}
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"

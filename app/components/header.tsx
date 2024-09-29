@@ -4,6 +4,7 @@ import { Link } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
 import { useState } from "react";
+import { primaryOrangeColor } from "./colors";
 
 interface props {
     name: string;
@@ -30,10 +31,10 @@ export default function Header() {
             {/* Icon Buttons */}
             <div className="justify-evenly items-center space-x-6">
                 <button className="hover:scale-110 duration-200">
-                    <IconSearch/>
+                    <IconSearch colorCode={primaryOrangeColor}  width="24" height="24"/>
                 </button>
                 <button className="hover:scale-110 duration-200">
-                    <IconProfile/>
+                    <IconProfile colorCode={primaryOrangeColor}  width="24" height="24"/>
                 </button>
                 {/* <Search /> */}
             </div>

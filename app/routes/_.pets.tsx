@@ -10,6 +10,7 @@ import IconCat from "~/components/icons/iconCat";
 import IconRabbit from "~/components/icons/iconRabbit";
 import IconPaw from "~/components/icons/iconPaw";
 import { useState } from "react";
+import { primaryOrangeColor } from "~/components/colors";
 
 export default function Pets() {
   const [select, setSelect] = useState("");
@@ -18,16 +19,17 @@ export default function Pets() {
     <div>
       <FilterRow>
         <FilterButton text="DOGS" select={select} setSelect={setSelect}>
-          <IconDog />
+          <IconDog width="24" height="24" colorCode={select == "DOGS"?"#ffffff":"#000000"}/>
         </FilterButton>
         <FilterButton text="CATS" select={select} setSelect={setSelect}>
-          <IconCat />
+          <IconCat width="24" height="24" colorCode={select == "CATS"?"#ffffff":"#000000"}/>
         </FilterButton>
         <FilterButton text="RABBITS" select={select} setSelect={setSelect}>
-          <IconRabbit />
+          <IconRabbit width="24" height="24" colorCode={select == "RABBITS"?"#ffffff":"#000000"}/>
         </FilterButton>
         <FilterButton text="OTHERS" select={select} setSelect={setSelect}>
-          <IconPaw />
+          <IconPaw width="24" height="24" colorCode={select == "OTHERS"?"#ffffff":"#000000"}/>
+          
         </FilterButton>
       </FilterRow>
       <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
