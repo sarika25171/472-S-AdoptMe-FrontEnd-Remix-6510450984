@@ -6,6 +6,7 @@ export default function Base() {
     return(
         <Body>
             <Header/>
+            <div className="mb-[10.9rem] md:mb-[6.5rem]"></div>
             <Outlet/>
         </Body>
     );
