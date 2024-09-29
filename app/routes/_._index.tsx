@@ -7,6 +7,7 @@ import Body from "~/components/body";
 import CustomButton from "~/components/custom_button";
 import SignIn from "~/components/signin";
 import SignUp from "~/components/signup";
+import { useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,16 +18,28 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <div className="relative">
-      <img src="https://cdn.prakasitj.com/proxy/get/blue-adopt.png" className="w-svw h-svh"/>
-      <div className="absolute inset-0 flex flex-col space-y-2 justify-center items-start px-20 py-60">
-        <h1 className="text-[64px] text-black">Pet Adoption</h1>
-        <h3 className="text-[32px] text-gray-500">Find your new best friend and give a pet a loving home.</h3>
-        <CustomButton destination="/pets" text="Find a pet" color="bg-primary-orange"/>
-        <SignIn />
-        <SignUp />
+      <div className="grid [&>img]:col-start-1 [&>img]:row-start-1 [&>div]:col-start-1 [&>div]:row-start-1">
+        <img
+          src="https://cdn.prakasitj.com/proxy/get/blue-adopt.png"
+          className="w-svw object-cover object-center"
+        />
+        <div className="flex flex-col space-y-2 justify-center items-start px-20">
+          <h1 className="text-[64px] text-black">Pet Adoption</h1>
+          <h3 className="text-[32px] text-gray-500">
+            Find your new best friend and give a pet a loving home.
+          </h3>
+          <CustomButton
+            destination="/pets"
+            text="Find a pet"
+            color="bg-primary-orange"
+          />
+
+          <div className="grid [&>div]:col-start-1 [&>div]:row-start-1 [&>div]:z-10 [&>div>div>div>div>div>a>button>h1:active]:active:text-blue-400 [&>div>div>div>div>div>a>button:hover]:hover:scale-110 [&>div>div>div>div>div>a>button:hover]:transition-all">
+            <SignUp />
+            <SignIn />
+          </div>
+
+        </div>
       </div>
-    </div>
   );
 }
-
