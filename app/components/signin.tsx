@@ -16,10 +16,10 @@ export default function SignIn() {
                 <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">
                     <h1 className="text-primary-orange text-[64px]">Sign In</h1>
                     <CustomTextbox placeholder={"Username"}>
-                        <IconProfile/>
+                        <IconProfile width="24" height="24"/>
                     </CustomTextbox>
                     <CustomTextbox placeholder={"Password"}>
-                        <IconPassword/>
+                        <IconPassword width="24" height="24"/>
                     </CustomTextbox>
                     <div className="flex flex-col justify-center items-center space-y-2">
                         <CustomButton text="Sign In" destination="" color="bg-primary-orange"/>

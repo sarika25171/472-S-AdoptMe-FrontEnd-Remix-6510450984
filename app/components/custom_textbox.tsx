@@ -7,7 +7,7 @@ interface props {
 
 export default function CustomTextbox({placeholder, children} : props) {
     return(
-        <div className="flex flex-row rounded-xl bg-primary-cream drop-shadow-lg text-black/80">
+        <div className="flex flex-row rounded-xl bg-primary-cream drop-shadow-lg text-black/80 items-center pl-4">
             {/* Icon */}
             {children}
             
