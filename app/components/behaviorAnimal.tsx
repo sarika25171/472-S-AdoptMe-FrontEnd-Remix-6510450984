@@ -12,7 +12,7 @@ export default function BehaviorAnimal({type, img} : props) {
             <img src={img} alt={type} className="rounded-3xl w-[460px] h-[260px] items-center object-cover"/>
             <h1 className="text-black font-bold text-3xl">{type}</h1>
             {/* <Link to={"/behavior"+type}> */}
-            <Link to={"/behavior"}>
+            <Link to={"/behavior"} prefetch="intent">
                 <button className="text-black font-bold text-xl rounded-full bg-primary-white-tone border-2 border-primary-orange px-4 py-2 hover:bg-primary-orange hover:text-white">
                     Learn More
                 </button>

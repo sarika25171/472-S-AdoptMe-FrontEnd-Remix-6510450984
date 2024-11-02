@@ -16,7 +16,7 @@ export default function Header() {
     return (
         // Home
         <div className="fixed top-0 left-0 z-50 overflow-hidden flex flex-col md:flex-row w-svw h-auto justify-between items-center bg-primary-cream drop-shadow-xl px-2 md:px-12">
-            <Link onClick={()=>{setSelect("home")}} to="/" className="flex flex-col items-center">
+            <Link onClick={()=>{setSelect("home")}} to="/" prefetch="intent" className="flex flex-col items-center">
                 <img src="https://cdn.prakasitj.com/proxy/get/logo-dog-paw.png" className="w-20 h-20 hover:scale-110 duration-200" />
                 <h1 className={`text-black -translate-y-2 ${select==="home"?"underline":""}`}>Home</h1>
             </Link>

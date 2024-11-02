@@ -25,6 +25,9 @@ export default function PetsPage() {
   return (
     <div className="flex flex-col justify-start items-center w-svw min-h-screen space-y-4 px-10 py-10">
       <div className="flex space-x-4">
+      <FilterButton text="" value="" select={select} setSelect={setSelect}>
+        <h1>All</h1>
+        </FilterButton>
         <FilterButton text="Dogs" value="Dog" select={select} setSelect={setSelect}>
           <IconDog width="24" height="24" colorCode={select === "Dog" ? "#ffffff" : "#000000"} />
         </FilterButton>

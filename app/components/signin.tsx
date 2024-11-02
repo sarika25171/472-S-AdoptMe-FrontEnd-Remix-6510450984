@@ -26,12 +26,12 @@ export default function SignIn() {
 
                         {/* SignUp / Recover Password */}
                         <div className="flex flex-row items-center justify-center space-x-4">
-                            <Link to="">
+                            <Link to="" prefetch="intent">
                                 <button type="button" className="text-black underline">
                                     <h1 className="items-center">Don’t have account ?<br/>Click here to Sign Up.</h1>
                                 </button>
                             </Link>
-                            <Link to="">
+                            <Link to="" prefetch="intent">
                                 <button type="button" className="text-black underline">
                                     <h1 className="items-center">Forget password.</h1>
                                 </button>

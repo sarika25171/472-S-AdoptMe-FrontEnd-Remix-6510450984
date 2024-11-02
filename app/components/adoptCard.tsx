@@ -1,7 +1,7 @@
 interface props {
     img : string,
     name : string,
-    age : number,
+    age : string,
     weight : number,
     sex : string,
     id : number
@@ -23,7 +23,7 @@ export default function AdoptCard({name, img, age, weight, sex, id, type, color,
 
                 {/* Location */}
                 <div className="flex flex-row space-x-0 p-0 items-center">
-                    <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" fill="#797676" stroke="#797676"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#797676" d="M32,0C18.746,0,8,10.746,8,24c0,5.219,1.711,10.008,4.555,13.93c0.051,0.094,0.059,0.199,0.117,0.289l16,24 C29.414,63.332,30.664,64,32,64s2.586-0.668,3.328-1.781l16-24c0.059-0.09,0.066-0.195,0.117-0.289C54.289,34.008,56,29.219,56,24 C56,10.746,45.254,0,32,0z M32,32c-4.418,0-8-3.582-8-8s3.582-8,8-8s8,3.582,8,8S36.418,32,32,32z"></path> </g></svg>
+                    <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 64 64" enableBackground="new 0 0 64 64" fill="#797676" stroke="#797676"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#797676" d="M32,0C18.746,0,8,10.746,8,24c0,5.219,1.711,10.008,4.555,13.93c0.051,0.094,0.059,0.199,0.117,0.289l16,24 C29.414,63.332,30.664,64,32,64s2.586-0.668,3.328-1.781l16-24c0.059-0.09,0.066-0.195,0.117-0.289C54.289,34.008,56,29.219,56,24 C56,10.746,45.254,0,32,0z M32,32c-4.418,0-8-3.582-8-8s3.582-8,8-8s8,3.582,8,8S36.418,32,32,32z"></path> </g></svg>
                     <h1 className="text-gray-500">Bangkok, Bangkaen</h1>
                 </div>
 
@@ -31,7 +31,7 @@ export default function AdoptCard({name, img, age, weight, sex, id, type, color,
                 <div className="flex flex-row p-0 space-x-2">
                     <div className="flex flex-col justify-center items-center rounded-xl bg-white px-4 py-2 space-y-2 w-[185px] h-[90px]">
                         <h1 className="text-black font-bold text-lg">Age</h1>
-                        <h1 className="text-gray-400">{age} years</h1>
+                        <h1 className="text-gray-400">{age}</h1>
                     </div>
                     <div className="flex flex-col justify-center items-center rounded-xl bg-white px-4 py-2 space-y-2 w-[185px] h-[90px]">
                         <h1 className="text-black font-bold text-lg">Weight</h1>
@@ -52,7 +52,7 @@ export default function AdoptCard({name, img, age, weight, sex, id, type, color,
                         <hr />
                         <div className="flex flex-row space-x-2">
                             <h1 className="text-black font-bold text-xl">Animal ID : </h1>
-                            <h1 className="text-gray-400 text-xl">{id.toExponential(4)}</h1>
+                            <h1 className="text-gray-400 text-xl">{id}</h1>
                         </div>
                         <div className="flex flex-row space-x-2">
                             <h1 className="text-black font-bold text-xl">Type : </h1>
