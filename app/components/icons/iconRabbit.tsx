@@ -12,9 +12,9 @@ export default function IconRabbit({colorCode, width, height} : props) {
             <g
                 fill="none"
                 stroke={colorCode??"#000000"}
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
             >
                 <path d="M13 16a3 3 0 0 1 2.24 5M18 12h.01" />
                 <path
