@@ -1,3 +1,3 @@
-const DOMAIN = "https://adoptme-db.prakasitj.com";
+const DOMAIN = "https://rvpx.prakasitj.com/api";
 
 export { DOMAIN };
