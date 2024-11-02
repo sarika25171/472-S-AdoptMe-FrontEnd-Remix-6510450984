@@ -1,45 +1,57 @@
-import type { MetaFunction } from "@remix-run/node";
-import Header from "../components/header";
-import Card from "../components/card";
+import { useEffect, useState } from "react";
 import FilterButton from "../components/filter_button";
-import Search from "../components/search_box";
-import Body from "~/components/body";
-import FilterRow from "~/components/filter_row";
+import AnimalCard from "../components/animalCard";
+import { DOMAIN } from "~/server/domain";
+import Pet from "~/models/pet";
 import IconDog from "~/components/icons/iconDog";
 import IconCat from "~/components/icons/iconCat";
-import IconRabbit from "~/components/icons/iconRabbit";
 import IconPaw from "~/components/icons/iconPaw";
-import { useState } from "react";
-import { primaryOrangeColor } from "~/components/colors";
+import IconRabbit from "~/components/icons/iconRabbit";
 
-export default function Pets() {
-  const [select, setSelect] = useState("");
-  let puppyAge = 4;
+export default function PetsPage() {
+  const [select, setSelect] = useState(""); // State for selected filter
+  const [pets, setPets] = useState<Pet[]>([]); // State for pets data
+
+  async function fetchPet() {
+    const response = await fetch(DOMAIN + "/pet/getAllPet");
+    const data: Pet[] = await response.json();
+    setPets(data);
+  }
+    
+  useEffect(() => {
+    fetchPet();
+  }, []);
+
   return (
-    <div>
-      <FilterRow>
-        <FilterButton text="DOGS" select={select} setSelect={setSelect}>
-          <IconDog width="24" height="24" colorCode={select == "DOGS"?"#ffffff":"#000000"}/>
+    <div className="flex flex-col justify-start items-center w-svw min-h-screen space-y-4 px-10 py-10">
+      <div className="flex space-x-4">
+        <FilterButton text="Dogs" value="Dog" select={select} setSelect={setSelect}>
+          <IconDog width="24" height="24" colorCode={select === "Dog" ? "#ffffff" : "#000000"} />
         </FilterButton>
-        <FilterButton text="CATS" select={select} setSelect={setSelect}>
-          <IconCat width="24" height="24" colorCode={select == "CATS"?"#ffffff":"#000000"}/>
+        <FilterButton text="Cats" value="Cat" select={select} setSelect={setSelect}>
+          <IconCat width="24" height="24" colorCode={select === "Cat" ? "#ffffff" : "#000000"} />
         </FilterButton>
-        <FilterButton text="RABBITS" select={select} setSelect={setSelect}>
-          <IconRabbit width="24" height="24" colorCode={select == "RABBITS"?"#ffffff":"#000000"}/>
+        <FilterButton text="Rabbits" value="Rabbit" select={select} setSelect={setSelect}>
+          <IconRabbit width="24" height="24" colorCode={select === "Rabbit" ? "#ffffff" : "#000000"} />
         </FilterButton>
-        <FilterButton text="OTHERS" select={select} setSelect={setSelect}>
-          <IconPaw width="24" height="24" colorCode={select == "OTHERS"?"#ffffff":"#000000"}/>
-          
+        <FilterButton text="Others" value="Other" select={select} setSelect={setSelect}>
+          <IconPaw width="24" height="24" colorCode={select === "Other" ? "#ffffff" : "#000000"} />
         </FilterButton>
-      </FilterRow>
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
-      <Card name="Thong Dee" gender="Male" breed="Golden Retriever" age={puppyAge} ageUnit="Months" imgSrc="https://cdn.prakasitj.com/proxy/get/golden-puppy.jpg" />
+      </div>
 
-      {/* <Search/> */}
+      <div className="grid grid-flow-dense grid-cols-6 gap-16">
+        {pets.filter(petData => !select || petData.species === select).map((petData) => (
+          <AnimalCard
+            key={petData.pet_id}
+            id={petData.pet_id}
+            name={petData.pet_name}
+            sex={petData.sex}
+            breed={petData.breed}
+            age={petData.age_years + petData.age_months}
+            imgSrc={petData.photo_url}
+          />
+        ))}
+      </div>
     </div>
   );
 }
-

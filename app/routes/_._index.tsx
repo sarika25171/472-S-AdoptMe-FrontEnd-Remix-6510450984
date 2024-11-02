@@ -29,8 +29,8 @@ export default function Index() {
           />
 
           <div className="grid [&>div]:col-start-1 [&>div]:row-start-1 [&>div]:z-10 [&>div>div>div>div>div>a>button>h1:active]:active:text-blue-400 [&>div>div>div>div>div>a>button:hover]:hover:scale-110 [&>div>div>div>div>div>a>button:hover]:transition-all">
-            <SignUp />
-            <SignIn />
+            {/* <SignUp /> */}
+            {/* <SignIn /> */}
           </div>
 
         </div>
