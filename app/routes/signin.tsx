@@ -10,7 +10,7 @@ export default function SignInView() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [role, setRole] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
@@ -18,6 +18,7 @@ export default function SignInView() {
     interface response {
       username: string;
       message: string;
+      priority : string;
     }
     const response = await fetch(DOMAIN+"/user/login", {
       method: "POST",
@@ -30,6 +31,7 @@ export default function SignInView() {
       }),
     });
     const data: response = await response.json();
+    
     if (data.username == "Error authen failed") {
       setError("User not found");
       console.log("User not found");
@@ -38,6 +40,8 @@ export default function SignInView() {
     ) {
       setError("User not found");
     } else {
+        setPriority(data[0].priority);
+        console.log(priority);
       setSuccess(true);
     }
   }
@@ -46,40 +50,21 @@ export default function SignInView() {
     if (success) {
       sessionStorage.setItem("user", JSON.stringify({ name: username }));
       sessionStorage.setItem("username", username);
-      //   sessionStorage.setItem("priority", )
+      sessionStorage.setItem("priority", priority);
       window.location.href = "/";
     }
   }, [success]);
 
   return (
-    // <div className="flex flex-col justify-center items-center w-full h-svh bg-blue-200 overflow-auto">
-    //   <div className="flex flex-col space-y-10 px-20 py-20 bg-white/20 justify-center items-center rounded-2xl shadow-xl">
-    //     {/* Login Text */}
-    //     <h1 className="text-black font-bold text-[48px]">Login</h1>
-    //     {/* Username */}
-    //     <CustomTextBox type="text" text="Username" state={setUsername} />
-    //     {/* Password */}
-    //     <CustomTextBox type="password" text="Password" state={setPassword} />
-    //     {error && <h1 className="text-red-500">{error}</h1>}
-    //     <Link
-    //       to="/"
-    //       onClick={(e) => {
-    //         e.preventDefault();
-    //         fetchUser(username, password);
-    //       }}
-    //     >
-    //       <button
-    //         type="button"
-    //         className={
-    //           "bg-primary-blue active:brightness-[80%] hover:brightness-[110%] hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-lg text-2xl justify-center items-center w-fit h-fit px-6 py-2"
-    //         }
-    //       >
-    //         <h1 className="items-center">Login</h1>
-    //       </button>
-    //     </Link>
-    //   </div>
-    // </div>
-    <div className="flex flex-col justify-center bg-[url('https://cdn.prakasitj.com/proxy/get/bg-adoptme.png')] items-center w-full min-h-screen">
+    <div className="flex flex-col justify-center bg-[url('https://cdn.prakasitj.com/proxy/get/bg-adoptme.png')] items-center w-full min-h-screen space-y-8">
+        <Link to="/" prefetch="intent">
+        <button
+                type="button"
+                className={
+                  "flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg bg-red-500 rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
+                }
+              >Back</button>
+        </Link>
       <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
         {/* Image */}
         <img src="https://cdn.prakasitj.com/proxy/get/dog-in-the-air.jpg" />
@@ -126,7 +111,7 @@ export default function SignInView() {
 
             {/* SignUp / Recover Password */}
             <div className="flex flex-row items-center justify-center space-x-4">
-              <Link to="" prefetch="intent">
+              <Link to="/signup" prefetch="intent">
                 <button type="button" className="text-black underline">
                   <h1 className="items-center">
                     Don’t have account ?<br />

@@ -1,7 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
 import CustomButton from "~/components/custom_button";
-import SignIn from "~/components/signin";
-import SignUp from "~/components/signup";
 
 export const meta: MetaFunction = () => {
   return [
@@ -29,8 +27,6 @@ export default function Index() {
           />
 
           <div className="grid [&>div]:col-start-1 [&>div]:row-start-1 [&>div]:z-10 [&>div>div>div>div>div>a>button>h1:active]:active:text-blue-400 [&>div>div>div>div>div>a>button:hover]:hover:scale-110 [&>div>div>div>div>div>a>button:hover]:transition-all">
-            {/* <SignUp /> */}
-            {/* <SignIn /> */}
           </div>
 
         </div>

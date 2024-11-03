@@ -3,7 +3,7 @@ import RouteButton from "./route_button";
 import { Link } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { primaryOrangeColor } from "./colors";
 
 interface props {
@@ -13,6 +13,19 @@ interface props {
 
 export default function Header() {
     const [select, setSelect] = useState("home");
+    const [link, setLink] = useState<string>("");
+
+    useEffect(()=>{
+        const tmpUsername = sessionStorage.getItem("username");
+        console.log("tempUsername : "+tmpUsername);
+        console.log(tmpUsername!=null);
+        if(tmpUsername != null) {
+            setLink("/profile");
+        } else {
+            setLink("/signin");
+        }
+    }, [])
+
     return (
         // Home
         <div className="fixed top-0 left-0 z-50 overflow-hidden flex flex-col md:flex-row w-svw h-auto justify-between items-center bg-primary-cream drop-shadow-xl px-2 md:px-12">
@@ -36,7 +49,9 @@ export default function Header() {
                     <IconSearch colorCode={primaryOrangeColor}  width="24" height="24"/>
                 </button>
                 <button className="hover:scale-110 duration-200">
-                    <IconProfile colorCode={primaryOrangeColor}  width="24" height="24"/>
+                    <Link to={link}>
+                        <IconProfile colorCode={primaryOrangeColor}  width="24" height="24"/>
+                    </Link>
                 </button>
                 {/* <Search /> */}
             </div>
