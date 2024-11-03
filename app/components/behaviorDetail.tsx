@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 import BehaviorTopic from "./behaviorTopic";
+import CatBevaior from "./catBehavior";
+import DogBevaior from "./dogBehavior";
 
 interface props {
     animal : string,
+    topic : string,
 }
 
-export default function BehaviorDetail({animal} : props) {
+export default function BehaviorDetail({animal, topic} : props) {
     if(animal == "Rabbits") {
         return(
             <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
@@ -107,22 +110,10 @@ export default function BehaviorDetail({animal} : props) {
         );
     }
     if (animal == "Dogs") {
-        return(
-            <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
-                <h1 className="text-black font-bold text-xl"></h1>
-
-            </div>
-        );
-        
+        <DogBevaior topic={topic}/>
     }
     if (animal == "Cats") {
-        return(
-           <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
-                <h1 className="text-black font-bold text-xl"></h1>
-
-            </div> 
-        );
-        
+        <CatBevaior topic={topic}/>
     }
     if (animal == "Chinchillas") {
         return(

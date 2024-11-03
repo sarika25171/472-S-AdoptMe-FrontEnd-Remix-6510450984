@@ -30,7 +30,7 @@ export default function BehaviorCommonPage() {
         src={image!}
         alt={type || ""}
       />
-      <BehaviorDetail animal={type!} />
+      <BehaviorDetail animal={type!} topic={topic || ""}/>
     </div>
   );
 }
