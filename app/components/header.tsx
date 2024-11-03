@@ -23,6 +23,7 @@ export default function Header() {
 
             {/* Text Buttons */}
             <div className="justify-evenly items-center space-x-10 md:space-x-32">
+                <RouteButton text="Admin" destination="/admin" setSelect={setSelect} select={select}/>
                 <RouteButton text="Pets" destination="/pets" setSelect={setSelect} select={select}/>
                 <RouteButton text="Behavior" destination="/behaviormain" setSelect={setSelect} select={select}/>
                 <RouteButton text="Pet Help" destination="/pethelp" setSelect={setSelect} select={select}/>
