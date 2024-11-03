@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 
 export default function AddPetPage() {
@@ -33,7 +34,7 @@ export default function AddPetPage() {
             <h1 className="text-black font-bold text-xl">Name</h1>
             <CustomTextBox type="text" text="Name" state={setName}/>
             <h1 className="text-black font-bold text-xl">Type</h1>
-            <select className="w-full bg-white border-2 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+            <select className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
             onChange={(e)=>{
               setSelectedType(e.currentTarget.value)
               setType(e.currentTarget.value)
@@ -48,7 +49,7 @@ export default function AddPetPage() {
             <h1 className="text-black font-bold text-xl">Color</h1>
             <CustomTextBox type="text" text="Color" state={setColor}/>
             <h1 className="text-black font-bold text-xl">Gender</h1>
-            <select className="w-full bg-white border-2 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+            <select className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
             onChange={(e)=>{
               setSelectedGender(e.currentTarget.value)
               setGender(e.currentTarget.value)
@@ -61,7 +62,7 @@ export default function AddPetPage() {
             <h1 className="text-black font-bold text-xl">Weight</h1>
             <CustomTextBox type="text" text="Weight" state={setWeight}/>
             <h1 className="text-black font-bold text-xl">Spayed/Neutered</h1>
-            <select className="w-full bg-white border-2 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+            <select className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
             onChange={(e)=>{
               setSelectedGender(e.currentTarget.value)
               setGender(e.currentTarget.value)
@@ -71,6 +72,11 @@ export default function AddPetPage() {
             </select>
             <h1 className="text-black font-bold text-xl">Details</h1>
             <CustomTextBox type="text" text="Details" height={100} state={setDetail}/>
+            <CustomButton
+              destination=""
+              text="Add Pet For Adoption"
+              color="bg-primary-orange"
+            />
         </div>
       </div>
     </div>

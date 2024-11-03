@@ -27,6 +27,7 @@ export default function Header() {
                 <RouteButton text="Pets" destination="/pets" setSelect={setSelect} select={select}/>
                 <RouteButton text="Behavior" destination="/behaviormain" setSelect={setSelect} select={select}/>
                 <RouteButton text="Pet Help" destination="/pethelp" setSelect={setSelect} select={select}/>
+                <RouteButton text="Add Pet" destination="/addpet" setSelect={setSelect} select={select}/>
             </div>
 
             {/* Icon Buttons */}
