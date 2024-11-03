@@ -36,6 +36,18 @@ export default function AdminView() {
 
   const columns: GridColDef[] = [
     { field: "pet_id", headerName: "ID", flex: 1 },
+    {
+        field: "photo_url",
+        headerName: "Image",
+        flex: 1,
+        renderCell: (params) => (
+          <img
+            src={params.row.photo_url}
+            alt={`${params.row.pet_name}'s photo`}
+            style={{ width: 120, height: 120, borderRadius: "10%" }}
+          />
+        ),
+      },
     { field: "pet_name", headerName: "Name", flex: 1 },
     {
       field: "age",
@@ -44,21 +56,9 @@ export default function AdminView() {
       valueGetter: (value, row) =>
         `${row.age_years} years ${row.age_months} months`,
     },
-    { field: "species", headerName: "Species", flex: 1 },
+    { field: "species", headerName: "Type", flex: 1 },
     { field: "breed", headerName: "Breed", flex: 1 },
     { field: "sex", headerName: "Sex", flex: 1 },
-    {
-      field: "photo_url",
-      headerName: "Image",
-      flex: 1,
-      renderCell: (params) => (
-        <img
-          src={params.row.photo_url}
-          alt={`${params.row.pet_name}'s photo`}
-          style={{ width: 120, height: 120, borderRadius: "10%" }}
-        />
-      ),
-    },
     { field: "weight", headerName: "Weight (kg)", flex: 1 },
     { field: "adopted", headerName: "Adopted", flex: 1, type: "boolean" },
     { field: "spayed", headerName: "Spayed", flex: 1, type: "boolean" },
