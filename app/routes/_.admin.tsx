@@ -23,14 +23,14 @@ export default function AdminView() {
     
     // Optionally, make a request to delete this pet from the server
     console.log("ID : "+ id);
-    fetch(DOMAIN + "/pet/deletePetByID​", {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          pet_id: id
-        })
+    fetch(DOMAIN+'/pet/deletePetByID', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        pet_id: id
+      })
     });
   };
 
