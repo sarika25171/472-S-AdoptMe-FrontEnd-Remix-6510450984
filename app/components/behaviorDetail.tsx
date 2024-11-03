@@ -106,4 +106,44 @@ export default function BehaviorDetail({animal} : props) {
             </div>
         );
     }
+    if (animal == "Dogs") {
+        return(
+            <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
+                <h1 className="text-black font-bold text-xl"></h1>
+
+            </div>
+        );
+        
+    }
+    if (animal == "Cats") {
+        return(
+           <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
+                <h1 className="text-black font-bold text-xl"></h1>
+
+            </div> 
+        );
+        
+    }
+    if (animal == "Chinchillas") {
+        return(
+            <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
+                <h1 className="text-black font-bold text-xl">Chinchillas are unique, social animals known for their playful, curious nature and gentle demeanor. Understanding their behavior can help you ensure they’re comfortable, happy, and healthy. Here are some key behaviors that are common in chinchillas and what they typically indicate:</h1>
+                <BehaviorTopic 
+                    header="Dust Bathing"
+                    body="Chinchillas love to roll around in dust baths to keep their dense fur clean and free from oil and moisture. This natural behavior is essential for their skin and coat health."
+                    tip="Dust bathing is a sign of a healthy and happy chinchilla. Allow them regular access to a dust bath (about 2-3 times per week) to keep their fur clean and fluffy"
+                />
+            </div>
+        );
+        
+    }
+    if (animal == "Birds") {
+        return(
+            <div className="flex flex-col justify-start items-start w-full h-fit space-y-8">
+                <h1 className="text-black font-bold text-xl"></h1>
+                
+            </div>
+        );
+        
+    }
 }
