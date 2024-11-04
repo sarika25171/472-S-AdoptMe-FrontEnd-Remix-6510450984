@@ -37,6 +37,8 @@ export default function AdminView() {
   }, []);
 
   const handleDelete = (id: number) => {
+    const row = rows.find((row) => row.pet_id === id);
+    // Remove the row from the table
     setRows((prevRows) => prevRows.filter((row) => row.pet_id !== id));
 
     // Optionally, make a request to delete this pet from the server
@@ -68,7 +70,26 @@ export default function AdminView() {
         console.error(error);
       }
     }
+    async function deleteFile(fileName: string) {
+      const options = {
+        method: "DELETE",
+        url: "https://cdn.prakasitj.com/proxy/delete",
+        headers: { "Content-Type": "application/json" },
+        data: { filename: fileName, key: "T6qom9erqaYUpddmnWlo" },
+      };
+
+      try {
+        const { data } = await axios.request(options);
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
     deleteAdoption();
+    if (row?.photo_url) {
+      const fileName = row.photo_url.split("/").pop();
+      deleteFile(fileName!);
+    };
   };
 
   const columns: GridColDef[] = [
