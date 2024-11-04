@@ -1,10 +1,12 @@
 import Search from "./search_box";
 import RouteButton from "./route_button";
-import { Link } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
 import { useEffect, useState } from "react";
 import { primaryOrangeColor } from "./colors";
+import axios from "axios";
+import User from "~/models/user";
 
 interface props {
   name: string;
@@ -15,12 +17,40 @@ export default function Header() {
   const [select, setSelect] = useState("home");
   const [link, setLink] = useState<string>("");
   const [admin, setAdmin] = useState<boolean>(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const navigator = useNavigate();
+
+  async function fetchUsers({username}: {username:string | null}) {
+    const options = {
+      method: "GET",
+      url: "https://adoptme-db.prakasitj.com/user/getAllUser",
+    };
+
+    try {
+      const { data } = await axios.request<User[]>(options);
+      setUsers(data);
+      if(username != null) {
+        setLink("/profile");
+        if (data.find((user) => user.username == username)?.priority == "admin") {
+          setAdmin(true);
+        } else {
+          navigator("/");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     const tmpUsername = sessionStorage.getItem("username");
-    const tmpPriority = sessionStorage.getItem("priority");
-    console.log("tempUsername : " + tmpUsername);
-    console.log(tmpUsername != null);
+    if(tmpUsername === null) navigator("/");
+    fetchUsers({username:tmpUsername});
+  }, []);
+
+  useEffect(() => {
+    const tmpUsername = sessionStorage.getItem("username");
+    const tmpPriority = users.find((user) => user.username == tmpUsername)?.priority;
     if (tmpUsername != null) {
       setLink("/profile");
       if (tmpPriority == "admin") {
@@ -95,7 +125,14 @@ export default function Header() {
       {/* Icon Buttons */}
       <div className="justify-evenly items-center space-x-6">
         <button className="hover:scale-110 duration-200">
-          <IconSearch colorCode={primaryOrangeColor} width="24" height="24" OnClick={()=>{setAdmin(false)}}/>
+          <IconSearch
+            colorCode={primaryOrangeColor}
+            width="24"
+            height="24"
+            OnClick={() => {
+              setAdmin(false);
+            }}
+          />
         </button>
         <button className="hover:scale-110 duration-200">
           <Link to={link}>
