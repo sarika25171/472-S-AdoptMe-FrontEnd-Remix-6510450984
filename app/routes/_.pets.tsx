@@ -82,6 +82,7 @@ export default function PetsPage() {
       <div className="grid grid-flow-dense grid-cols-6 gap-16">
         {pets
           .filter((petData) => !select || petData.species === select)
+          .filter((petData) => petData.adopted === false)
           .map((petData) => (
             <AnimatedComponent key={petData.pet_id}>
               <AnimalCard

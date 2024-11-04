@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
-import { PHOTO } from "~/server/domain";
+import { DOMAIN, PHOTO } from "~/server/domain";
+import Adoption from "~/models/adoption";
+import axios from "axios";
 
 interface props {
   img: string;
@@ -36,6 +38,74 @@ export default function AdoptCard({
   const details = detail.split("-");
   const [popUp, setPopUp] = useState(false);
   const [contact, setContact] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [adoptions, setAdoptions] = useState<Adoption[]>([]);
+  const [adoption, setAdoption] = useState<Adoption>();
+  const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function fetchAdoption() {
+      const options = {method: 'GET', url: DOMAIN+'/adoption/getAllAdoption'};
+
+      try {
+        const { data } = await axios.request<Adoption[]>(options);
+        setAdoptions(data);
+        const curUser = data.find((item: Adoption) => item.pet_id === id);
+        setAdoption(curUser);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchAdoption();
+  }, []);
+
+  
+
+  useEffect(()=>{
+
+    async function fetchData() {
+      const options = {
+        method: 'PUT',
+        url: DOMAIN+'/adoption/adopt',
+        headers: {'Content-Type': 'application/json'},
+        data: {
+          added_id: adoption?.added_id
+        }
+      };
+      
+      try {
+        const { data } = await axios.request(options);
+        fetchUpdatePet();
+        setFetching(false);
+        setSuccess(true);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function fetchUpdatePet() {
+      const options = {
+        method: 'PUT',
+        url: DOMAIN+'/pet/updatePetByID',
+        headers: {'Content-Type': 'application/json'},
+        data: {
+          pet_id: adoption?.pet_id,
+          adopted: true
+        }
+      };
+      
+      try {
+        const { data } = await axios.request(options);
+        console.log(data);
+        console.log("Update success")
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchData()
+
+  }, [fetching])
+
   return (
     <div className="grid grid-flow-col grid-cols-1">
       <div
@@ -165,16 +235,28 @@ export default function AdoptCard({
               <li>Phone : {owner.phone_number}</li>
             </ul>
           </div> */}
-
-            <button
-              className="bg-primary-orange px-5 py-2 rounded-xl"
+              {success && <h1 className="text-green-600 font-bold text-3xl">Pet is Adopted !</h1>}
+              <div className="flex flex-row space-x-4">
+              <button
+                className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
+                onClick={() => {
+                  setPopUp(true);
+                  setContact(true);
+                }}
+              >
+                Contact
+              </button>
+              {sessionStorage.getItem("username") == owner.username && <button
+              className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
               onClick={() => {
-                setPopUp(true);
-                setContact(true);
+                setFetching(true);
               }}
             >
-              Contact
+              Adopted
             </button>
+            }
+            </div>
+            
           </div>
         </AnimatedComponent>
       </div>
