@@ -1,4 +1,3 @@
-import { s } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -44,7 +43,7 @@ export default {
           "0%": {
             transform: "scale(0)",
           },
-          "90": { transform: "scale(1.25)" },
+          "90%": { transform: "scale(1.25)" },
           "100%": {
             transform: "scale(1)",
           },

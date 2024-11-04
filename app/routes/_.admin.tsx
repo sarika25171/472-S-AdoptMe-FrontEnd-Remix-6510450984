@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -89,7 +88,7 @@ export default function AdminView() {
     if (row?.photo_url) {
       const fileName = row.photo_url.split("/").pop();
       deleteFile(fileName!);
-    };
+    }
   };
 
   const columns: GridColDef[] = [
@@ -127,13 +126,14 @@ export default function AdminView() {
       headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => handleDelete(params.row.id)}
-        >
-          Delete
-        </Button>
+        <div className="flex flex-col">
+          <button
+            className="bg-red-500 rounded-xl"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            <h1 className="text-center text-black0">Delete</h1>
+          </button>
+        </div>
       ),
     },
   ];

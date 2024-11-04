@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
 import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
@@ -208,15 +207,15 @@ export default function AdoptCard({
                   </div>
                 </div>
 
-                <Button
-                  className="text-red-300"
+                <button
+                  className="text-red-300 font-bold"
                   onClick={() => {
                     setContact(false);
                     Promise.resolve(setTimeout(() => setPopUp(false), 450));
                   }}
                 >
                   Close
-                </Button>
+                </button>
               </div>
             </div>
           </AnimatedComponent>

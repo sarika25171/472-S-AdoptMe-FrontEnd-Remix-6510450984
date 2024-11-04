@@ -1,7 +1,6 @@
 import { Link } from "@remix-run/react";
 import axios from "axios";
-import { s } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
-import { useEffect, useState } from "react";
+ import { useEffect, useState } from "react";
 import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 import UploadButton from "~/components/upload_button";
