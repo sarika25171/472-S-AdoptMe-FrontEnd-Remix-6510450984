@@ -51,7 +51,7 @@ export default function SignUpView() {
     phoneNumber: string,
     salary: string
   ) {
-    await fetch(DOMAIN + "/user/post", {
+    const response = await fetch(DOMAIN + "/user/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,6 +67,9 @@ export default function SignUpView() {
         priority: "user"
       }),
     });
+    const data = await response.json();
+    console.log(data); 
+    navigate("/signin");
   }
 
   return (
