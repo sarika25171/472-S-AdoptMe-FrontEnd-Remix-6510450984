@@ -1,4 +1,5 @@
 import { Outlet } from "@remix-run/react";
+import { useEffect } from "react";
 import Body from "~/components/body";
 import Header from "~/components/header";
 
