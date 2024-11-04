@@ -34,7 +34,7 @@ export default function Header() {
         if (data.find((user) => user.username == username)?.priority == "admin") {
           setAdmin(true);
         } else {
-          navigator("/");
+          setAdmin(false);
         }
       }
     } catch (error) {
@@ -44,7 +44,6 @@ export default function Header() {
 
   useEffect(() => {
     const tmpUsername = sessionStorage.getItem("username");
-    if(tmpUsername === null) navigator("/");
     fetchUsers({username:tmpUsername});
   }, []);
 

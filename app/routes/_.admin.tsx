@@ -1,13 +1,31 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useNavigate } from "@remix-run/react";
 import axios from "axios";
+import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { useEffect, useState } from "react";
 import Adoption from "~/models/adoption";
 import Pet from "~/models/pet";
+import User from "~/models/user";
 import { DOMAIN } from "~/server/domain";
 
 export default function AdminView() {
   const [rows, setRows] = useState<Pet[]>([]);
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const navigator = useNavigate();
+
+  async function fetchUsers() {
+    const response = await fetch(DOMAIN + "/user/getAllUser");
+    const data: User[] = await response.json();
+    setUsers(data);
+    const tmpUsername = sessionStorage.getItem("username");
+    const currentUser = data.find((user) => user.username === tmpUsername);
+    if (currentUser?.priority !== "admin") {
+      navigator("/");
+    }
+    setCurrentUser(currentUser || null);
+  }
 
   async function fetchPet() {
     const response = await fetch(DOMAIN + "/pet/getAllPet");
@@ -31,6 +49,7 @@ export default function AdminView() {
   }
 
   useEffect(() => {
+    fetchUsers();
     fetchPet();
     fetchAdoptation();
   }, []);
@@ -140,7 +159,9 @@ export default function AdminView() {
 
   return (
     <div className="flex flex-col justify-start items-center w-full min-h-screen p-10 space-y-8">
-      <h1 className="text-[48px] font-bold text-black">Admin's Page</h1>
+      {currentUser?.priority === "admin" && (
+        <h1 className="text-[48px] font-bold text-black">Admin's Page</h1>
+      )}
       <div
         style={{
           height: "80%",
@@ -149,13 +170,15 @@ export default function AdminView() {
           marginRight: "auto",
         }}
       >
-        <DataGrid
-          rows={rows}
-          rowHeight={120}
-          columns={columns}
-          sx={{ backgroundColor: "#FFFFFF" }}
-          className="[&>*]:font-urbanist [&>*]:font-bold [&>*]:text-black"
-        />
+        {currentUser?.priority === "admin" && (
+          <DataGrid
+            rows={rows}
+            rowHeight={120}
+            columns={columns}
+            sx={{ backgroundColor: "#FFFFFF" }}
+            className="[&>*]:font-urbanist [&>*]:font-bold [&>*]:text-black"
+          />
+        )}
       </div>
     </div>
   );
