@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import BehaviorDetail from "~/components/behaviorDetail";
 import BehaviorTopic from "~/components/behaviorTopic";
 import LongCard from "~/components/longCard";
+import { PHOTO } from "~/server/domain";
 
 export default function BehaviorCommonPage() {
   const [searchParams] = useSearchParams();
@@ -11,13 +12,13 @@ export default function BehaviorCommonPage() {
   const img = searchParams.get("img");
   let image;
   if (type == "Rabbits") {
-    image = "https://cdn.prakasitj.com/proxy/get/rabbit1.jpg";
+    image = PHOTO+"rabbit1.jpg";
   } else if (type == "Hamster") {
-    image = "https://cdn.prakasitj.com/proxy/get/the-hamster.png";
+    image = PHOTO+"the-hamster.png";
   } else if (type == "Chinchillas") {
-    image = "https://cdn.prakasitj.com/proxy/get/chinchilla1.jpg";
+    image = PHOTO+"chinchilla1.jpg";
   } else if (type == "Birds") {
-    image = "https://cdn.prakasitj.com/proxy/get/birds1.webp";
+    image = PHOTO+"birds1.webp";
   } else {
     image = img;
   }

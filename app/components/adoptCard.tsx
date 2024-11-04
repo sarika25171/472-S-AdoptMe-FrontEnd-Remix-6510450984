@@ -1,6 +1,7 @@
 import { useState } from "react";
 import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
+import { PHOTO } from "~/server/domain";
 
 interface props {
   img: string;
@@ -184,7 +185,7 @@ export default function AdoptCard({
               <div className="flex flex-col w-5/6 h-full justify-center items-center gap-2">
                 <h1 className="text-4xl text-black font-bold">Contact Owner</h1>
                 <img
-                  src={"https://cdn.prakasitj.com/proxy/get/" + owner.photo_url}
+                  src={PHOTO + owner.photo_url}
                   className="h-28 object-cover rounded-full"
                 />
 

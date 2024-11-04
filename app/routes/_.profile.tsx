@@ -6,7 +6,7 @@ import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 import BehaviorCard from "~/components/longCard";
 import User from "~/models/user";
-import { DOMAIN } from "~/server/domain";
+import { DOMAIN, PHOTO } from "~/server/domain";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User[]>([]);
@@ -160,7 +160,7 @@ export default function ProfilePage() {
           <img
               className="rounded-full"
               src={
-                "https://cdn.prakasitj.com/proxy/get/" + currentUser.photo_url
+                PHOTO + currentUser.photo_url
               }
               alt="Profile"
             />

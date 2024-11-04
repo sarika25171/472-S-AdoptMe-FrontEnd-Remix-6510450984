@@ -6,7 +6,7 @@ import CustomTextBox from "~/components/custom_textbox";
 import UploadButton from "~/components/upload_button";
 import Pet from "~/models/pet";
 import User from "~/models/user";
-import { DOMAIN } from "~/server/domain";
+import { DOMAIN, PHOTO, PHOTOPOST } from "~/server/domain";
 
 export default function AddPetPage() {
   const [name, setName] = useState<string>("");
@@ -96,7 +96,7 @@ export default function AddPetPage() {
           species: type,
           breed: breed,
           photo_url:
-            "https://cdn.prakasitj.com/proxy/get/" +
+            PHOTO +
             name.trim().replace(" ", "") +
             "-photo.jpg",
           weight: parseInt(weight),
@@ -164,7 +164,7 @@ export default function AddPetPage() {
 
     const sendData = {
       method: "POST",
-      url: "https://cdn.prakasitj.com/proxy/post",
+      url: PHOTOPOST,
       headers: { "Content-Type": "multipart/form-data" },
       data: formdata,
     };

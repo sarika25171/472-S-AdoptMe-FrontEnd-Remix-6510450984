@@ -1,4 +1,3 @@
-import Search from "./search_box";
 import RouteButton from "./route_button";
 import { Link, useNavigate } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
@@ -7,6 +6,7 @@ import { useEffect, useState } from "react";
 import { primaryOrangeColor } from "./colors";
 import axios from "axios";
 import User from "~/models/user";
+import { PHOTO } from "~/server/domain";
 
 interface props {
   name: string;
@@ -78,7 +78,7 @@ export default function Header() {
         className="flex flex-col items-center"
       >
         <img
-          src="https://cdn.prakasitj.com/proxy/get/logo-dog-paw.png"
+          src={PHOTO+"logo-dog-paw.png"}
           className="w-20 h-20 hover:scale-110 duration-200"
         />
         <h1

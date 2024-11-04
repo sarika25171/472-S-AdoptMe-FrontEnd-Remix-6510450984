@@ -5,7 +5,7 @@ import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { DOMAIN } from "~/server/domain";
+import { DOMAIN, PHOTO } from "~/server/domain";
 
 export default function SignUpView() {
   const [username, setUsername] = useState<string>("");
@@ -66,7 +66,7 @@ export default function SignUpView() {
         phone_number: phoneNumber,
         salary: parseInt(salary),
         priority: "user",
-        photo_url: "https://cdn.prakasitj.com/proxy/get/default-profile.png",
+        photo_url: PHOTO+"default-profile.png",
       },
     };
 
@@ -80,7 +80,7 @@ export default function SignUpView() {
   }
 
   return (
-    <div className="flex flex-col justify-center bg-[url('https://cdn.prakasitj.com/proxy/get/bg-adoptme.png')] items-center w-full min-h-screen space-y-8">
+    <div className={`flex flex-col justify-center bg-[url('${PHOTO}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}>
       <Link to="/" prefetch="intent">
         <button
           type="button"
@@ -210,7 +210,7 @@ export default function SignUpView() {
           </div>
         </div>
         {/* Image */}
-        <img src="https://cdn.prakasitj.com/proxy/get/dog-in-the-air.jpg" />
+        <img src={PHOTO+"dog-in-the-air.jpg"} />
       </div>
     </div>
   );

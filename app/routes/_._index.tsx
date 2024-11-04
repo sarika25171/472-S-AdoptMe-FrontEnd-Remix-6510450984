@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import CustomButton from "~/components/custom_button";
+import { PHOTO } from "~/server/domain";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,7 +13,7 @@ export default function Index() {
   return (
       <div className="grid [&>img]:col-start-1 [&>img]:row-start-1 [&>div]:col-start-1 [&>div]:row-start-1">
         <img
-          src="https://cdn.prakasitj.com/proxy/get/blue-adopt.png"
+          src={PHOTO+"blue-adopt.png"}
           className="w-svw object-cover object-center"
         />
         <div className="flex flex-col space-y-2 justify-center items-start px-20">

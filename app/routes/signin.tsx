@@ -6,7 +6,7 @@ import CustomTextBox from "~/components/custom_textbox";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
 import User from "~/models/user";
-import { DOMAIN } from "~/server/domain";
+import { DOMAIN, PHOTO } from "~/server/domain";
 
 export default function SignInView() {
   const [username, setUsername] = useState<string>("");
@@ -79,7 +79,7 @@ export default function SignInView() {
   }, [success]);
 
   return (
-    <div className="flex flex-col justify-center bg-[url('https://cdn.prakasitj.com/proxy/get/bg-adoptme.png')] items-center w-full min-h-screen space-y-8">
+    <div className={`flex flex-col justify-center bg-[url('${PHOTO}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}>
       <Link to="/" prefetch="intent">
         <button
           type="button"
@@ -92,7 +92,7 @@ export default function SignInView() {
       </Link>
       <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
         {/* Image */}
-        <img src="https://cdn.prakasitj.com/proxy/get/dog-in-the-air.jpg" />
+        <img src={PHOTO+"dog-in-the-air.jpg"} />
 
         {/* Content */}
         <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">

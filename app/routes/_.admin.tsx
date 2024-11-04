@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Adoption from "~/models/adoption";
 import Pet from "~/models/pet";
 import User from "~/models/user";
-import { DOMAIN } from "~/server/domain";
+import { DOMAIN, PHOTODELETE } from "~/server/domain";
 
 export default function AdminView() {
   const [rows, setRows] = useState<Pet[]>([]);
@@ -76,7 +76,7 @@ export default function AdminView() {
       const adoption = adoptions.find((adoption) => adoption.pet_id === id);
       const options = {
         method: "DELETE",
-        url: "https://adoptme-db.prakasitj.com/adoption/delete",
+        url: DOMAIN+"/adoption/delete",
         headers: { "Content-Type": "application/json" },
         data: { added_id: adoption?.added_id },
       };
@@ -91,7 +91,7 @@ export default function AdminView() {
     async function deleteFile(fileName: string) {
       const options = {
         method: "DELETE",
-        url: "https://cdn.prakasitj.com/proxy/delete",
+        url: PHOTODELETE,
         headers: { "Content-Type": "application/json" },
         data: { filename: fileName, key: "T6qom9erqaYUpddmnWlo" },
       };
