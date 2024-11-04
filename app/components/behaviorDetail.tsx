@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import BehaviorTopic from "./behaviorTopic";
 import CatBevaior from "./catBehavior";
 import DogBevaior from "./dogBehavior";
+import GeneralPetHelp from "./generalPetHelp";
 
 interface props {
     animal : string,
@@ -214,5 +215,10 @@ export default function BehaviorDetail({animal, topic} : props) {
             </div>
         );
         
+    }
+    if(animal==""){
+        return(
+            <GeneralPetHelp topic={topic}/>
+        );
     }
 }

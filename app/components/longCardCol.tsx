@@ -6,6 +6,7 @@ interface props {
 }
 
 export default function LongCardCol({type} : props) {
+    console.log("type : "+type);
     if(type == "Dogs") {
         return(
             <div className="flex flex-col justify-center items-center w-full h-fit space-y-8">
@@ -31,6 +32,19 @@ export default function LongCardCol({type} : props) {
                 <LongCard type={type!} topic="Older Cats with Behavior Problems" detail="As your cat ages, he or she may experience a decline in cognitive functioning." img="https://cdn.prakasitj.com/proxy/get/cat-older.jpg"/>
                 <LongCard type={type!} topic="Urine Marking in Cats" detail="It is important to determine whether your cat has a little box problem, or if he or she is urine marking." img="https://cdn.prakasitj.com/proxy/get/cat-urine-marking.jpg"/>
                
+            </div>
+        );
+    }
+    if(type == "PetHelp") {
+        return(
+            <div className="flex flex-col justify-center items-center w-full h-fit space-y-8">
+                <LongCard topic="Allergies to Pets" detail="Roughly 15 to 20% of the population is allergic to pets. Read tips for coping with allergies." img="https://cdn.prakasitj.com/proxy/get/allergies.jpg"/>
+                <LongCard topic="Cutting Pet Care Costs" detail="Here are a few tips to help you save money on your pet’s health care." img="https://cdn.prakasitj.com/proxy/get/cutting.jpg"/>
+                <LongCard topic="Spay/Neuter Your Pet" detail="Spaying or neutering your pet helps control the pet overpopulation crisis." img="https://cdn.prakasitj.com/proxy/get/spay-pet.webp"/>
+                <LongCard topic="Emergency Care For Your Pet" detail="It’s crucial to have an emergency plan in place before you need it." img="https://cdn.prakasitj.com/proxy/get/emergency-care.jpg"/>
+                <LongCard topic="End Of Life Care" detail="Read on to find out how to help make your pet’s final days peaceful and dignified." img="https://cdn.prakasitj.com/proxy/get/End-of-Life.png.webp"/>
+                <LongCard topic="Finding a Lost Pet" detail="Take swift action and follow these steps to locate your missing pet." img="https://cdn.prakasitj.com/proxy/get/lost-pet.jpg"/>
+                <LongCard topic="Vaccinations for Your Pet" detail="Vaccinating your pet is one of the easiest ways to help him live a long, healthy life." img="https://cdn.prakasitj.com/proxy/get/vaccination.jpeg"/>
             </div>
         );
     }
