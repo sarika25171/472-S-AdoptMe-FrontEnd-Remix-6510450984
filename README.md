@@ -1,3 +1,11 @@
+# Adopt Me Front End using Remix JS
+
+This website is to find pet to adopt or add pet for adoption.
+This website also include topic about how to care your pet in general way.
+
+This project is term project for 471 Software Design and Development.
+
+
 # Welcome to Remix!
 
 - 📖 [Remix docs](https://remix.run/docs)
