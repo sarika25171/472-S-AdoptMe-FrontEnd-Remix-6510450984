@@ -18,9 +18,10 @@ export default function Header() {
   const [link, setLink] = useState<string>("");
   const [admin, setAdmin] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [signOut, setSignOut] = useState<boolean>(false);
   const navigator = useNavigate();
 
-  async function fetchUsers({username}: {username:string | null}) {
+  async function fetchUsers({ username }: { username: string | null }) {
     const options = {
       method: "GET",
       url: "https://adoptme-db.prakasitj.com/user/getAllUser",
@@ -29,9 +30,11 @@ export default function Header() {
     try {
       const { data } = await axios.request<User[]>(options);
       setUsers(data);
-      if(username != null) {
+      if (username != null) {
         setLink("/profile");
-        if (data.find((user) => user.username == username)?.priority == "admin") {
+        if (
+          data.find((user) => user.username == username)?.priority == "admin"
+        ) {
           setAdmin(true);
         } else {
           setAdmin(false);
@@ -44,12 +47,14 @@ export default function Header() {
 
   useEffect(() => {
     const tmpUsername = sessionStorage.getItem("username");
-    fetchUsers({username:tmpUsername});
+    fetchUsers({ username: tmpUsername });
   }, []);
 
   useEffect(() => {
     const tmpUsername = sessionStorage.getItem("username");
-    const tmpPriority = users.find((user) => user.username == tmpUsername)?.priority;
+    const tmpPriority = users.find(
+      (user) => user.username == tmpUsername
+    )?.priority;
     if (tmpUsername != null) {
       setLink("/profile");
       if (tmpPriority == "admin") {
@@ -130,6 +135,8 @@ export default function Header() {
             height="24"
             OnClick={() => {
               setAdmin(false);
+              setSignOut(true);
+              Promise.resolve(setTimeout(() => setSignOut(false), 2000));
             }}
           />
         </button>
@@ -144,6 +151,11 @@ export default function Header() {
         </button>
         {/* <Search /> */}
       </div>
+      {signOut && (
+        <div className="fixed right-32 w-28 animate-pulse">
+          <h1 className="text-red-600 font-bold font-sans">Signing out...</h1>
+        </div>
+      )}
     </div>
   );
 }
