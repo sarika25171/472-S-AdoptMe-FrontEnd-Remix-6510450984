@@ -31,7 +31,7 @@ export default function PetsPage() {
         </FilterButton>
         <FilterButton
           text="Dogs"
-          value="Dog"
+          value="Dogs"
           select={select}
           setSelect={setSelect}
         >
@@ -43,7 +43,7 @@ export default function PetsPage() {
         </FilterButton>
         <FilterButton
           text="Cats"
-          value="Cat"
+          value="Cats"
           select={select}
           setSelect={setSelect}
         >
@@ -55,7 +55,7 @@ export default function PetsPage() {
         </FilterButton>
         <FilterButton
           text="Rabbits"
-          value="Rabbit"
+          value="Rabbits"
           select={select}
           setSelect={setSelect}
         >

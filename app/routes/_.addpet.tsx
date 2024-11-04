@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 import axios from "axios";
+import { s } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { useEffect, useState } from "react";
 import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
@@ -26,6 +27,8 @@ export default function AddPetPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [waiting, setWaiting] = useState<boolean>(false);
 
   const [username, setUsername] = useState<string>("");
 
@@ -169,6 +172,8 @@ export default function AddPetPage() {
 
     try {
       const { data } = await axios.request(sendData);
+      setWaiting(false);
+      setSuccess(true);
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -282,12 +287,16 @@ export default function AddPetPage() {
                 height={100}
                 state={setDetail}
               />
+              {waiting && <h1 className="text-black font-bold text-3xl">Please wait...</h1>}
+              {success && <h1 className="text-green-600 font-bold text-3xl">Create Pet Success</h1>}
               <CustomButton
                 text="Add Pet For Adoption"
                 destination="/pets"
                 color="bg-primary-orange"
                 disabled={!isFormValid}
+                noRedirect={true}
                 click={() => {
+                  setWaiting(true);
                   setFetching(true);
                 }}
               />
