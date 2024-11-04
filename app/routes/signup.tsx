@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@remix-run/react";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
@@ -17,6 +18,7 @@ export default function SignUpView() {
   const [salary, setSalary] = useState<string>("0");
   const [error, setError] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,12 +53,11 @@ export default function SignUpView() {
     phoneNumber: string,
     salary: string
   ) {
-    await fetch(DOMAIN + "/user/post", {
+    const options = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+      url: DOMAIN+"/user/post",
+      headers: { "Content-Type": "application/json" },
+      data: {
         username: username,
         password: password,
         email: email,
@@ -64,9 +65,18 @@ export default function SignUpView() {
         last_name: lastName,
         phone_number: phoneNumber,
         salary: parseInt(salary),
-        priority: "user"
-      }),
-    });
+        priority: "user",
+        photo_url: "https://cdn.prakasitj.com/proxy/get/default-profile.png",
+      },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      setSuccess(true);
+      navigate("/signin");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -82,7 +92,6 @@ export default function SignUpView() {
         </button>
       </Link>
       <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
-
         {/* Content */}
         <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">
           <h1 className="text-primary-orange text-[64px]">Sign In</h1>
@@ -178,6 +187,7 @@ export default function SignUpView() {
           </div>
 
           <div className="flex flex-col justify-center items-center space-y-2">
+            {success && <h1 className="text-green-500">Create user success</h1>}
             {error && <h1 className="text-red-500">{error}</h1>}
             <CustomButton
               text="Sign Up"
@@ -192,8 +202,8 @@ export default function SignUpView() {
                   email,
                   firstName,
                   lastName,
-                  salary,
-                  phoneNumber
+                  phoneNumber,
+                  salary
                 );
               }}
             />

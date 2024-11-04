@@ -5,11 +5,12 @@ interface props {
     name:string;
     sex:string;
     breed:string;
-    age:number;
+    ageYear:number;
+    ageMonth:number;
     imgSrc:string;
 }
 
-export default function AnimalCard({id, name, sex, breed, age, imgSrc}: props){
+export default function AnimalCard({id, name, sex, breed, ageYear, ageMonth, imgSrc}: props){
     return (
         <Link to={`/adopt?id=${id}`} prefetch="intent">
             <div className="relative w-[200px] h-[320px] xl:w-full xl:h-[420px] rounded-2xl max-w-xs overflow-hidden bg-clip-border w-500 h-640 hover:shadow-2xl hover:shadow-yellow-600 group bg-black" style={{transitionDuration:"0.5s"}}>
@@ -20,7 +21,7 @@ export default function AnimalCard({id, name, sex, breed, age, imgSrc}: props){
                         <h1 className="text-4xl font-bold ">{name}</h1>
                         <hr className="h-px my-2 bg-white w-auto"></hr>
                         <h2>{sex}</h2>
-                        <h2>{age} years</h2>
+                        {ageYear > 0 ? <h2>{ageYear} years </h2> : <h2>{ageMonth} months</h2>}
                         <h2>{breed}</h2>
                     </div>
                 </div>

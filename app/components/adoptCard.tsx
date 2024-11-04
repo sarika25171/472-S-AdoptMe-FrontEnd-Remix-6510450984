@@ -1,3 +1,5 @@
+import User from "~/models/user";
+
 interface props {
     img : string,
     name : string,
@@ -10,9 +12,12 @@ interface props {
     color : string,
     spayed : boolean,
     detail : string,
+
+    owner : User
 }
 
-export default function AdoptCard({name, img, age, weight, sex, id, type, color, breed, spayed, detail} : props) {
+export default function AdoptCard({name, img, age, weight, sex, id, type, color, breed, spayed, detail, owner} : props) {
+    const details = detail.split("-");
     return(
         <div className="flex flex-row bg-primary-white-tone rounded-3xl w-[1500px] h-[900px] drop-shadow-lg p-2 justify-evenly items-center space-x-4">
 
@@ -77,13 +82,29 @@ export default function AdoptCard({name, img, age, weight, sex, id, type, color,
                         <h1 className="text-black font-bold text-2xl">Additional Details</h1>
                         <hr />
                         <ul className="text-gray-400">
-                            {detail}
+                            {/* {detail} */}
+                            {details.map((item, index) => {
+                                if(item === "") return null;
+                                return <li key={index}>- {item}</li>
+                            })}
+                            
                             {/* <li>Likes to explore new places and say hi to everyone he meets</li>
                             <li>Enjoys car rides and sits in his own little booster seat</li>
                             <li>Loves going on walks and does best with a harness</li>
                             <li>Happy to nap on the couch at night with his people</li> */}
                         </ul>
                     </div>
+
+                    <div>
+                        <h1 className="text-black font-bold text-2xl">Owner</h1>
+                        <hr />
+                        <ul className="text-gray-400">
+                            <li>Name : {owner.first_name} {owner.last_name}</li>
+                            <li>Email : {owner.email}</li>
+                            <li>Phone : {owner.phone_number}</li>
+                        </ul>
+                    </div>
+
 
             </div>
         </div>
