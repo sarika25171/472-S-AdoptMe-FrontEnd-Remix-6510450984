@@ -121,6 +121,7 @@ export default function AdminView() {
           src={params.row.photo_url}
           alt={`${params.row.pet_name}'s photo`}
           style={{ width: 120, height: 120, borderRadius: "10%" }}
+          className="object-cover"
         />
       ),
     },
