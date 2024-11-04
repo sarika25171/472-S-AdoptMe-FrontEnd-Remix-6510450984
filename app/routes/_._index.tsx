@@ -18,7 +18,7 @@ export default function Index() {
         />
         <div className="flex flex-col space-y-2 justify-center items-start px-20">
           <h1 className="text-[64px] text-black">Pet Adoption</h1>
-          <h3 className="text-[32px] text-gray-500">
+          <h3 className="text-  [32px] text-gray-500">
             Find your new best friend and give a pet a loving home.
           </h3>
           <CustomButton

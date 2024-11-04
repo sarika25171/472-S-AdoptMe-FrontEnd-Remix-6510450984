@@ -5,8 +5,9 @@ import BehaviorAnimal from "~/components/behaviorAnimal";
 import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 import BehaviorCard from "~/components/longCard";
+import UploadButton from "~/components/upload_button";
 import User from "~/models/user";
-import { DOMAIN, PHOTO } from "~/server/domain";
+import { DOMAIN, PHOTO, PHOTOPOST } from "~/server/domain";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User[]>([]);
@@ -18,6 +19,8 @@ export default function ProfilePage() {
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [salary, setSalary] = useState<string>("1");
+  const [isDefault, setIsDefault] = useState<boolean>(false);
+  const [photoUrl, setPhotoUrl] = useState<string>("");
   const [image, setImage] = useState<File | null>(null); // New state for image file
   const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -25,6 +28,9 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const navigate = useNavigate();
+  const getLastItem = (thePath: string): string => {
+    return thePath.substring(thePath.lastIndexOf('/') + 1);
+  };
 
   useEffect(() => {
     const isValid =
@@ -33,7 +39,8 @@ export default function ProfilePage() {
       lastName.trim() !== "" ||
       email.trim() !== "" ||
       phoneNumber.trim() !== "" ||
-      salary.trim() !== "";
+      salary.trim() !== "" ||
+      image != null;
     setIsFormValid(isValid);
     console.log(isValid);
   }, [
@@ -43,6 +50,7 @@ export default function ProfilePage() {
     email,
     phoneNumber,
     salary,
+    image,
   ]);
 
   useEffect(() => {
@@ -53,12 +61,11 @@ export default function ProfilePage() {
       firstName: string,
       lastName: string,
       phoneNumber: string,
-      salary: string
+      salary: string,
     ) {
-      // uploadFile(image!, name.trim().replace(" ", "") + "-photo.jpg");
-      console.log("firstName");
-      console.log(firstName == "");
-      console.log("lastName"+lastName=="");
+      if(image != null) {
+        uploadFile(image!, currentUser!.username.trim().replace(" ", "") + "-photo.jpg");
+      }
       const sendData = {
         method: 'PUT',
         url: DOMAIN+'/user/updateUserByID',
@@ -70,7 +77,8 @@ export default function ProfilePage() {
           first_name: (firstName=="" ? currentUser?.first_name : firstName),
           last_name: (lastName==""? currentUser?.last_name : lastName),
           phone_number: (phoneNumber==""? currentUser?.phone_number : phoneNumber),
-          salary: (salary==""? parseInt(""+currentUser?.salary) : parseInt(salary))
+          salary: (salary==""? parseInt(""+currentUser?.salary) : parseInt(salary)),
+          photo_url : (isDefault ? currentUser?.photo_url : currentUser?.username.trim().replace(" ", "")+ "-photo.jpg"),
         }
       };
       
@@ -98,6 +106,28 @@ export default function ProfilePage() {
       );
     }
   }, [fetching]);
+
+  async function uploadFile(file: File, fileName: string) {
+    const formdata = new FormData();
+    formdata.append("file", file);
+    formdata.append("filename", fileName);
+    formdata.append("key", "T6qom9erqaYUpddmnWlo");
+
+    const sendData = {
+      method: "POST",
+      url: PHOTOPOST,
+      headers: { "Content-Type": "multipart/form-data" },
+      data: formdata,
+    };
+
+    try {
+      const { data } = await axios.request(sendData);
+      setSuccess(true);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   
   useEffect(() => {
     async function fetchUser() {
@@ -129,6 +159,10 @@ export default function ProfilePage() {
       setEmail(currentUser.email);
       setPhoneNumber(currentUser.phone_number);
       setSalary(""+currentUser.salary);
+      setPhotoUrl(PHOTO+currentUser.photo_url);
+      if(getLastItem(currentUser.photo_url) == "default-profile.png") {
+        setIsDefault(true);
+      }
     }
   }, [firstFetch]);
 
@@ -140,7 +174,8 @@ export default function ProfilePage() {
       setEmail("");
       setPhoneNumber("");
       setSalary("");
-    } else {
+      setPhotoUrl(photoUrl);
+      } else {
       if(currentUser != undefined) {
         setFirstName(currentUser.first_name);
         setLastName(currentUser.last_name);
@@ -148,10 +183,26 @@ export default function ProfilePage() {
         setEmail(currentUser.email);
         setPhoneNumber(currentUser.phone_number);
         setSalary(""+currentUser.salary);
+        setPhotoUrl(PHOTO+currentUser.photo_url);
       }
       window.location.reload
     }
   }, [edit]);
+
+  useEffect(()=> {
+    if(imagePreview != null) {
+      setPhotoUrl(imagePreview!);
+    }
+  }, [imagePreview]);
+  
+  const handleFileSelect = (file: File | null) => {
+    setImage(file);
+    if (file) {
+      setImagePreview(URL.createObjectURL(file)); // Generate a URL for image preview
+    } else {
+      setImagePreview(null); // Clear preview if no file is selected
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center w-full min-h-screen px-20 py-10 space-y-8">
@@ -160,10 +211,15 @@ export default function ProfilePage() {
           <img
               className="rounded-full"
               src={
-                PHOTO + currentUser.photo_url
+                photoUrl
               }
               alt="Profile"
             />
+            {edit && <UploadButton
+                text="Upload Photo"
+                color="bg-primary-orange"
+                onFileSelect={handleFileSelect} // Pass file select handler to UploadButton
+              />}
             <div className="flex flex-row space-x-8 px-24 w-full [&>div>h1]:text-black [&>div>h1]:font-bold [&>div>h1]:text-xl">
               <div className="flex flex-col p-0 space-y-2 justify-start w-full">
                 <h1>First Name</h1>
