@@ -1,4 +1,5 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";

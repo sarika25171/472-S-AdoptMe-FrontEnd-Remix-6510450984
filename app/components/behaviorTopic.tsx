@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 interface props {
     header : string,
     body : string,

@@ -1,70 +1,34 @@
 import RouteButton from "./route_button";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { primaryOrangeColor } from "./colors";
-import axios from "axios";
-import User from "~/models/user";
-import { PHOTO } from "~/server/domain";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { UserAPI } from "~/server/repository";
 
-interface props {
-  name: string;
-  page: string;
+const Photo = process.env.PHOTO!
+
+const [admin, setAdmin] = useState<boolean>(false);
+
+export function loader({request} : LoaderFunctionArgs) {
+  const username = sessionStorage.getItem("username");
+  if(username) {
+    const currentUser = UserAPI.getUserByUsername(username);
+    currentUser.then((user) => {
+      if(user.priority === "admin") 
+        setAdmin(true);
+    })
+  }
+  return { username };
 }
 
 export default function Header() {
+  const {username} = useLoaderData<typeof loader>();
+
   const [select, setSelect] = useState("home");
-  const [link, setLink] = useState<string>("");
   const [admin, setAdmin] = useState<boolean>(false);
-  const [users, setUsers] = useState<User[]>([]);
   const [signOut, setSignOut] = useState<boolean>(false);
-  const navigator = useNavigate();
-
-  async function fetchUsers({ username }: { username: string | null }) {
-    const options = {
-      method: "GET",
-      url: "https://adoptme-db.prakasitj.com/user/getAllUser",
-    };
-
-    try {
-      const { data } = await axios.request<User[]>(options);
-      setUsers(data);
-      if (username != null) {
-        setLink("/profile");
-        if (
-          data.find((user) => user.username == username)?.priority == "admin"
-        ) {
-          setAdmin(true);
-        } else {
-          setAdmin(false);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    const tmpUsername = sessionStorage.getItem("username");
-    fetchUsers({ username: tmpUsername });
-  }, []);
-
-  useEffect(() => {
-    const tmpUsername = sessionStorage.getItem("username");
-    const tmpPriority = users.find(
-      (user) => user.username == tmpUsername
-    )?.priority;
-    if (tmpUsername != null) {
-      setLink("/profile");
-      if (tmpPriority == "admin") {
-        setAdmin(true);
-      }
-    } else {
-      setLink("/signin");
-      setAdmin(false);
-    }
-  }, [select]);
 
   return (
     // Home
@@ -78,7 +42,7 @@ export default function Header() {
         className="flex flex-col items-center"
       >
         <img
-          src={PHOTO+"logo-dog-paw.png"}
+          src={Photo+"logo-dog-paw.png"}
           className="w-20 h-20 hover:scale-110 duration-200"
         />
         <h1
@@ -95,7 +59,7 @@ export default function Header() {
         {admin && (
           <RouteButton
             text="Admin"
-            destination="/admin"
+            destination="/adminnew"
             setSelect={setSelect}
             select={select}
           />
@@ -120,7 +84,7 @@ export default function Header() {
         />
         <RouteButton
           text="Add Pet"
-          destination="/addpet"
+          destination="/addpetnew"
           setSelect={setSelect}
           select={select}
         />
@@ -128,7 +92,10 @@ export default function Header() {
 
       {/* Icon Buttons */}
       <div className="justify-evenly items-center space-x-6">
-        <button className="hover:scale-110 duration-200">
+        {
+          username &&
+          <button className="hover:scale-110 duration-200">
+          {/* I think this icon is signout icon, not search lol */}
           <IconSearch
             colorCode={primaryOrangeColor}
             width="24"
@@ -140,8 +107,9 @@ export default function Header() {
             }}
           />
         </button>
+        }
         <button className="hover:scale-110 duration-200">
-          <Link to={link}>
+          <Link to={username ? "/profilenew" : "/signin"}>
             <IconProfile
               colorCode={primaryOrangeColor}
               width="24"

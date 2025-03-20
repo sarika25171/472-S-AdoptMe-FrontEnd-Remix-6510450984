@@ -1,10 +1,6 @@
 import { Link } from "@remix-run/react";
 import {
-  Children,
-  Dispatch,
   MouseEventHandler,
-  ReactNode,
-  SetStateAction,
 } from "react";
 
 interface props {

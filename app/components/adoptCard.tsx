@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
-import { DOMAIN, PHOTO } from "~/server/domain";
 import Adoption from "~/models/adoption";
-import axios from "axios";
+import { AdoptionAPI, PetAPI } from "~/server/repository";
+
+const Domain = process.env.DOMAIN!;
+const Photo = process.env.PHOTO!;
 
 interface props {
+  adoption : Adoption;
   img: string;
   name: string;
   age: string;
@@ -17,11 +20,11 @@ interface props {
   color: string;
   spayed: boolean;
   detail: string;
-
   owner: User;
 }
 
 export default function AdoptCard({
+  adoption,
   name,
   img,
   age,
@@ -35,76 +38,17 @@ export default function AdoptCard({
   detail,
   owner,
 }: props) {
+
+  function updateData() {
+    AdoptionAPI.updateAdopted(adoption.id);
+    PetAPI.updatePetByID(adoption.pet_id);
+    setSuccess(true);
+  }
+
   const details = detail.split("-");
   const [popUp, setPopUp] = useState(false);
-  const [contact, setContact] = useState(false);
-  const [fetching, setFetching] = useState(false);
-  const [adoptions, setAdoptions] = useState<Adoption[]>([]);
-  const [adoption, setAdoption] = useState<Adoption>();
+  const [contact, setContact] = useState(false); //*
   const [success, setSuccess] = useState<boolean>(false);
-
-  useEffect(() => {
-    async function fetchAdoption() {
-      const options = {method: 'GET', url: DOMAIN+'/adoption/getAllAdoption'};
-
-      try {
-        const { data } = await axios.request<Adoption[]>(options);
-        setAdoptions(data);
-        const curUser = data.find((item: Adoption) => item.pet_id === id);
-        setAdoption(curUser);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchAdoption();
-  }, []);
-
-  
-
-  useEffect(()=>{
-
-    async function fetchData() {
-      const options = {
-        method: 'PUT',
-        url: DOMAIN+'/adoption/adopt',
-        headers: {'Content-Type': 'application/json'},
-        data: {
-          added_id: adoption?.added_id
-        }
-      };
-      
-      try {
-        const { data } = await axios.request(options);
-        fetchUpdatePet();
-        setFetching(false);
-        setSuccess(true);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    async function fetchUpdatePet() {
-      const options = {
-        method: 'PUT',
-        url: DOMAIN+'/pet/updatePetByID',
-        headers: {'Content-Type': 'application/json'},
-        data: {
-          pet_id: adoption?.pet_id,
-          adopted: true
-        }
-      };
-      
-      try {
-        const { data } = await axios.request(options);
-        console.log(data);
-        console.log("Update success")
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData()
-
-  }, [fetching])
 
   return (
     <div className="grid grid-flow-col grid-cols-1">
@@ -216,27 +160,14 @@ export default function AdoptCard({
                   if (item === "") return null;
                   return <li key={index}>- {item}</li>;
                 })}
-
-                {/* <li>Likes to explore new places and say hi to everyone he meets</li>
-                            <li>Enjoys car rides and sits in his own little booster seat</li>
-                            <li>Loves going on walks and does best with a harness</li>
-                            <li>Happy to nap on the couch at night with his people</li> */}
               </ul>
             </div>
-
-            {/* <div>
-            <h1 className="text-black font-bold text-2xl">Owner</h1>
-            <hr />
-            <ul className="text-gray-400">
-              <li>
-                Name : {owner.first_name} {owner.last_name}
-              </li>
-              <li>Email : {owner.email}</li>
-              <li>Phone : {owner.phone_number}</li>
-            </ul>
-          </div> */}
-              {success && <h1 className="text-green-600 font-bold text-3xl">Pet is Adopted !</h1>}
-              <div className="flex flex-row space-x-4">
+            {success && (
+              <h1 className="text-green-600 font-bold text-3xl">
+                Pet is Adopted !
+              </h1>
+            )}
+            <div className="flex flex-row space-x-4">
               <button
                 className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
                 onClick={() => {
@@ -246,28 +177,32 @@ export default function AdoptCard({
               >
                 Contact
               </button>
-              {sessionStorage.getItem("username") == owner.username && <button
-              className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
-              onClick={() => {
-                setFetching(true);
-              }}
-            >
-              Adopted
-            </button>
-            }
+              {sessionStorage.getItem("username") == owner.username && (
+                <button
+                  className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
+                  onClick={() => {
+                    updateData();
+                  }}
+                >
+                  Adopted
+                </button>
+              )}
             </div>
-            
           </div>
         </AnimatedComponent>
       </div>
       {popUp && (
-        <div className={`row-start-1 col-start-1 z-10 text-black flex flex-col justify-center items-center ${contact === false ? "animate-fade-out":""}`}>
+        <div
+          className={`row-start-1 col-start-1 z-10 text-black flex flex-col justify-center items-center ${
+            contact === false ? "animate-fade-out" : ""
+          }`}
+        >
           <AnimatedComponent>
             <div className="text-black flex flex-col justify-center items-center bg-[#fff9ea] rounded-xl p-4 w-[20svw] shadow-sm">
               <div className="flex flex-col w-5/6 h-full justify-center items-center gap-2">
                 <h1 className="text-4xl text-black font-bold">Contact Owner</h1>
                 <img
-                  src={PHOTO + owner.photo_url}
+                  src={Photo + owner.photo_url}
                   className="h-28 object-cover rounded-full"
                 />
 

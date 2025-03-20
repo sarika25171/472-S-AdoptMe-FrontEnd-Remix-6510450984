@@ -4,4 +4,4 @@ node_modules
 /build
 .env
 
-/app/server/domain.ts
+server/domain.ts

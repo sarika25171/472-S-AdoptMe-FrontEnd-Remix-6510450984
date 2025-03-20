@@ -1,3 +1,4 @@
+import { ActionFunctionArgs } from "@remix-run/node";
 import { Link, useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -5,7 +6,13 @@ import CustomButton from "~/components/custom_button";
 import CustomTextBox from "~/components/custom_textbox";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { DOMAIN, PHOTO } from "~/server/domain";
+
+const Domain = process.env.DOMAIN!
+const Photo = process.env.PHOTO!
+
+export async function action({ request } : ActionFunctionArgs) {
+  
+}
 
 export default function SignUpView() {
   const [username, setUsername] = useState<string>("");
@@ -55,7 +62,7 @@ export default function SignUpView() {
   ) {
     const options = {
       method: "POST",
-      url: DOMAIN+"/user/post",
+      url: Domain+"/user/post",
       headers: { "Content-Type": "application/json" },
       data: {
         username: username,
@@ -66,7 +73,7 @@ export default function SignUpView() {
         phone_number: phoneNumber,
         salary: parseInt(salary),
         priority: "user",
-        photo_url: PHOTO+"default-profile.png",
+        photo_url: Photo+"default-profile.png",
       },
     };
 
@@ -80,7 +87,7 @@ export default function SignUpView() {
   }
 
   return (
-    <div className={`flex flex-col justify-center bg-[url('${PHOTO}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}>
+    <div className={`flex flex-col justify-center bg-[url('${Photo}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}>
       <Link to="/" prefetch="intent">
         <button
           type="button"
@@ -210,7 +217,7 @@ export default function SignUpView() {
           </div>
         </div>
         {/* Image */}
-        <img src={PHOTO+"dog-in-the-air.jpg"} />
+        <img src={Photo+"dog-in-the-air.jpg"} />
       </div>
     </div>
   );

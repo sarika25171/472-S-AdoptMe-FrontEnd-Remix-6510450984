@@ -1,27 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterButton from "../components/filter_button";
 import AnimalCard from "../components/animalCard";
-import { DOMAIN } from "~/server/domain";
 import Pet from "~/models/pet";
 import IconDog from "~/components/icons/iconDog";
 import IconCat from "~/components/icons/iconCat";
 import IconPaw from "~/components/icons/iconPaw";
 import IconRabbit from "~/components/icons/iconRabbit";
 import AnimatedComponent from "~/components/animations/animatedComponent";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { PetAPI } from "~/server/repository";
+import { useLoaderData } from "@remix-run/react";
+
+export async function loader({request} : LoaderFunctionArgs) {
+  const pets: Pet[] = await PetAPI.getAll();
+  return { pets }
+}
 
 export default function PetsPage() {
+  const { pets } = useLoaderData<typeof loader>();
   const [select, setSelect] = useState(""); // State for selected filter
-  const [pets, setPets] = useState<Pet[]>([]); // State for pets data
-
-  async function fetchPet() {
-    const response = await fetch(DOMAIN + "/pet/getAllPet");
-    const data: Pet[] = await response.json();
-    setPets(data);
-  }
-
-  useEffect(() => {
-    fetchPet();
-  }, []);
 
   return (
     <div className="flex flex-col justify-start items-center w-svw min-h-screen space-y-4 px-10 py-10" style={{transitionDuration:"1s"}}>

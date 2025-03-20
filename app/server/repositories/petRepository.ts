@@ -1,16 +1,29 @@
-import { DOMAIN, PHOTO } from "../domain";
+import Pet from "~/models/pet";
 
-const apiPath = `${DOMAIN}/pet`;
+const Domain = process.env.DOMAIN!
+const Photo = process.env.PHOTO!
+
+const apiPath = `${Domain}/pet`;
 
 export default class PetAPI {
-    static async getPetById(id: number) {
+    static async getAll() : Promise<Pet[]> {
+        const res = await fetch(`${apiPath}/getAll`, { method: "GET" });
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error("Failed to fetch pets");
+        }
+        return data;
+    }
+
+    static async getPetByID(id: number) {
         const res = await fetch(`${apiPath}/getById/${id}`, { method: "GET" });
-    
+        const data = await res.json();
+        
         if (!res.ok) {
             return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
         }
-    
-        return res.json();
+        return data;
     }
 
     static async createPet(
@@ -34,7 +47,7 @@ export default class PetAPI {
                 species: type,
                 breed: breed,
                 photo_url:
-                    PHOTO +
+                    Photo +
                     name.trim().replace(" ", "") +
                     "-photo.jpg",
                 weight: parseInt(weight),
@@ -68,6 +81,19 @@ export default class PetAPI {
             return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
         }
     
+        return data;
+    }
+
+    static async deletePetByID(id : number) {
+        const res = await fetch(`${apiPath}/delete`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                pet_id : id,
+            }),
+            headers: {"Content-Type": "application/json"},
+        });
+        const data = await res.json();
+        if(!res.ok) return {error : data.message};
         return data;
     }
 }

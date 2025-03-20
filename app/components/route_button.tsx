@@ -1,5 +1,5 @@
-import { Link, Route } from "@remix-run/react";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Link } from "@remix-run/react";
+import { Dispatch, SetStateAction } from "react";
 
 interface props {
     text: string;

@@ -1,8 +1,5 @@
 import { useSearchParams } from "@remix-run/react";
-import { useEffect, useState } from "react";
 import BehaviorDetail from "~/components/behaviorDetail";
-import BehaviorTopic from "~/components/behaviorTopic";
-import LongCard from "~/components/longCard";
 import { PHOTO } from "~/server/domain";
 
 export default function BehaviorCommonPage() {

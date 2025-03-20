@@ -1,6 +1,6 @@
-import { DOMAIN } from "../domain";
+const Domain = process.env.DOMAIN!
 
-const apiPath = `${DOMAIN}/adoption`;
+const apiPath = `${Domain}/adoption`;
 
 export default class AdoptionAPI {
     static async getAdoption() {
@@ -10,14 +10,8 @@ export default class AdoptionAPI {
         return data;
     }
 
-    static async deletePetByID(id : string) {
-        const res = await fetch(`${apiPath}/delete`, {
-            method: "DELETE",
-            body: JSON.stringify({
-                pet_id : id,
-            }),
-            headers: {"Content-Type": "application/json"},
-        });
+    static async getAdoptionByPetID(id : number) {
+        const res = await fetch(`${apiPath}/getByPetId/${id}`, {method : "GET"});
         const data = await res.json();
         if(!res.ok) return {error : data.message};
         return data;
@@ -40,10 +34,25 @@ export default class AdoptionAPI {
         return data;
     }
 
-    static async updateAdoption(
+    // static async updateAdoption(
+    //     adoption_id: number,
+    // ) {
+    //     const res = await fetch(`${apiPath}/updateAdoption`, {
+    //         method: "PUT",
+    //         body : JSON.stringify({
+    //             id : adoption_id,
+    //         }),
+    //         headers: {"Content-Type": "application/json"},
+    //     });
+    //     const data = await res.json();
+    //     if(!res.ok) return {error : data.message};
+    //     return data
+    // }
+
+    static async updateAdopted(
         adoption_id: number,
     ) {
-        const res = await fetch(`${apiPath}/updateAdoption`, {
+        const res = await fetch(`${apiPath}/adopted`, {
             method: "PUT",
             body : JSON.stringify({
                 id : adoption_id,
@@ -53,5 +62,18 @@ export default class AdoptionAPI {
         const data = await res.json();
         if(!res.ok) return {error : data.message};
         return data
+    }
+
+    static async deleteAdoptionByID(id : number) {
+        const res = await fetch(`${apiPath}/delete`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                pet_id : id,
+            }),
+            headers: {"Content-Type": "application/json"},
+        });
+        const data = await res.json();
+        if(!res.ok) return {error : data.message};
+        return data;
     }
 }

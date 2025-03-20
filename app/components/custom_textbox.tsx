@@ -1,4 +1,4 @@
-import { ChangeEventHandler, Dispatch, LegacyRef, SetStateAction, useEffect, useRef, useState} from "react";
+import { ChangeEventHandler, Dispatch, LegacyRef, SetStateAction, useRef, useState} from "react";
 
 interface props {
     type : string,

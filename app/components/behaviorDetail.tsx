@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import BehaviorTopic from "./behaviorTopic";
 import CatBevaior from "./catBehavior";
 import DogBevaior from "./dogBehavior";

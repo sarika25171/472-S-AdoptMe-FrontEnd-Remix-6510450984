@@ -1,16 +1,18 @@
-import { DOMAIN, PHOTO, PHOTO_KEY, PHOTOPOST, PHOTODELETE } from "../domain";
+import User from "~/models/user";
 
-const apiPath = `${DOMAIN}/user`;
+const Domain = process.env.DOMAIN!
+const Photo = process.env.PHOTO!
+
+const apiPath = `${Domain}/user`;
 
 export default class UserAPI {
-    static async getUser() {
+    static async getUser() : Promise<User[]> {
         const res = await fetch(`${apiPath}/getAll`, {method: "GET"})
-        const data = await res.json();
-        if(!res.ok) return { error: data.message };
+        const data : User[] = await res.json();
         return data;
     }
     
-    static async getUserByID(userID : string) {
+    static async getUserByID(userID : string) : Promise<User> {
         const res = await fetch(`${apiPath}/getById`, {
             method: "GET",
             body: JSON.stringify({
@@ -18,7 +20,21 @@ export default class UserAPI {
             })
         })
         const data = await res.json();
-        if(!res.ok) return { error: data.message };
+        if(!data)
+            throw new Error("User not found");
+        return data;
+    }
+
+    static async getUserByUsername(username : string) : Promise<User> {
+        const res = await fetch(`${apiPath}/getByUsername`, {
+            method: "GET",
+            body: JSON.stringify({
+                username : username,
+            })
+        })
+        const data = await res.json();
+        if(!data)
+            throw new Error("User not found");
         return data;
     }
     
@@ -42,7 +58,7 @@ export default class UserAPI {
                 phone_number: phoneNumber,
                 salary: parseInt(salary),
                 priority: "user",
-                photo_url: PHOTO+"default-profile.png",
+                photo_url: Photo+"default-profile.png",
             }),
             headers: {"Content-Type": "application/json"},
         });
@@ -77,20 +93,14 @@ export default class UserAPI {
             lastName?: string;
             phoneNumber?: string;
             photoUrl?: string;
-            salary?: string;
+            salary?: number;
         }
     ) {
         const res = await fetch(`${apiPath}/update`, {
             method: "PUT",
             body: JSON.stringify({
                 id,
-                username: updates.username,
-                email: updates.email,
-                first_name: updates.firstName,
-                last_name: updates.lastName,
-                phone_number: updates.phoneNumber,
-                photo_url: updates.photoUrl,
-                salary: updates.salary ? parseFloat(updates.salary) : undefined,
+                ...updates
             }),
             headers: { "Content-Type": "application/json" },
         });

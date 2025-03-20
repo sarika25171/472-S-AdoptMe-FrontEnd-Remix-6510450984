@@ -1,7 +1,7 @@
 export default interface Adoption {
-    added_id: number,
-    added_user: string,
+    id: number,
+    user_id : string,
     pet_id: number,
-    added_date: Date,
-    adopted_date: Date
+    createAt: Date,
+    updatedAt: Date
 }
