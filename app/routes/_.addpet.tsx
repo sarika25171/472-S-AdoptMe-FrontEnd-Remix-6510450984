@@ -1,298 +1,371 @@
-// import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-// import { Link, useFetcher } from "@remix-run/react";
-// import axios from "axios";
-//  import { useEffect, useState } from "react";
-// import CustomButton from "~/components/custom_button";
-// import CustomTextBox from "~/components/custom_textbox";
-// import UploadButton from "~/components/upload_button";
-// import Pet from "~/models/pet";
-// import User from "~/models/user";
-// import { ImageAPI, PetAPI } from "~/server/CRUD";
-// import { DOMAIN, PHOTO, PHOTOPOST } from "~/server/domain";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import { useRef, useState } from "react";
+import UploadButton from "~/components/upload_button";
+import PetAPI from "~/server/repositories/petRepository";
+import { getSession } from "~/server/session";
 
-// export async function action({request} : ActionFunctionArgs) {
-//   const formData = request.formData
-// } 
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const action = formData.get("_action");
+  if (action === "add") {
+    const name = formData.get("name") as string;
+    const type = formData.get("type") as string;
+    const breed = formData.get("breed") as string;
+    const color = formData.get("color") as string;
+    const gender = formData.get("gender") as string;
+    const ageYear = formData.get("ageYear") as string;
+    const ageMonth = formData.get("ageMonth") as string;
+    const weight = formData.get("weight") as string;
+    const spayed = formData.get("spayed") as string;
+    const detail = formData.get("detail") as string;
+    const image = formData.get("image") as File | null;
+    PetAPI.createPet(
+      name,
+      type,
+      breed,
+      color,
+      gender,
+      ageYear,
+      ageMonth,
+      weight,
+      spayed,
+      detail
+    );
+  }
+}
 
-// export async function loader({request} : LoaderFunctionArgs) {
-//   const username = sessionStorage.getItem("username");
-//     return { username }
-// }
+export async function loader({ request }: LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const username = session.get("username");
+  return { username };
+}
 
-// export default function AddPetPage() {
-//   const fetcher = useFetcher<typeof action>();
+export default function AddPetPage() {
+  const { username } = useLoaderData<typeof loader>();
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // use useState for instant preview (remix is not)
 
-//   const [name, setName] = useState<string>("");
-//   const [type, setType] = useState<string>("Dogs");
-//   const [breed, setBreed] = useState<string>("");
-//   const [color, setColor] = useState<string>("");
-//   const [gender, setGender] = useState<string>("Male");
-//   const [ageYear, setAgeYear] = useState<string>("0");
-//   const [ageMonth, setAgeMonth] = useState<string>("0");
-//   const [weight, setWeight] = useState<string>("0");
-//   const [spayed, setSpayed] = useState<string>("false");
-//   const [detail, setDetail] = useState<string>("");
-//   const [selectedType, setSelectedType] = useState<string>("Dogs");
-//   const [selectedGender, setSelectedGender] = useState<string>("Male");
-//   const [selectedSpayed, setSelectedSpayed] = useState<string>("false");
-//   const [image, setImage] = useState<File | null>(null); // New state for image file
-//   const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
-//   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-//   const [fetching, setFetching] = useState<boolean>(false);
-//   const [success, setSuccess] = useState<boolean>(false);
-//   const [waiting, setWaiting] = useState<boolean>(false);
-//   const [username, setUsername] = useState<string>("");
+  return (
+    <div>
+      {username ? (
+        <div className="flex flex-col justify-start items-center w-svw min-h-screen">
+          <HeadPart />
+          {/* Body */}
+          <div className="flex flex-row items-start justify-center space-x-10 p-20 w-[60%]">
+            <ImagePart
+              image={image}
+              setImage={setImage}
+              setImagePreview={setImagePreview}
+              imagePreview={imagePreview}
+            />
+            <FormPart />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col justify-center items-center w-svw h-[75svh] overflow-hidden">
+          <Link to="/signin" className="text-black font-bold text-2xl ">
+            <h1 className="text-black font-bold text-5xl hover:text-gray-500 active:scale-95">
+              Please Sign In
+            </h1>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
 
-//   useEffect(() => {
-//     const isValid =
-//       name.trim() !== "" &&
-//       type.trim() !== "" &&
-//       breed.trim() !== "" &&
-//       color.trim() !== "" &&
-//       gender.trim() !== "" &&
-//       ageYear.trim() !== "" &&
-//       ageMonth.trim() !== "" &&
-//       weight.trim() !== "" &&
-//       spayed.trim() !== "" &&
-//       detail.trim() !== "" &&
-//       image != null;
-//     setIsFormValid(isValid);
-//     console.log(isValid);
-//   }, [
-//     name,
-//     type,
-//     breed,
-//     color,
-//     gender,
-//     ageYear,
-//     ageMonth,
-//     weight,
-//     spayed,
-//     detail,
-//     selectedGender,
-//     selectedType,
-//     selectedSpayed,
-//     image,
-//   ]);
+function HeadPart() {
+  return (
+    <>
+      <h1 className="font-bold text-black text-[64px]">Add Pet</h1>
+      <h1 className="text-black text-2xl">
+        List pets in need of a loving home! Share details about the animal’s
+        personality, age, and special needs to help them find the perfect
+        family. Make a difference by helping pets find their forever homes.
+      </h1>
+    </>
+  );
+}
 
-//   useEffect(() => {
-//     async function fetchData(
-//       name: string,
-//       type: string,
-//       breed: string,
-//       color: string,
-//       gender: string,
-//       ageYear: string,
-//       ageMonth: string,
-//       weight: string,
-//       spayed: string,
-//       detail: string
-//     ) {
-//       ImageAPI.uploadImage(image!, name.trim().replace(" ", "") + "-photo.jpg");
-//       console.log(DOMAIN + "/pet/post");
-//       const sendData = {
-//           pet_name: name,
-//           age_years: parseInt(ageYear),
-//           age_months: parseInt(ageMonth),
-//           species: type,
-//           breed: breed,
-//           photo_url:
-//             PHOTO +
-//             name.trim().replace(" ", "") +
-//             "-photo.jpg",
-//           weight: parseInt(weight),
-//           adopted: false,
-//           spayed: false,
-//           description: detail,
-//           color: color,
-//           sex: gender,
-//       };
-//       PetAPI.createPet(
-//         name,
-//         type,
-//         breed,
-//         color,
-//         gender,
-//         ageYear,
-//         ageMonth,
-//         weight,
-//         spayed,
-//         detail
-//       );
+// function ImagePart({ image, setImage, setImagePreview }) {
+//   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-
-//       try {
-//         const { data } = await axios.request<Pet>(sendData);
-//         const userString = sessionStorage.getItem("user");
-//         if (!userString) {
-//           return;
-//         }
-//         const user: User = JSON.parse(userString);
-//         fetchAdoption({added_user: user.user_id, pet_id: data.pet_id});
-//         console.table(data);
-//       } catch (error) {
-//         console.error(error);
-//       } finally {
-//         setFetching(false);
-//       }
-//     }
-
-//     async function fetchAdoption({added_user, pet_id}: {added_user: string, pet_id: number}) {
-//       const options = {
-//         method: 'POST',
-//         url: DOMAIN+'/adoption/post',
-//         headers: {'Content-Type': 'application/json'},
-//         data: {added_user: added_user, pet_id: pet_id}
-//       };
-      
-//       try {
-//         const { data } = await axios.request(options);
-//         console.log(data);
-//       } catch (error) {
-//         console.error(error);
-//       }
-//     }
-
-//     if (fetching) {
-//       fetchData(
-//         name,
-//         type,
-//         breed,
-//         color,
-//         gender,
-//         ageYear,
-//         ageMonth,
-//         weight,
-//         spayed,
-//         detail
-//       );
-//     }
-//   }, [fetching]);
-
-//   // Handler for file selection
-//   const handleFileSelect = (file: File | null) => {
+//   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = event.target.files?.[0] || null;
 //     setImage(file);
 //     if (file) {
-//       setImagePreview(URL.createObjectURL(file)); // Generate a URL for image preview
+//       setImagePreview(URL.createObjectURL(file)); // Generate preview URL
 //     } else {
 //       setImagePreview(null); // Clear preview if no file is selected
 //     }
 //   };
 
+//   const handleClick = () => {
+//     fileInputRef.current?.click(); // Trigger file input click
+//   };
 //   return (
-//     <div>
-//       {username === "" ? (
-//         <div className="flex flex-col justify-center items-center w-svw h-[75svh] overflow-hidden">
-//           <Link to="/signin" className="text-black font-bold text-2xl ">
-//           <h1 className="text-black font-bold text-5xl hover:text-gray-500 active:scale-95">Please Sign In</h1>
-//           </Link>
-//         </div>
+//     <div className="flex flex-col justify-center items-center space-y-4">
+//       {imagePreview ? (
+//         <img
+//           src={imagePreview}
+//           alt="Uploaded pet"
+//           className="w-[400px] h-[400px] border-2 border-black rounded-xl"
+//         />
 //       ) : (
-//         <div className="flex flex-col justify-start items-center w-svw min-h-screen">
-//           <h1 className="font-bold text-black text-[64px]">Add Pet</h1>
-//           <h1 className="text-black text-2xl">
-//             List pets in need of a loving home! Share details about the animal’s
-//             personality, age, and special needs to help them find the perfect
-//             family. Make a difference by helping pets find their forever homes.
-//           </h1>
-//           {/* Body */}
-//           <div className="flex flex-row items-start justify-center space-x-10 p-20 w-[60%]">
-//             {/* Image */}
-//             <div className="flex flex-col justify-center items-center space-y-4">
-//               {imagePreview ? (
-//                 <img
-//                   src={imagePreview}
-//                   alt="Uploaded pet"
-//                   className="w-[400px] h-[400px] border-2 border-black rounded-xl"
-//                 />
-//               ) : (
-//                 <div className="w-[400px] h-[400px] border-2 border-black rounded-xl flex items-center justify-center">
-//                   <p className="text-gray-500">No image uploaded</p>
-//                 </div>
-//               )}
-//               <UploadButton
-//                 text="Upload Photo"
-//                 color="bg-primary-orange"
-//                 onFileSelect={handleFileSelect} // Pass file select handler to UploadButton
-//               />
-//             </div>
-//             {/* Right */}
-//             <div className="flex flex-col justify-center w-full items-start space-y-2">
-//               <h1 className="text-black font-bold text-xl">Name</h1>
-//               <CustomTextBox type="text" text="Name" state={setName} />
-//               <h1 className="text-black font-bold text-xl">Type</h1>
-//               <select
-//                 className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
-//                 onChange={(e) => {
-//                   setSelectedType(e.currentTarget.value);
-//                   setType(e.currentTarget.value);
-//                 }}
-//               >
-//                 <option value="Dogs">Dogs</option>
-//                 <option value="Cats">Cats</option>
-//                 <option value="Rabbits">Rabbits</option>
-//                 <option value="Others">Others</option>
-//               </select>
-//               <h1 className="text-black font-bold text-xl">Breed</h1>
-//               <CustomTextBox type="text" text="Breed" state={setBreed} />
-//               <h1 className="text-black font-bold text-xl">Color</h1>
-//               <CustomTextBox type="text" text="Color" state={setColor} />
-//               <h1 className="text-black font-bold text-xl">Gender</h1>
-//               <select
-//                 className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
-//                 onChange={(e) => {
-//                   setSelectedGender(e.currentTarget.value);
-//                   setGender(e.currentTarget.value);
-//                 }}
-//               >
-//                 <option value="Male">Male</option>
-//                 <option value="Female">Female</option>
-//               </select>
-//               <h1 className="text-black font-bold text-xl">Age Years</h1>
-//               <CustomTextBox type="text" text="Age Years" state={setAgeYear} />
-//               <h1 className="text-black font-bold text-xl">Age Months</h1>
-//               <CustomTextBox
-//                 type="text"
-//                 text="Age Months"
-//                 state={setAgeMonth}
-//               />
-//               <h1 className="text-black font-bold text-xl">Weight</h1>
-//               <CustomTextBox type="text" text="Weight" state={setWeight} />
-//               <h1 className="text-black font-bold text-xl">Spayed/Neutered</h1>
-//               <select
-//                 className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
-//                 onChange={(e) => {
-//                   setSelectedSpayed(e.currentTarget.value);
-//                   setSpayed(e.currentTarget.value);
-//                 }}
-//               >
-//                 <option value="false">No</option>
-//                 <option value="true">Yes</option>
-//               </select>
-//               <h1 className="text-black font-bold text-xl">Details</h1>
-//               <CustomTextBox
-//                 type="text"
-//                 text="Details"
-//                 height={100}
-//                 state={setDetail}
-//               />
-//               {waiting && <h1 className="text-black font-bold text-3xl">Please wait...</h1>}
-//               {success && <h1 className="text-green-600 font-bold text-3xl">Create Pet Success</h1>}
-//               <CustomButton
-//                 text="Add Pet For Adoption"
-//                 destination="/pets"
-//                 color="bg-primary-orange"
-//                 disabled={!isFormValid}
-//                 noRedirect={true}
-//                 click={() => {
-//                   setWaiting(true);
-//                   setFetching(true);
-//                 }}
-//               />
-//             </div>
-//           </div>
+//         <div className="w-[400px] h-[400px] border-2 border-black rounded-xl flex items-center justify-center">
+//           <p className="text-gray-500">No image uploaded</p>
 //         </div>
 //       )}
+//       <button
+//         type="button"
+//         onClick={handleClick}
+//         className={`flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg bg-primary-orange rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2`}
+//       >
+//         <h1>Upload Photo</h1>
+//       </button>
+//       <input
+//         type="file"
+//         accept="image/*"
+//         ref={fileInputRef}
+//         onChange={handleFileSelect}
+//         style={{ display: "none" }} // Hide the file input
+//       />
 //     </div>
 //   );
 // }
+
+function ImagePart({
+  image,
+  setImage,
+  setImagePreview,
+  imagePreview,
+}: {
+  image: File | null;
+  setImage: React.Dispatch<React.SetStateAction<File | null>>;
+  setImagePreview: React.Dispatch<React.SetStateAction<string | null>>;
+  imagePreview: string | null;
+}) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setImage(file);
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center space-y-4">
+      {image ? (
+        <img
+          src={imagePreview!}
+          alt="Uploaded pet"
+          className="w-[400px] h-[400px] border-2 border-black rounded-xl"
+        />
+      ) : (
+        <div className="w-[400px] h-[400px] border-2 border-black rounded-xl flex items-center justify-center">
+          <p className="text-gray-500">No image uploaded</p>
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="bg-primary-orange text-white font-bold px-6 py-2 rounded-3xl"
+      >
+        Upload Photo
+      </button>
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        hidden
+      />
+    </div>
+  );
+}
+
+// function FormPart({ image }) {
+//   const fetcher = useFetcher<typeof action>();
+//   const formData = fetcher.formData;
+//   const isFormValid =
+//     formData &&
+//     [
+//       "name",
+//       "type",
+//       "breed",
+//       "color",
+//       "gender",
+//       "ageYear",
+//       "ageMonth",
+//       "weight",
+//       "spayed",
+//       "description",
+//     ].every((field) => formData.get(field)?.toString().trim() !== "");
+
+//   return (
+//     <fetcher.Form
+//       method="post"
+//       className="flex flex-col justify-center w-full items-start space-y-2"
+//     >
+//       <label>
+//         Name :
+//         <input type="text" name="name" placeholder="Pet name" />
+//       </label>
+
+//       <label>
+//         Type :
+//         <select
+//           className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+//           name="type"
+//         >
+//           <option value="Dogs">Dogs</option>
+//           <option value="Cats">Cats</option>
+//           <option value="Rabbits">Rabbits</option>
+//           <option value="Others">Others</option>
+//         </select>
+//       </label>
+
+//       <label>
+//         Breed :
+//         <input
+//           type="text"
+//           name="breed"
+//           placeholder="ex. Golden Retriever"
+//         />
+//       </label>
+
+//       <label>
+//         Color :
+//         <input type="text" name="color" placeholder="ex. Orange" />
+//       </label>
+
+//       <label>
+//         Gender :
+//         <select
+//           className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+//           name="gender"
+//         >
+//           <option value="Male">Male</option>
+//           <option value="Female">Female</option>
+//         </select>
+//       </label>
+
+//       <label>
+//         {" "}
+//         Age Years :
+//         <input type="text" name="ageYear" placeholder="Age Years" />
+//       </label>
+
+//       <label>
+//         {" "}
+//         Age Months :
+//         <input type="text" name="ageMonth" placeholder="Age Months" />
+//       </label>
+
+//       <label>
+//         {" "}
+//         Weight Kg.:
+//         <input type="text" name="weight" placeholder="ex. 2" />
+//       </label>
+
+//       <label>
+//         {" "}
+//         Spayed/Neutered :
+//         <select
+//           className="w-full bg-white border-4 border-green-600 h-12 rounded-xl px-4 py-2 text-black/80"
+//           name="spayed"
+//         >
+//           <option value="false">No</option>
+//           <option value="true">Yes</option>
+//         </select>
+//       </label>
+
+//       <label>
+//         {" "}
+//         Description :
+//         <textarea name="description" placeholder="Description" />
+//       </label>
+
+//       <button type="submit" name="_action" value="add" disabled={!isFormValid}>
+//         Add Pet For Adoption
+//       </button>
+//     </fetcher.Form>
+//   );
+// }
+
+function FormPart() {
+  const fetcher = useFetcher<typeof action>();
+
+  return (
+    <fetcher.Form
+      method="post"
+      className="flex flex-col justify-center w-full space-y-2"
+    >
+
+      <label>
+        Name: <input type="text" name="name" placeholder="Pet name" required />
+      </label>
+
+      <label>
+        Type:
+        <select name="type" required>
+          <option value="Dogs">Dogs</option>
+          <option value="Cats">Cats</option>
+          <option value="Rabbits">Rabbits</option>
+          <option value="Others">Others</option>
+        </select>
+      </label>
+
+      <label>
+        Breed: <input type="text" name="breed" placeholder="ex. Golden Retriever" required />
+      </label>
+
+      <label>
+        Color: <input type="text" name="color" placeholder="ex. Orange" required />
+      </label>
+
+      <label>
+        Gender:
+        <select name="gender" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </label>
+
+      <label>
+        Age (Years): <input type="text" name="ageYear" placeholder="Age Years" required />
+      </label>
+
+      <label>
+        Age (Months): <input type="text" name="ageMonth" placeholder="Age Months" required />
+      </label>
+
+      <label>
+        Weight (Kg): <input type="text" name="weight" placeholder="ex. 2" required />
+      </label>
+
+      <label>
+        Spayed/Neutered:
+        <select name="spayed" required>
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </label>
+
+      <label>
+        Description: <textarea name="detail" placeholder="Description" required />
+      </label>
+
+      <button
+        type="submit"
+        disabled={fetcher.state !== "idle"}
+        className="bg-green-500 text-white px-4 py-2 rounded"
+        name="_action" 
+        value="add"
+      >
+        Add Pet for Adoption
+      </button>
+    </fetcher.Form>
+  );
+}

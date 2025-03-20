@@ -1,33 +1,19 @@
 import RouteButton from "./route_button";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Form, Link, redirect, useLoaderData } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
 import { useState } from "react";
 import { primaryOrangeColor } from "./colors";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { UserAPI } from "~/server/repository";
+import { commitSession, getSession } from "~/server/session";
 
-const Photo = process.env.PHOTO!
+const Photo = process.env.PHOTO!;
 
-const [admin, setAdmin] = useState<boolean>(false);
-
-export function loader({request} : LoaderFunctionArgs) {
-  const username = sessionStorage.getItem("username");
-  if(username) {
-    const currentUser = UserAPI.getUserByUsername(username);
-    currentUser.then((user) => {
-      if(user.priority === "admin") 
-        setAdmin(true);
-    })
-  }
-  return { username };
-}
-
-export default function Header() {
-  const {username} = useLoaderData<typeof loader>();
-
+export default function Header({username, isAdmin} : {username : string | undefined, isAdmin: boolean | undefined}) {
+  console.log("Header session username :", username);
+  console.log("Header session isAdmin :", isAdmin);
   const [select, setSelect] = useState("home");
-  const [admin, setAdmin] = useState<boolean>(false);
   const [signOut, setSignOut] = useState<boolean>(false);
 
   return (
@@ -42,7 +28,7 @@ export default function Header() {
         className="flex flex-col items-center"
       >
         <img
-          src={Photo+"logo-dog-paw.png"}
+          src={Photo + "logo-dog-paw.png"}
           className="w-20 h-20 hover:scale-110 duration-200"
         />
         <h1
@@ -56,10 +42,10 @@ export default function Header() {
 
       {/* Text Buttons */}
       <div className="justify-evenly items-center space-x-10 md:space-x-32">
-        {admin && (
+        {isAdmin && (
           <RouteButton
             text="Admin"
-            destination="/adminnew"
+            destination="/admin"
             setSelect={setSelect}
             select={select}
           />
@@ -84,32 +70,35 @@ export default function Header() {
         />
         <RouteButton
           text="Add Pet"
-          destination="/addpetnew"
+          destination="/addpet"
           setSelect={setSelect}
           select={select}
         />
       </div>
 
       {/* Icon Buttons */}
-      <div className="justify-evenly items-center space-x-6">
-        {
-          username &&
-          <button className="hover:scale-110 duration-200">
-          {/* I think this icon is signout icon, not search lol */}
-          <IconSearch
-            colorCode={primaryOrangeColor}
-            width="24"
-            height="24"
-            OnClick={() => {
-              setAdmin(false);
-              setSignOut(true);
-              Promise.resolve(setTimeout(() => setSignOut(false), 2000));
-            }}
-          />
-        </button>
-        }
+      <div className="flex justify-evenly items-center space-x-6">
+        {username && (
+          <Form method="post" action="/signout" className="translate-y-1">
+            <button
+              type="submit"
+              className="hover:scale-110 duration-200"
+              onClick={() => {
+                setSignOut(true);
+                setTimeout(() => setSignOut(false), 2000);
+              }}
+            >
+              {/* I think this icon is signout icon, not search lol */}
+              <IconSearch
+                colorCode={primaryOrangeColor}
+                width="24"
+                height="24"
+              />
+            </button>
+          </Form>
+        )}
         <button className="hover:scale-110 duration-200">
-          <Link to={username ? "/profilenew" : "/signin"}>
+          <Link to={username ? "/profile" : "/signin"}>
             <IconProfile
               colorCode={primaryOrangeColor}
               width="24"

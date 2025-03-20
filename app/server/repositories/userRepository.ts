@@ -50,13 +50,13 @@ export default class UserAPI {
         const res = await fetch(`${apiPath}/register`, {
             method: "POST",
             body: JSON.stringify({
-                username: username,
-                password: password,
-                email: email,
-                first_name: firstName,
-                last_name: lastName,
-                phone_number: phoneNumber,
-                salary: parseInt(salary),
+                username: username.trim(),
+                password: password.trim(),
+                email: email.trim(),
+                first_name: firstName.trim(),
+                last_name: lastName.trim(),
+                phone_number: phoneNumber.trim(),
+                salary: parseInt(salary.trim()),
                 priority: "user",
                 photo_url: Photo+"default-profile.png",
             }),
@@ -70,7 +70,7 @@ export default class UserAPI {
     static async userLogin(
         username: string, 
         password: string
-    ) {
+    ) : Promise<User> {
         const res = await fetch(`${apiPath}/login`, {
             method: "POST",
             body : JSON.stringify({
@@ -80,7 +80,8 @@ export default class UserAPI {
             headers: {"Content-Type": "application/json"},
         });
         const data = await res.json();
-        if(!res.ok) return { error: data.message };
+        if(data.error)
+            throw new Error(data.error);
         return data;
     }
     

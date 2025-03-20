@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "@remix-run/react";
+import { useSearchParams } from "@remix-run/react";
 import LongCardCol from "~/components/longCardCol";
 
 export default function BehaviorCommonPage() {

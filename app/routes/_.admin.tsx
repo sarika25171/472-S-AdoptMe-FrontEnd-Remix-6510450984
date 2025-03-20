@@ -1,115 +1,64 @@
+import { json, redirect } from "@remix-run/node";
+import { useLoaderData, useFetcher } from "@remix-run/react";
+import type { LoaderFunction, ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
-import axios from "axios";
-import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
-import { useEffect, useState } from "react";
-import Adoption from "~/models/adoption";
-import Pet from "~/models/pet";
+import { PetAPI, UserAPI, AdoptionAPI, ImageAPI } from "~/server/repository";
 import User from "~/models/user";
-import { DOMAIN, PHOTODELETE } from "~/server/domain";
+import Pet from "~/models/pet";
 
+// --- Loader: Fetch data before rendering ---
+export const loader: LoaderFunction = async ({ request } : LoaderFunctionArgs) => {
+  const users = await UserAPI.getUser();
+  const pets = await PetAPI.getAll();
+  const adoptions = await AdoptionAPI.getAdoption();
+
+  // Mocked session-based user retrieval (replace with actual session logic)
+  const username = "admin"; // TODO: Replace with session-based username retrieval
+  const currentUser = users.find((user: User) => user.username === username);
+
+  if (!currentUser || currentUser.priority !== "admin") {
+    return redirect("/");
+  }
+
+  return json({ pets, users, adoptions });
+};
+
+// --- Action: Handle delete operations ---
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const petId = Number(formData.get("petId"));
+  const photoUrl = formData.get("photoUrl") as string;
+
+  if (!petId) return json({ error: "Invalid pet ID" }, { status: 400 });
+
+  try {
+    // Delete pet
+    await PetAPI.deletePetByID(petId);
+
+    // Delete adoption record if it exists
+    const adoption = await AdoptionAPI.getAdoptionByPetID(petId);
+    if (adoption?.id) {
+      await AdoptionAPI.deleteAdoptionByID(adoption.id);
+    }
+
+    // Delete pet image
+    if (photoUrl) {
+      const fileName = photoUrl.split("/").pop();
+      if (fileName) {
+        ImageAPI.deleteImage(fileName);
+      }
+    }
+
+    return json({ success: true });
+  } catch (error) {
+    return json({ error: "Failed to delete pet" }, { status: 500 });
+  }
+};
+
+// --- AdminView Component ---
 export default function AdminView() {
-  const [rows, setRows] = useState<Pet[]>([]);
-  const [adoptions, setAdoptions] = useState<Adoption[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const navigator = useNavigate();
-
-  async function fetchUsers() {
-    const response = await fetch(DOMAIN + "/user/getAllUser");
-    const data: User[] = await response.json();
-    setUsers(data);
-    const tmpUsername = sessionStorage.getItem("username");
-    const currentUser = data.find((user) => user.username === tmpUsername);
-    if (currentUser?.priority !== "admin") {
-      navigator("/");
-    }
-    setCurrentUser(currentUser || null);
-  }
-
-  async function fetchPet() {
-    const response = await fetch(DOMAIN + "/pet/getAllPet");
-    const data: Pet[] = await response.json();
-    // Ensure each row has an `id` field for DataGrid
-    setRows(data.map((pet) => ({ ...pet, id: pet.pet_id })));
-  }
-
-  async function fetchAdoptation() {
-    const options = {
-      method: "GET",
-      url: DOMAIN + "/adoption/getAllAdoption",
-    };
-
-    try {
-      const { data } = await axios.request<Adoption[]>(options);
-      setAdoptions(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchUsers();
-    fetchPet();
-    fetchAdoptation();
-  }, []);
-
-  const handleDelete = (id: number) => {
-    const row = rows.find((row) => row.pet_id === id);
-    // Remove the row from the table
-    setRows((prevRows) => prevRows.filter((row) => row.pet_id !== id));
-
-    // Optionally, make a request to delete this pet from the server
-    console.log("ID : " + id);
-    fetch(DOMAIN + "/pet/deletePetByID", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        pet_id: id,
-      }),
-    });
-
-    // Delete the adoption record
-    async function deleteAdoption() {
-      const adoption = adoptions.find((adoption) => adoption.pet_id === id);
-      const options = {
-        method: "DELETE",
-        url: DOMAIN+"/adoption/delete",
-        headers: { "Content-Type": "application/json" },
-        data: { added_id: adoption?.added_id },
-      };
-
-      try {
-        const { data } = await axios.request(options);
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    async function deleteFile(fileName: string) {
-      const options = {
-        method: "DELETE",
-        url: PHOTODELETE,
-        headers: { "Content-Type": "application/json" },
-        data: { filename: fileName, key: "T6qom9erqaYUpddmnWlo" },
-      };
-
-      try {
-        const { data } = await axios.request(options);
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    deleteAdoption();
-    if (row?.photo_url) {
-      const fileName = row.photo_url.split("/").pop();
-      deleteFile(fileName!);
-    }
-  };
+  const { pets } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
 
   const columns: GridColDef[] = [
     { field: "pet_id", headerName: "ID", flex: 1 },
@@ -120,67 +69,45 @@ export default function AdminView() {
       renderCell: (params) => (
         <img
           src={params.row.photo_url}
-          alt={`${params.row.pet_name}'s photo`}
-          style={{ width: 120, height: 120, borderRadius: "10%" }}
-          className="object-cover"
+          alt={`${params.row.pet_name}`}
+          className="w-24 h-24 rounded-lg object-cover"
         />
       ),
     },
     { field: "pet_name", headerName: "Name", flex: 1 },
-    {
-      field: "age",
-      headerName: "Age",
-      flex: 1,
-      valueGetter: (value, row) =>
-        `${row.age_years} years ${row.age_months} months`,
-    },
     { field: "species", headerName: "Type", flex: 1 },
     { field: "breed", headerName: "Breed", flex: 1 },
     { field: "sex", headerName: "Sex", flex: 1 },
     { field: "weight", headerName: "Weight (kg)", flex: 1 },
     { field: "adopted", headerName: "Adopted", flex: 1, type: "boolean" },
     { field: "spayed", headerName: "Spayed", flex: 1, type: "boolean" },
-    { field: "description", headerName: "Description", flex: 1 },
     { field: "color", headerName: "Color", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
-        <div className="flex flex-col">
-          <button
-            className="bg-red-500 rounded-xl"
-            onClick={() => handleDelete(params.row.id)}
-          >
-            <h1 className="text-center text-black0">Delete</h1>
+        <fetcher.Form method="post">
+          <input type="hidden" name="petId" value={params.row.pet_id} />
+          <input type="hidden" name="photoUrl" value={params.row.photo_url} />
+          <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded-lg">
+            Delete
           </button>
-        </div>
+        </fetcher.Form>
       ),
     },
   ];
 
   return (
-    <div className="flex flex-col justify-start items-center w-full min-h-screen p-10 space-y-8">
-      {currentUser?.priority === "admin" && (
-        <h1 className="text-[48px] font-bold text-black">Admin's Page</h1>
-      )}
-      <div
-        style={{
-          height: "80%",
-          width: "80%",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      >
-        {currentUser?.priority === "admin" && (
-          <DataGrid
-            rows={rows}
-            rowHeight={120}
-            columns={columns}
-            sx={{ backgroundColor: "#FFFFFF" }}
-            className="[&>*]:font-urbanist [&>*]:font-bold [&>*]:text-black"
-          />
-        )}
+    <div className="flex flex-col items-center w-full min-h-screen p-10 space-y-8">
+      <h1 className="text-4xl font-bold">Admin's Page</h1>
+      <div className="w-4/5">
+        <DataGrid
+          rows={pets.map((pet: Pet) => ({ ...pet, id: pet.pet_id }))}
+          rowHeight={100}
+          columns={columns}
+          sx={{ backgroundColor: "#FFFFFF" }}
+        />
       </div>
     </div>
   );

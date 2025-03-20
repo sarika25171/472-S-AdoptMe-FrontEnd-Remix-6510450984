@@ -1,85 +1,56 @@
-import { Link, useNavigate } from "@remix-run/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import CustomButton from "~/components/custom_button";
-import CustomTextBox from "~/components/custom_textbox";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  Form,
+  json,
+  Link,
+  redirect,
+  useActionData,
+  useFetcher,
+} from "@remix-run/react";
+import { useState } from "react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import User from "~/models/user";
-import { DOMAIN, PHOTO } from "~/server/domain";
+import { UserAPI } from "~/server/repository";
+import { commitSession, getSession } from "~/server/session";
+
+const Domain = process.env.DOMAIN!;
+const Photo = process.env.PHOTO!;
+
+export async function action({ request }: ActionFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const formData = await request.formData();
+  const action = formData.get("_action");
+  if (action === "signIn") {
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+    try {
+      const user = await UserAPI.userLogin(username, password); // Await the login
+      // console.log("signIn info:", user);
+      // Store user in the session
+      session.set("username", user.username);
+      if (user.priority === "ADMIN") session.set("isAdmin", true);
+      else session.set("isAdmin", false);
+      // console.log("session username : ", session.get("username"));
+      // console.log("session isAdmin : ", session.get("isAdmin"));
+      return redirect("/", {
+        headers: {
+          "Set-Cookie": await commitSession(session),
+        },
+      });
+    } catch (error) {
+      return json(
+        { success: false, error: "Username or password are incorrect." },
+        { status: 400 }
+      );
+    }
+  }
+}
 
 export default function SignInView() {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [success, setSuccess] = useState<boolean>(false);
-  const [priority, setPriority] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [users, setUsers] = useState<User[]>([]);
-  const navigate = useNavigate();
-
-  async function fetchUsers() {
-    const options = {
-      method: "GET",
-      url: DOMAIN + "/user/getAllUser",
-    };
-
-    try {
-      const { data } = await axios.request<User[]>(options);
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  async function fetchUser(username: string, password: string) {
-    interface response {
-      username: string;
-      message: string;
-      priority: string;
-    }
-    const response = await fetch(DOMAIN + "/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    });
-    const data: response = await response.json();
-
-    if (data.username == "Error authen failed") {
-      setError("User not found");
-      console.log("User not found");
-    } else if (
-      data.message == "undefined is not an object (evaluating 'authen[0].salt')"
-    ) {
-      setError("User not found");
-    } else {
-      const currentUser = users.filter((user) => user.username == username);
-      sessionStorage.setItem("user", JSON.stringify(currentUser[0]));
-      const tempData: any = data;
-      setPriority(tempData[0].priority);
-      console.log(priority);
-      setSuccess(true);
-    }
-  }
-
-  useEffect(() => {
-    if (success) {
-      sessionStorage.setItem("username", username);
-      sessionStorage.setItem("priority", priority);
-      window.location.href = "/";
-    }
-  }, [success]);
-
   return (
-    <div className={`flex flex-col justify-center bg-[url('${PHOTO}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}>
+    <div
+      className={`flex flex-col justify-center bg-[url('${Photo}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}
+    >
       <Link to="/" prefetch="intent">
         <button
           type="button"
@@ -90,68 +61,70 @@ export default function SignInView() {
           Back
         </button>
       </Link>
-      <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
-        {/* Image */}
-        <img src={PHOTO+"dog-in-the-air.jpg"} />
+      <FormBody />
+    </div>
+  );
+}
 
-        {/* Content */}
-        <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">
-          <h1 className="text-primary-orange text-[64px]">Sign In</h1>
-          <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-row justify-center items-center space-x-2">
-              <IconProfile width="24" height="24" />
-              <h1 className="text-black font-bold text-xl">Username</h1>
-            </div>
-            <CustomTextBox type="text" text="Name" state={setUsername} />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-row justify-center items-center space-x-2">
-              <IconPassword width="24" height="24" />
-              <h1 className="text-black font-bold text-xl">Password</h1>
-            </div>
-            <CustomTextBox
-              type="password"
-              text="Password"
-              state={setPassword}
-            />
-          </div>
-          <div className="flex flex-col justify-center items-center space-y-2">
-            {error && <h1 className="text-red-500">{error}</h1>}
-            <Link
-              to="/"
-              onClick={(e) => {
-                e.preventDefault();
-                fetchUser(username, password);
-              }}
-            >
-              <button
-                type="button"
-                className={
-                  "flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg bg-primary-orange rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
-                }
-              >
-                <h1 className="items-center">Sign In</h1>
-              </button>
-            </Link>
+function FormBody() {
+  const fetcher = useFetcher<typeof action>();
+  const actionData = useActionData<typeof action>() || null;
 
-            {/* SignUp / Recover Password */}
-            <div className="flex flex-row items-center justify-center space-x-4">
-              <Link to="/signup" prefetch="intent">
-                <button type="button" className="text-black underline">
-                  <h1 className="items-center">
-                    Don’t have account ?<br />
-                    Click here to Sign Up.
-                  </h1>
-                </button>
-              </Link>
-              {/* <Link to="" prefetch="intent">
-                                <button type="button" className="text-black underline">
-                                    <h1 className="items-center">Forget password.</h1>
-                                </button>
-                            </Link> */}
-            </div>
+  return (
+    <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
+      {/* Image */}
+      <img src={Photo + "dog-in-the-air.jpg"} />
+
+      {/* Content */}
+      <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">
+        <h1 className="text-primary-orange text-[64px]">Sign In</h1>
+        <Form
+          method="post"
+          className="w-full flex flex-col justify-center items-center space-y-4"
+        >
+          <div className="flex flex-row justify-center items-center space-x-2">
+            <IconProfile width="24" height="24" />
+            <h1 className="text-black font-bold text-xl">Username</h1>
           </div>
-        </div>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            className={`w-full bg-white border-4 rounded-xl px-4 py-2 text-black/80 focus:outline-none focus:border-blue-600`}
+            required
+          />
+          <div className="flex flex-row justify-center items-center space-x-2">
+            <IconPassword width="24" height="24" />
+            <h1 className="text-black font-bold text-xl">Password</h1>
+          </div>
+          <input
+            type="password"
+            name="password"
+            className={`w-full bg-white border-4 rounded-xl px-4 py-2 text-black/80 focus:outline-none focus:border-blue-600`}
+            placeholder="Password"
+            required
+          />
+          {actionData && (
+            <h1 className="text-red-500">{actionData.error}</h1>
+          )}
+          <button
+            type="submit"
+            className="flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg bg-primary-orange rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
+            name="_action"
+            value="signIn"
+          >
+            Sign In
+          </button>
+        </Form>
+
+        <Link to="/signup" prefetch="intent">
+          <button type="button" className="text-black underline">
+            <h1 className="items-center">
+              Don’t have account ?<br />
+              Click here to Sign Up.
+            </h1>
+          </button>
+        </Link>
       </div>
     </div>
   );

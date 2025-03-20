@@ -1,6 +1,7 @@
 import { useSearchParams } from "@remix-run/react";
 import BehaviorDetail from "~/components/behaviorDetail";
-import { PHOTO } from "~/server/domain";
+
+const Photo = process.env.PHOTO!
 
 export default function BehaviorCommonPage() {
   const [searchParams] = useSearchParams();
@@ -9,13 +10,13 @@ export default function BehaviorCommonPage() {
   const img = searchParams.get("img");
   let image;
   if (type == "Rabbits") {
-    image = PHOTO+"rabbit1.jpg";
+    image = Photo+"rabbit1.jpg";
   } else if (type == "Hamster") {
-    image = PHOTO+"the-hamster.png";
+    image = Photo+"the-hamster.png";
   } else if (type == "Chinchillas") {
-    image = PHOTO+"chinchilla1.jpg";
+    image = Photo+"chinchilla1.jpg";
   } else if (type == "Birds") {
-    image = PHOTO+"birds1.webp";
+    image = Photo+"birds1.webp";
   } else {
     image = img;
   }

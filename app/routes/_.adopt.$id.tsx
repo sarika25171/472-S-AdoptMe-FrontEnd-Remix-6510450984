@@ -1,4 +1,4 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AdoptCard from "~/components/adoptCard";
 import { AdoptionAPI, PetAPI, UserAPI } from "~/server/repository";

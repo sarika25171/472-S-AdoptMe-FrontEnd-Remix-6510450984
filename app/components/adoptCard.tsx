@@ -3,6 +3,9 @@ import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
 import Adoption from "~/models/adoption";
 import { AdoptionAPI, PetAPI } from "~/server/repository";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { getSession } from "~/server/session";
+import { useLoaderData } from "@remix-run/react";
 
 const Domain = process.env.DOMAIN!;
 const Photo = process.env.PHOTO!;
@@ -23,6 +26,13 @@ interface props {
   owner: User;
 }
 
+export async function loader({request} : LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const username = session.get("username");
+
+  return { username };
+}
+
 export default function AdoptCard({
   adoption,
   name,
@@ -38,7 +48,7 @@ export default function AdoptCard({
   detail,
   owner,
 }: props) {
-
+  const { username } = useLoaderData<typeof loader>();
   function updateData() {
     AdoptionAPI.updateAdopted(adoption.id);
     PetAPI.updatePetByID(adoption.pet_id);
@@ -177,7 +187,7 @@ export default function AdoptCard({
               >
                 Contact
               </button>
-              {sessionStorage.getItem("username") == owner.username && (
+              {username == owner.username && (
                 <button
                   className="bg-primary-orange flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
                   onClick={() => {
