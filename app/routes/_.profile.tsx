@@ -31,13 +31,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const imageFile = formData.get("image") as File;
     if (imageFile) {
-      await ImageAPI.uploadImage(imageFile, `${updatedUser.username}-photo.jpg`);
+      await ImageAPI.uploadImage(
+        imageFile,
+        `${updatedUser.username}-photo.jpg`
+      );
     }
 
     return redirect("/profile"); // Redirect after update
   }
 }
-
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -110,8 +112,12 @@ function BodyPart() {
   const isUpdating = fetcher.state !== "idle";
   const [edit, setEdit] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(Photo + userInfo.photo);
+  const [imagePreview, setImagePreview] = useState<string>(
+    Photo + userInfo.photo
+  );
   const [formData, setFormData] = useState(userInfo);
+  const tailwindIn =
+    "w-full bg-white border-4 rounded-xl px-4 py-2 text-black/80 focus:outline-none focus:border-blue-600";
 
   const handleFileSelect = (file: File | null) => {
     if (file) {
@@ -129,40 +135,102 @@ function BodyPart() {
   return (
     <div className="flex flex-col justify-start items-center space-y-4 p-10 w-full min-h-screen">
       <img className="rounded-full" src={imagePreview} alt="Profile" />
-      {edit && <UploadButton text="Upload Photo" onFileSelect={handleFileSelect} color="bg-primary-orange" />}
-      <fetcher.Form method="patch" className="flex flex-row space-x-8 px-24 w-full">
+      {edit && (
+        <UploadButton
+          text="Upload Photo"
+          onFileSelect={handleFileSelect}
+          color="bg-primary-orange"
+        />
+      )}
+      <fetcher.Form
+        method="patch"
+        className="flex flex-col space-y-2 items-center w-full"
+      >
+        <div
+        className="flex flex-row space-x-8 px-24 w-full"
+        >
+
+        
         <input type="hidden" name="currentUserId" value={currentUserId} />
         <input type="hidden" name="image" value={image as any} />
         <div className="flex flex-col space-y-2 w-full">
-          <label>First Name
-            <input type="text" name="first_name" value={formData.firstName} onChange={handleChange} />
+          <label>
+            First Name
+            <input
+              type="text"
+              name="first_name"
+              value={formData.firstName}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
-          <label>Username
-            <input type="text" name="username" value={formData.username} onChange={handleChange} />
+          <label>
+            Username
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
-          <label>Email
-            <input type="text" name="email" value={formData.email} onChange={handleChange} />
+          <label>
+            Email
+            <input
+              type="text"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
         </div>
         <div className="flex flex-col space-y-2 w-full">
-          <label>Last Name
-            <input type="text" name="last_name" value={formData.lastName} onChange={handleChange} />
+          <label>
+            Last Name
+            <input
+              type="text"
+              name="last_name"
+              value={formData.lastName}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
-          <label>Phone Number
-            <input type="text" name="phone_number" value={formData.phoneNo} onChange={handleChange} />
+          <label>
+            Phone Number
+            <input
+              type="text"
+              name="phone_number"
+              value={formData.phoneNo}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
-          <label>Salary
-            <input type="text" name="salary" value={formData.salary} onChange={handleChange} />
+          <label>
+            Salary
+            <input
+              type="text"
+              name="salary"
+              value={formData.salary}
+              onChange={handleChange}
+              className={`${tailwindIn}`}
+            />
           </label>
         </div>
-        <button type="submit" name="_action" value="update" disabled={isUpdating}>
+        </div>
+        <button
+          type="submit"
+          name="_action"
+          value="update"
+          disabled={isUpdating}
+          className="rounded-full font-bold text-xl bg-green-400 text-white hover:scale-110 duration-200 p-4 "
+        >
           Update
         </button>
       </fetcher.Form>
     </div>
   );
 }
-
 
 function FormPart() {
   const { userInfo } = useLoaderData<typeof loader>();
