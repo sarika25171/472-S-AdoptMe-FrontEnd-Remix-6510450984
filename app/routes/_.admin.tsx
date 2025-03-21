@@ -6,24 +6,14 @@ import { PetAPI, UserAPI, AdoptionAPI, ImageAPI } from "~/server/repository";
 import User from "~/models/user";
 import Pet from "~/models/pet";
 
-// --- Loader: Fetch data before rendering ---
 export const loader: LoaderFunction = async ({ request } : LoaderFunctionArgs) => {
-  const users = await UserAPI.getUser();
+  // const users = await UserAPI.getUser();
   const pets = await PetAPI.getAll();
-  const adoptions = await AdoptionAPI.getAdoption();
+  // const adoptions = await AdoptionAPI.getAdoption();
 
-  // Mocked session-based user retrieval (replace with actual session logic)
-  const username = "admin"; // TODO: Replace with session-based username retrieval
-  const currentUser = users.find((user: User) => user.username === username);
-
-  if (!currentUser || currentUser.priority !== "admin") {
-    return redirect("/");
-  }
-
-  return json({ pets, users, adoptions });
+  return { pets };
 };
 
-// --- Action: Handle delete operations ---
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const petId = Number(formData.get("petId"));

@@ -44,19 +44,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const username = session.get("username");
   if (!username) return redirect("/signin");
 
-  const currentUser = UserAPI.getUserByUsername(username);
+  const currentUser = await UserAPI.getUserByUsername(username);
 
   if (!currentUser) return redirect("/signin");
-
-  const currentUserId: string = (await currentUser).user_id;
+  console.log(currentUser);
+  const currentUserId: string = currentUser.user_id;
   const userInfo = {
-    username: (await currentUser).username,
-    email: (await currentUser).email,
-    photo: (await currentUser).photo_url,
-    phoneNo: (await currentUser).phone_number,
-    firstName: (await currentUser).first_name,
-    lastName: (await currentUser).last_name,
-    salary: (await currentUser).salary,
+    username: currentUser.username,
+    email: currentUser.email,
+    photo: currentUser.photo_url,
+    phoneNo: currentUser.phone_number,
+    firstName: currentUser.first_name,
+    lastName: currentUser.last_name,
+    salary: currentUser.salary,
   };
 
   return { currentUser, userInfo, currentUserId, username };
@@ -66,7 +66,7 @@ export default function ProfilePage() {
   const { currentUser } = useLoaderData<typeof loader>();
   return (
     <div className="flex flex-col justify-center items-center w-full min-h-screen px-20 py-10 space-y-8">
-      {currentUser && <Body />}
+      {currentUser && <BodyPart />}
     </div>
   );
 }
@@ -104,7 +104,7 @@ export default function ProfilePage() {
 //   </div>;
 // }
 
-function Body() {
+function BodyPart() {
   const { userInfo, currentUserId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const isUpdating = fetcher.state !== "idle";

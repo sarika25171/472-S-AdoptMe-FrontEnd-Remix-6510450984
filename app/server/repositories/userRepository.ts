@@ -7,14 +7,14 @@ const apiPath = `${Domain}/user`;
 
 export default class UserAPI {
     static async getUser() : Promise<User[]> {
-        const res = await fetch(`${apiPath}/getAll`, {method: "GET"})
+        const res = await fetch(`${apiPath}/getAll`, {method: "POST"})
         const data : User[] = await res.json();
         return data;
     }
     
     static async getUserByID(userID : string) : Promise<User> {
         const res = await fetch(`${apiPath}/getById`, {
-            method: "GET",
+            method: "POST",
             body: JSON.stringify({
                 user_id : userID,
             })
@@ -27,7 +27,8 @@ export default class UserAPI {
 
     static async getUserByUsername(username : string) : Promise<User> {
         const res = await fetch(`${apiPath}/getByUsername`, {
-            method: "GET",
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 username : username,
             })
