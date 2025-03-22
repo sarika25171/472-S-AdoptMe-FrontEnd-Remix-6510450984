@@ -65,15 +65,23 @@ export default function AddPetPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleFileSelect triggered");
     const file = event.target.files?.[0] || null;
-    console.log("file : ", file)
+    console.log("Selected file:", file);
     if (file) {
+      console.log("File type:", file.type);
+      console.log("File size:", file.size);
       if (imagePreview) {
-        URL.revokeObjectURL(imagePreview); // Revoke previous preview before setting a new one
+        console.log("Revoking previous preview URL");
+        URL.revokeObjectURL(imagePreview);
       }
-      setImagePreview(URL.createObjectURL(file));
-      setImageName(file.name); // Store the file name
+      const newPreviewUrl = URL.createObjectURL(file);
+      console.log("Created new preview URL:", newPreviewUrl);
+      setImagePreview(newPreviewUrl);
+      setImageName(file.name);
       setImage(file);
+    } else {
+      console.log("No file selected");
     }
   };
 
@@ -139,13 +147,22 @@ export default function AddPetPage() {
                   <p className="text-gray-500">No image uploaded</p>
                 </div>
               )}
-              <label className="bg-primary-orange text-white font-bold px-6 py-2 rounded-3xl hover:scale-105 duration-200 cursor-pointer">
+              <label 
+                className="bg-primary-orange text-white font-bold px-6 py-2 rounded-3xl hover:scale-105 duration-200 cursor-pointer"
+                onClick={() => {
+                  console.log("Label clicked");
+                  fileInputRef.current?.click();
+                }}
+              >
                 Upload Photo
                 <input
                   type="file"
                   accept="image/*"
                   ref={fileInputRef}
-                  onChange={handleFileSelect}
+                  onChange={(e) => {
+                    console.log("Input changed");
+                    handleFileSelect(e);
+                  }}
                   name="image"
                   required
                   className="hidden"
@@ -285,7 +302,7 @@ function HeadPart() {
     <>
       <h1 className="font-bold text-black text-[64px]">Add Pet</h1>
       <h1 className="text-black text-2xl">
-        List pets in need of a loving home! Share details about the animal’s
+        List pets in need of a loving home! Share details about the animal's
         personality, age, and special needs to help them find the perfect
         family. Make a difference by helping pets find their forever homes.
       </h1>
