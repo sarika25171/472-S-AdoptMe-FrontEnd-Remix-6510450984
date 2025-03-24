@@ -3,6 +3,7 @@ import { createCookieSessionStorage } from "@remix-run/node"; // or cloudflare/d
 
 type SessionData = {
   username: string;
+  userId: string;
   isAdmin : boolean;
 };
 

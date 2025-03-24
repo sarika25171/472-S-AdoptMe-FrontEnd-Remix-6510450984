@@ -12,7 +12,7 @@ interface props {
 
 export default function AnimalCard({id, name, sex, breed, ageYear, ageMonth, imgSrc}: props){
     return (
-        <Link to={`/adopt?id=${id}`} prefetch="intent">
+        <Link to={`/adopt/${id}`} prefetch="intent">
             <div className="relative w-[200px] h-[320px] xl:w-full xl:h-[420px] rounded-2xl max-w-xs overflow-hidden bg-clip-border w-500 h-640 hover:shadow-2xl hover:shadow-yellow-600 group bg-black" style={{transitionDuration:"0.5s"}}>
                 <img src={imgSrc} className="w-full h-full transition-transform group-hover:scale-110 duration-200 object-cover"/>
 

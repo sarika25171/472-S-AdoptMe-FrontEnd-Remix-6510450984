@@ -1,12 +1,13 @@
 import RouteButton from "./route_button";
-import { Form, Link, redirect, useLoaderData } from "@remix-run/react";
+import { Form, Link, redirect, useLoaderData, useFetcher } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { primaryOrangeColor } from "./colors";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { UserAPI } from "~/server/repository";
 import { commitSession, getSession } from "~/server/session";
+import type { Cart } from "~/models/cart";
 
 const Photo = process.env.PHOTO!;
 
@@ -15,6 +16,14 @@ export default function Header({username, isAdmin} : {username : string | undefi
   console.log("Header session isAdmin :", isAdmin);
   const [select, setSelect] = useState("home");
   const [signOut, setSignOut] = useState<boolean>(false);
+  const cartFetcher = useFetcher<{ cart: Cart }>();
+  
+  useEffect(() => {
+    // Fetch cart data when component mounts
+    cartFetcher.load("/cart");
+  }, []);
+
+  const cartItemCount = cartFetcher.data?.cart.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
   return (
     // Home
@@ -106,6 +115,27 @@ export default function Header({username, isAdmin} : {username : string | undefi
             />
           </Link>
         </button>
+        {username && <Link to="/cart" className="relative">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="h-6 w-6" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke={primaryOrangeColor}
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" 
+            />
+          </svg>
+          {cartItemCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {cartItemCount}
+            </span>
+          )}
+        </Link>}
         {/* <Search /> */}
       </div>
       {signOut && (

@@ -28,6 +28,8 @@ export async function action({ request }: ActionFunctionArgs) {
       // console.log("signIn info:", user);
       // Store user in the session
       session.set("username", user.username);
+      session.set("userId", user.user_id);
+      
       if (user.priority === "ADMIN") session.set("isAdmin", true);
       else session.set("isAdmin", false);
       // console.log("session username : ", session.get("username"));
