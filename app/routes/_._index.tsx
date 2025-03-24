@@ -1,7 +1,13 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import CustomButton from "~/components/custom_button";
+import { photoPath } from "~/server/path.server";
 
-const Photo = process.env.PHOTO!
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
+  console.log("pathLoaderBase : ", Photo);
+  return { Photo };
+}
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,6 +17,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+  const { Photo } = useLoaderData<typeof loader>();
   return (
       <div className="grid [&>img]:col-start-1 [&>img]:row-start-1 [&>div]:col-start-1 [&>div]:row-start-1">
         <img
