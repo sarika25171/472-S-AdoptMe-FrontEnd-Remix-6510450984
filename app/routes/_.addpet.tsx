@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import PetAPI from "~/server/repositories/petRepository";
@@ -6,6 +6,7 @@ import { ImageAPI } from "~/server/repository";
 import { getSession } from "~/server/session";
 
 export async function action({ request }: ActionFunctionArgs) {
+  console.log("action addpet");
   const formData = await request.formData();
   const action = formData.get("_action");
   if (action === "add") {
@@ -29,20 +30,28 @@ export async function action({ request }: ActionFunctionArgs) {
     if(!imageName)
       return {error: "No image name."}
 
-    await PetAPI.createPet(
-      name,
-      type,
-      breed,
-      color,
-      gender,
-      ageYear,
-      ageMonth,
-      weight,
-      spayed,
-      detail
-    );
-    await ImageAPI.uploadImage(image, imageName);
+    try {
+      await PetAPI.createPet(
+        name,
+        type,
+        breed,
+        color,
+        gender,
+        ageYear,
+        ageMonth,
+        weight,
+        spayed,
+        detail
+      );
+      await ImageAPI.uploadImage(image, imageName);
+      
+      return redirect("/pets");
+    } catch (error) {
+      return json({ error: "Failed to add pet.", details: error }, { status: 500 });
+    }
   }
+
+  return json({ error: "Invalid action" }, { status: 400 });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -70,7 +79,6 @@ export default function AddPetPage() {
     console.log("Selected file:", file);
     if (file) {
       console.log("File type:", file.type);
-      console.log("File size:", file.size);
       if (imagePreview) {
         console.log("Revoking previous preview URL");
         URL.revokeObjectURL(imagePreview);
@@ -105,6 +113,7 @@ export default function AddPetPage() {
 
     setIsSubmitting(true)
     const formData = new FormData(event.currentTarget);
+    formData.append("_action", "add"); // Add the action parameter
     formData.append("image", image); // Append actual file
 
     if (imageName) {
@@ -148,14 +157,12 @@ export default function AddPetPage() {
                 </div>
               )}
               <label 
+                htmlFor="image-upload"
                 className="bg-primary-orange text-white font-bold px-6 py-2 rounded-3xl hover:scale-105 duration-200 cursor-pointer"
-                onClick={() => {
-                  console.log("Label clicked");
-                  fileInputRef.current?.click();
-                }}
               >
                 Upload Photo
                 <input
+                  id="image-upload"
                   type="file"
                   accept="image/*"
                   ref={fileInputRef}
