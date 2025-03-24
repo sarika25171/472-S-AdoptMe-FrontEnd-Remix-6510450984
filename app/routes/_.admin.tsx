@@ -1,9 +1,8 @@
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
 import type { LoaderFunction, ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { PetAPI, UserAPI, AdoptionAPI, ImageAPI } from "~/server/repository";
-import User from "~/models/user";
+import { PetAPI, AdoptionAPI, ImageAPI } from "~/server/repository";
 import Pet from "~/models/pet";
 
 export const loader: LoaderFunction = async ({ request } : LoaderFunctionArgs) => {

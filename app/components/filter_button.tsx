@@ -1,4 +1,4 @@
-import { Children, Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 
 interface props {
     text: string;

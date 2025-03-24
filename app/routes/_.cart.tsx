@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useActionData, useNavigation, useFetcher } from "@remix-run/react";
 import CartAPI from "~/server/repositories/cartRepository";
-import type { Cart, CartItem } from "~/models/cart";
+import type { Cart } from "~/models/cart";
 import { getSession } from "~/server/session";
 
 export async function loader({ request }: LoaderFunctionArgs) {

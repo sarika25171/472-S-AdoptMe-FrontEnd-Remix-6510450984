@@ -1,12 +1,9 @@
 import RouteButton from "./route_button";
-import { Form, Link, redirect, useLoaderData, useFetcher } from "@remix-run/react";
+import { Form, Link, useFetcher } from "@remix-run/react";
 import IconProfile from "./icons/iconProfile";
 import IconSearch from "./icons/iconSearch";
 import { useState, useEffect } from "react";
 import { primaryOrangeColor } from "./colors";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { UserAPI } from "~/server/repository";
-import { commitSession, getSession } from "~/server/session";
 import type { Cart } from "~/models/cart";
 
 const Photo = process.env.PHOTO!;
