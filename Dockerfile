@@ -1,6 +1,11 @@
-FROM node:21-bullseye-slim
+FROM oven/bun:latest
 WORKDIR /myapp
 ADD . .
-RUN npm install
-RUN npm run build
-CMD ["npm", "start"]
+RUN bun install
+ENV DOMAIN=${DOMAIN}
+ENV PHOTO=${PHOTO}
+ENV PHOTODELETE=${PHOTODELETE}
+ENV PHOTOPOST=${PHOTOPOST}
+ENV PHOTO_KEY=${PHOTO_KEY}
+ENV SESSION_SECRET=${SESSION_SECRET}
+EXPOSE 5173
