@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import LongCardCol from "~/components/longCardCol";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const Photo = photoPath();

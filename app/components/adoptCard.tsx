@@ -3,9 +3,6 @@ import User from "~/models/user";
 import AnimatedComponent from "./animations/animatedComponent";
 import Adoption from "~/models/adoption";
 import { AdoptionAPI, PetAPI } from "~/server/repository";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { getSession } from "~/server/session";
-import { useLoaderData } from "@remix-run/react";
 
 interface props {
   adoption : Adoption;
@@ -21,13 +18,7 @@ interface props {
   spayed: boolean;
   detail: string;
   owner: User;
-}
-
-export async function loader({request} : LoaderFunctionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  const username = session.get("username");
-
-  return { username };
+  username: string;
 }
 
 export default function AdoptCard({
@@ -44,8 +35,8 @@ export default function AdoptCard({
   spayed,
   detail,
   owner,
+  username
 }: props) {
-  const { username } = useLoaderData<typeof loader>();
   function updateData() {
     AdoptionAPI.updateAdopted(adoption.id);
     PetAPI.updatePetByID(adoption.pet_id);

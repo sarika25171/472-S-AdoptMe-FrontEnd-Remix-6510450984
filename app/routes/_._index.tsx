@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import CustomButton from "~/components/custom_button";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const Photo = photoPath();

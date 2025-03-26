@@ -2,7 +2,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, Link, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 import { UserAPI } from "~/server/repository";
 
 export async function action({ request }: ActionFunctionArgs) {

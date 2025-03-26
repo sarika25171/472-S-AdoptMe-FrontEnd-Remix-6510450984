@@ -10,7 +10,7 @@ import {
 } from "@remix-run/react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 import { UserAPI } from "~/server/repository";
 import { commitSession, getSession } from "~/server/session";
 

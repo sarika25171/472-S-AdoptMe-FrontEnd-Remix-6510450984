@@ -12,7 +12,7 @@ import IconProfile from "~/components/icons/iconProfile";
 import IconSignOut from "~/components/icons/iconSignOut";
 import RouteButton from "~/components/route_button";
 import { Cart } from "~/models/cart";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 import { getSession } from "~/server/session";
 
 export async function loader({ request }: LoaderFunctionArgs) {
