@@ -30,7 +30,6 @@ export default function Base() {
   const [select, setSelect] = useState("home");
   const [signOut, setSignOut] = useState<boolean>(false);
   const cartFetcher = useFetcher<{ cart: Cart }>();
-  console.log("username : ", username);
 
   useEffect(() => {
     // Fetch cart data when component mounts

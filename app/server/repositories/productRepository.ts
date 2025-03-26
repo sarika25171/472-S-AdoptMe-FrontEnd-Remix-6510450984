@@ -1,7 +1,7 @@
 import product from "~/models/product";
+import { domainPath } from "../path.server";
 
-
-const Domain = process.env.DOMAIN!
+const Domain = domainPath();
 const apiPath = `${Domain}/product`;
 
 export default class ProductAPI {

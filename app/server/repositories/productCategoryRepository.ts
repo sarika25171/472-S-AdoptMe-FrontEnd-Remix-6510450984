@@ -1,6 +1,7 @@
 import Product from "~/models/product";
 import product from "~/models/product";
 import  ProductCategory  from "~/models/productCategory";
+import { domainPath } from "../path.server";
 
 const Domain = process.env.DOMAIN!
 const apiPath = `${Domain}/product-category`;
@@ -28,7 +29,7 @@ export default class ProductCategoryAPI {
 	}
 
 	static async getByName(name: string): Promise<Product[]> {
-		const res = await fetch(`http://localhost:3000/api/product-category/getByName/${name}`, { method: "GET" });
+		const res = await fetch(`${apiPath}/getByName/${name}`, { method: "GET" });
 
 		if (!res.ok) {
 			console.error(`Failed to fetch product category by name: ${res.status} ${res.statusText}`);
