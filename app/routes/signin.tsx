@@ -6,15 +6,13 @@ import {
   redirect,
   useActionData,
   useFetcher,
+  useLoaderData,
 } from "@remix-run/react";
-import { useState } from "react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
+import { photoPath } from "~/server/path.server";
 import { UserAPI } from "~/server/repository";
 import { commitSession, getSession } from "~/server/session";
-
-const Domain = process.env.DOMAIN!;
-const Photo = process.env.PHOTO!;
 
 export async function action({ request }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -48,7 +46,13 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
+  return { Photo };
+}
+
 export default function SignInView() {
+  const { Photo } = useLoaderData<typeof loader>();
   return (
     <div
       className={`flex flex-col justify-center bg-[url('${Photo}bg-adoptme.png')] items-center w-full min-h-screen space-y-8`}
@@ -71,6 +75,7 @@ export default function SignInView() {
 function FormBody() {
   const fetcher = useFetcher<typeof action>();
   const actionData = useActionData<typeof action>() || null;
+  const { Photo } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
@@ -122,7 +127,7 @@ function FormBody() {
         <Link to="/signup" prefetch="intent">
           <button type="button" className="text-black underline">
             <h1 className="items-center">
-              Don’t have account ?<br />
+              Don't have account ?<br />
               Click here to Sign Up.
             </h1>
           </button>
