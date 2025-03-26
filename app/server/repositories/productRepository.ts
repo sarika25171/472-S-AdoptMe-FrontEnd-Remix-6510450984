@@ -63,7 +63,7 @@ export default class ProductAPI {
 		stock: number,
 	) {
 		const res = await fetch(`${apiPath}/updateProduct`, {
-			method: "PATCH",
+			method: "POST",
 			body: JSON.stringify({
 				id: id,
 				product_category_id: product_category_id,

@@ -1,9 +1,9 @@
 import Pet from "~/models/pet";
 
-import { domainPath, photoPath } from "../path.server";
+import { domainPath, photoS3Path } from "../path.server";
 
 const Domain = domainPath();
-const Photo = photoPath();
+const PhotoS3 = photoS3Path();
 
 const apiPath = `${Domain}/pet`;
 
@@ -40,30 +40,43 @@ export default class PetAPI {
         spayed: string,
         detail: string
     ) {
+        // Convert gender to uppercase to match enum
+        const sex = gender.toUpperCase() === "UNKNOW" ? "UNKNOWN" : gender.toUpperCase();
+        
+        // Ensure numeric values are properly converted
+        const age_years = parseInt(ageYear) || 0;
+        const age_months = parseInt(ageMonth) || 0;
+        const weight_value = parseInt(weight) || 0;
+        
+        // Convert spayed string to boolean
+        const spayed_value = spayed.toLowerCase() === "true";
+
+        const requestBody = {
+            pet_name: name,
+            age_years,
+            age_months,
+            species: type,
+            breed,
+            photo_url: PhotoS3 + name.trim().replace(" ", "") + "-photo.jpg",
+            weight: weight_value,
+            adopted: false,
+            spayed: spayed_value,
+            description: detail,
+            color,
+            sex
+        };
+
+        console.log("Request body:", JSON.stringify(requestBody, null, 2));
+
         const res = await fetch(`${apiPath}/createPet`, {
             method: "POST",
-            body: JSON.stringify({
-                pet_name: name,
-                age_years: parseInt(ageYear),
-                age_months: parseInt(ageMonth),
-                species: type,
-                breed: breed,
-                photo_url:
-                    Photo +
-                    name.trim().replace(" ", "") +
-                    "-photo.jpg",
-                weight: parseInt(weight),
-                adopted: false,
-                spayed: false,
-                description: detail,
-                color: color,
-                sex: gender,
-            }),
+            body: JSON.stringify(requestBody),
             headers: { "Content-Type": "application/json" },
         });
         const data = await res.json();
         if (!res.ok) {
-            return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
+            console.log("Response data:", data);
+            return { error: `Failed to create pet: ${res.status} ${res.statusText}` };
         }
 
         return data;

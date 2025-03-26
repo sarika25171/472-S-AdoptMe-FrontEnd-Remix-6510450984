@@ -26,7 +26,6 @@ export default function BehaviorCommonPage() {
   } else {
     image = img;
   }
-  console.log("img : " + img);
 
   return (
     <div className="flex flex-col justify-start items-center bg-primary-white-tone w-auto min-h-screen m-10 p-10 space-y-8 rounded-2xl">

@@ -18,7 +18,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const phoneNumber = formData.get("phone_no") as string;
     const salary = formData.get("salary") as string;
     if (confirmPassword === password) {
-      UserAPI.userSignUp(
+      const resCreateUser = await UserAPI.userSignUp(
         username,
         password,
         email,
@@ -27,6 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
         phoneNumber,
         salary
       );
+      console.log("resCreateUser : ", resCreateUser);
       return redirect("/signin");
     } else {
       return json(

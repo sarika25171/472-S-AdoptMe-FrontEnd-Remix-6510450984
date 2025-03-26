@@ -10,9 +10,13 @@ import AnimatedComponent from "~/components/animations/animatedComponent";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { PetAPI } from "~/server/repository";
 import { useLoaderData } from "@remix-run/react";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 export async function loader({request} : LoaderFunctionArgs) {
-  const pets: Pet[] = await PetAPI.getAll();
+  let pets: Pet[] = await PetAPI.getAll();
+  for (let pet of pets) {
+    pet.photo_url = await prefetchImage(pet.photo_url);
+  }
   return { pets }
 }
 

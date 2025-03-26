@@ -6,7 +6,6 @@ import { AdoptionAPI, PetAPI } from "~/server/repository";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { getSession } from "~/server/session";
 import { useLoaderData } from "@remix-run/react";
-import { photoPath } from "~/server/path.server";
 
 interface props {
   adoption : Adoption;
@@ -27,9 +26,8 @@ interface props {
 export async function loader({request} : LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const username = session.get("username");
-  const Photo = photoPath();
 
-  return { Photo, username };
+  return { username };
 }
 
 export default function AdoptCard({
@@ -47,7 +45,7 @@ export default function AdoptCard({
   detail,
   owner,
 }: props) {
-  const { username, Photo } = useLoaderData<typeof loader>();
+  const { username } = useLoaderData<typeof loader>();
   function updateData() {
     AdoptionAPI.updateAdopted(adoption.id);
     PetAPI.updatePetByID(adoption.pet_id);
@@ -211,7 +209,7 @@ export default function AdoptCard({
               <div className="flex flex-col w-5/6 h-full justify-center items-center gap-2">
                 <h1 className="text-4xl text-black font-bold">Contact Owner</h1>
                 <img
-                  src={Photo + owner.photo_url}
+                  src={owner.photo_url}
                   className="h-28 object-cover rounded-full"
                 />
 

@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import PetAPI from "~/server/repositories/petRepository";
@@ -21,17 +26,13 @@ export async function action({ request }: ActionFunctionArgs) {
     const spayed = formData.get("spayed") as string;
     const detail = formData.get("detail") as string;
     const image = formData.get("image") as File | null;
-    const imageName = formData.get("imageName") as string | null;
 
     if (!image) {
       return { error: "Please upload an image." };
     }
-
-    if(!imageName)
-      return {error: "No image name."}
-
+    console.log("image : ", image);
     try {
-      await PetAPI.createPet(
+      const resCreatePet = await PetAPI.createPet(
         name,
         type,
         breed,
@@ -43,11 +44,21 @@ export async function action({ request }: ActionFunctionArgs) {
         spayed,
         detail
       );
-      await ImageAPI.uploadImage(image, imageName);
-      
+      console.log("resCreatePet : ", resCreatePet);
+      try {
+        const resUploadImage = await ImageAPI.uploadImage(image, name);
+        
+        console.log("resUploadImage : ", resUploadImage);
+      } catch(error) {
+        console.error("Error uploading image:", error);
+      }
+
       return redirect("/pets");
     } catch (error) {
-      return json({ error: "Failed to add pet.", details: error }, { status: 500 });
+      return json(
+        { error: "Failed to add pet.", details: error },
+        { status: 500 }
+      );
     }
   }
 
@@ -63,7 +74,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function AddPetPage() {
   const { username } = useLoaderData<typeof loader>();
   const [image, setImage] = useState<File | null>(null);
-  const [imageName, setImageName] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null); // use useState for instant preview (remix is not)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -86,7 +96,6 @@ export default function AddPetPage() {
       const newPreviewUrl = URL.createObjectURL(file);
       console.log("Created new preview URL:", newPreviewUrl);
       setImagePreview(newPreviewUrl);
-      setImageName(file.name);
       setImage(file);
     } else {
       console.log("No file selected");
@@ -95,12 +104,11 @@ export default function AddPetPage() {
 
   // Cleanup the object URL when the component unmounts
   useEffect(() => {
-    console.log("imagePreview : ", imagePreview)
+    console.log("imagePreview : ", imagePreview);
     return () => {
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
       }
-      
     };
   }, [imagePreview]);
 
@@ -111,14 +119,10 @@ export default function AddPetPage() {
       return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     const formData = new FormData(event.currentTarget);
     formData.append("_action", "add"); // Add the action parameter
     formData.append("image", image); // Append actual file
-
-    if (imageName) {
-      formData.append("imageName", imageName); // Append image name
-    }
 
     fetcher.submit(formData, {
       method: "post",
@@ -156,7 +160,7 @@ export default function AddPetPage() {
                   <p className="text-gray-500">No image uploaded</p>
                 </div>
               )}
-              <label 
+              <label
                 htmlFor="image-upload"
                 className="bg-primary-orange text-white font-bold px-6 py-2 rounded-3xl hover:scale-105 duration-200 cursor-pointer"
               >
@@ -282,7 +286,7 @@ export default function AddPetPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className={`flex flex-row hover:scale-105 duration-200 space-x-2 text-white font-bold shadow-lg 
-          bg-green-500 rounded-3xl text-2xl justify-center items-center w-full h-fit py-2`}
+              bg-green-500 rounded-3xl text-2xl justify-center items-center w-full h-fit py-2`}
                 name="_action"
                 value="add"
               >

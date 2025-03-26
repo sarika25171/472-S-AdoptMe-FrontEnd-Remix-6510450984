@@ -1,8 +1,8 @@
 import User from "~/models/user";
-import { domainPath, photoPath } from "../path.server";
+import { domainPath, photoS3Path } from "../path.server";
 
 const Domain = domainPath();
-const Photo = photoPath();
+const PhotoS3 = photoS3Path();
 const apiPath = `${Domain}/user`;
 
 export default class UserAPI {
@@ -59,7 +59,7 @@ export default class UserAPI {
                 phone_number: phoneNumber.trim(),
                 salary: parseInt(salary.trim()),
                 priority: "user",
-                photo_url: Photo+"default-profile.png",
+                photo_url: PhotoS3+"default-profile.jpg",
             }),
             headers: {"Content-Type": "application/json"},
         });
@@ -87,8 +87,8 @@ export default class UserAPI {
     }
     
     static async updateUser(
-        id: string,
         updates: {
+            user_id: string,
             username?: string;
             email?: string;
             firstName?: string;
@@ -99,16 +99,15 @@ export default class UserAPI {
         }
     ) {
         const res = await fetch(`${apiPath}/update`, {
-            method: "PUT",
+            method: "PATCH",
             body: JSON.stringify({
-                id,
                 ...updates
             }),
             headers: { "Content-Type": "application/json" },
         });
-    
         const data = await res.json();
         if (!res.ok) {
+            console.log("Update user response :", data);
             return { error: data.message };
         }
         return data;

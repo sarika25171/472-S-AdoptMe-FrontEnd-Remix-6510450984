@@ -6,7 +6,7 @@ interface props {
   height: string;
 }
 
-export default function IconSearch({ colorCode, width, height}: props) {
+export default function IconSignOut({ colorCode, width, height}: props) {
   return (
     <Link
       to="/"

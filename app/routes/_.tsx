@@ -9,7 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { primaryOrangeColor } from "~/components/colors";
 import IconProfile from "~/components/icons/iconProfile";
-import IconSearch from "~/components/icons/iconSearch";
+import IconSignOut from "~/components/icons/iconSignOut";
 import RouteButton from "~/components/route_button";
 import { Cart } from "~/models/cart";
 import { photoPath } from "~/server/path.server";
@@ -30,14 +30,19 @@ export default function Base() {
   const [select, setSelect] = useState("home");
   const [signOut, setSignOut] = useState<boolean>(false);
   const cartFetcher = useFetcher<{ cart: Cart }>();
+  const signOutFetcher = useFetcher();
 
   useEffect(() => {
-    // Fetch cart data when component mounts
     cartFetcher.load("/cart");
   }, []);
 
+  const handleSignOut = () => {
+    setSignOut(true);
+    signOutFetcher.submit(null, { method: "post", action: "/signout" });
+  };
+
   const cartItemCount =
-  cartFetcher.data?.cart?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
+    cartFetcher.data?.cart?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
   return (
     <div
@@ -112,23 +117,18 @@ export default function Base() {
         {/* Icon Buttons */}
         <div className="flex justify-evenly items-center space-x-6">
           {username && (
-            <Form method="post" action="/signout" className="translate-y-1">
-              <button
-                type="submit"
-                className="hover:scale-110 duration-200"
-                onClick={() => {
-                  setSignOut(true);
-                  setTimeout(() => setSignOut(false), 2000);
-                }}
-              >
-                {/* I think this icon is signout icon, not search lol */}
-                <IconSearch
-                  colorCode={primaryOrangeColor}
-                  width="24"
-                  height="24"
-                />
-              </button>
-            </Form>
+            <button
+              type="button"
+              className="hover:scale-110 duration-200"
+              onClick={handleSignOut}
+              disabled={signOutFetcher.state === "submitting"}
+            >
+              <IconSignOut
+                colorCode={primaryOrangeColor}
+                width="24"
+                height="24"
+              />
+            </button>
           )}
           <button className="hover:scale-110 duration-200">
             <Link to={username == undefined ? "/signin" : "/profile"}>
@@ -166,7 +166,9 @@ export default function Base() {
         </div>
         {signOut && (
           <div className="fixed right-32 w-28 animate-pulse">
-            <h1 className="text-red-600 font-bold font-sans">Signing out...</h1>
+            <h1 className={`font-bold font-sans ${signOutFetcher.state === "submitting" ? "text-red-600" : signOutFetcher.state === "idle" ? "text-green-600" : "text-red-600"}`}>
+              {signOutFetcher.state === "submitting" ? "Signing out..." : signOutFetcher.state === "idle" ? "Signed out!" : "Error signing out"}
+            </h1>
           </div>
         )}
       </div>

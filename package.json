@@ -18,7 +18,6 @@
     "@remix-run/node": "^2.12.1",
     "@remix-run/react": "^2.12.1",
     "@remix-run/serve": "^2.12.1",
-    "adoptme": "file:",
     "axios": "^1.7.7",
     "gsap": "^3.12.5",
     "isbot": "^4.1.0",
