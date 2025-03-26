@@ -1,12 +1,9 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { request } from "node_modules/axios/index.cjs";
-import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import AnimatedComponent from "~/components/animations/animatedComponent";
 import ProductAPI from "~/server/repositories/productRepository";
 import { getSession } from "~/server/session";
 import { Link } from "@remix-run/react";
-import Product from "~/models/product";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
@@ -22,47 +19,48 @@ export async function loader({ request,params }: LoaderFunctionArgs) {
   return { product,isAdmin };
 }
 
-export async function action({ request,params }: LoaderFunctionArgs) {
+export async function action({request, params }: LoaderFunctionArgs) {
+  console.log("action");
+  if (request.method !== "DELETE") {
+    throw new Response("Method Not Allowed", { status: 405 });
+  }
   const id = Number(params.id);
-  const products: Product= await ProductAPI.deleteProduct(id);
-  return { products };
+  await ProductAPI.deleteProduct(id);
+  return redirect("/Product");
 }
 
-interface props {
-  productId: number;
-  isAdmin: boolean;
-  status: ProductStatus;
+export function AdminProductButton({productId}: {productId: number}){
+  const fetcher = useFetcher<typeof action>();
+
+  return (
+    <fetcher.Form method="delete">
+    <button
+      type="submit"
+      value={productId}
+      className="bg-red-500 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 hover:scale-110 duration-200"
+    >
+      Delete Product
+    </button>
+    </fetcher.Form>
+  )
 }
 
-export function ProductButton({productId,isAdmin, status}:props){
+export function UserProductButton({status}: {status: ProductStatus}){
   let text = "";
   let color = "";
   let link = "";
-  let action = null;;
-  const fetcher = useFetcher();
 
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      fetcher.submit(null, { method: "DELETE", action: `/products/${productId}` });
-    }
-  };
-
-  if (isAdmin) {
-    text = "Delete Product";
-    color = "bg-primary-red";
-    action = handleDelete;
-  } else if (status === "OUT_OF_STOCK") {
+  if (status === "OUT_OF_STOCK") {
     text = "Out of Stock";
     color = "bg-primary-gray";
     link = "";
   } else {
     text = "Order Here";
     color = "bg-primary-green";
-    // need to add to ter path
     link = "/test";
   }
 
-  return link ? (
+  return (
     <Link to={link}>
       <button
         className={`${color} flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2`}
@@ -70,16 +68,8 @@ export function ProductButton({productId,isAdmin, status}:props){
         {text}
       </button>
     </Link>
-  ) : (
-    <button
-      className={`${color} flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2`}
-    >
-      {text}
-    </button>
   );
 }
-
-
 
 export default  function ProductDetailPage() {
 
@@ -134,7 +124,8 @@ export default  function ProductDetailPage() {
                 <h1 className="text-black font-bold text-xl">Stock:</h1>
                 <h1 className="text-gray-400 text-xl">{product.stock}</h1>
               </div>
-              <ProductButton productId={product.id} isAdmin={!!isAdmin} status={product.status} />
+              {isAdmin && <AdminProductButton productId={product.id} />}
+              {!isAdmin && <UserProductButton status={product.status} />}
             </div>
           </AnimatedComponent>
         </div>

@@ -31,13 +31,13 @@ export default function Base() {
   const [signOut, setSignOut] = useState<boolean>(false);
   const cartFetcher = useFetcher<{ cart: Cart }>();
 
-  useEffect(() => {
-    // Fetch cart data when component mounts
-    cartFetcher.load("/cart");
-  }, []);
+  // useEffect(() => {
+  // Fetch cart data when component mounts
+  // cartFetcher.load("/cart");
+  // }, []);
 
-  const cartItemCount =
-  cartFetcher.data?.cart?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
+  // const cartItemCount =
+  // cartFetcher.data?.cart?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
   return (
     <div
@@ -59,9 +59,8 @@ export default function Base() {
             className="w-20 h-20 hover:scale-110 duration-200"
           />
           <h1
-            className={`text-black -translate-y-2 ${
-              select === "home" ? "underline" : ""
-            }`}
+            className={`text-black -translate-y-2 ${select === "home" ? "underline" : ""
+              }`}
           >
             Home
           </h1>
@@ -155,11 +154,11 @@ export default function Base() {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              {cartItemCount > 0 && (
+              {/* {cartItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
-              )}
+              )} */}
             </Link>
           )}
           {/* <Search /> */}

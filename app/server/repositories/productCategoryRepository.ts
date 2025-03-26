@@ -47,6 +47,7 @@ export default class ProductCategoryAPI {
 	) {
 		const res = await fetch(`${apiPath}/createProductCategory`, {
 			method: "POST",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				name: name,
 				description: description,
@@ -55,28 +56,27 @@ export default class ProductCategoryAPI {
 
 		const data = await res.json();
 		if (!res.ok) {
-            throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+            throw new Error(`Failed to create product category: ${res.status} ${res.statusText}`);
         }
 		return data;
 	}
 
 	static async updateProductCategory(
 		id: number,
-		name?: string,
-		description?: string,
+		ProductCategory: Partial<ProductCategory>
 	) {
 		const res = await fetch(`${apiPath}/updateProductCategory`, {
 			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				id: id,
-				name: name,
-				description: description,
+				ProductCategory: ProductCategory,
 			}),
 		});
 
 		const data = await res.json();
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			throw new Error(`Failed to update product category: ${res.status} ${res.statusText}`);
 		}
 		return data;
 	}
@@ -84,6 +84,7 @@ export default class ProductCategoryAPI {
 	static async deleteProductCategory(id: number) {
 		const res = await fetch(`${apiPath}/deleteProductCategory`, {
 			method: "DELETE",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				id: id,
 			}),
@@ -91,7 +92,7 @@ export default class ProductCategoryAPI {
 
 		const data = await res.json();
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			throw new Error(`Failed to delete product category: ${res.status} ${res.statusText}`);
 		}
 		return data;
 	}
