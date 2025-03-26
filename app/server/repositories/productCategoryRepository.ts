@@ -1,12 +1,6 @@
+import Product from "~/models/product";
 import product from "~/models/product";
 import  ProductCategory  from "~/models/productCategory";
-
-interface ProductCategoryDetails extends Partial<ProductCategory>{
-	id: number;
-	name: string;
-	description: string;
-	product: product[] | null;
-}
 
 const Domain = process.env.DOMAIN!
 const apiPath = `${Domain}/product-category`;
@@ -33,14 +27,17 @@ export default class ProductCategoryAPI {
 		return data;
 	}
 
-	static async getByName(name: string): Promise<ProductCategoryDetails | null> {
-		const res = await fetch(`${apiPath}/getByName/${name}`, { method: "GET" });
+	static async getByName(name: string): Promise<Product[]> {
+		const res = await fetch(`http://localhost:3000/api/product-category/getByName/${name}`, { method: "GET" });
 
 		if (!res.ok) {
 			console.error(`Failed to fetch product category by name: ${res.status} ${res.statusText}`);
-			return null;
+			return [];
 		}
-		return res.json();
+
+		const data = await res.json();
+		const products = data[0]?.product ?? [];
+		return products;
 	}
 
 	static async createProductCategory(
