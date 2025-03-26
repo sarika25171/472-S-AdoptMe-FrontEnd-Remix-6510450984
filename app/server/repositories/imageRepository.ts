@@ -1,6 +1,9 @@
-const PhotoKey = process.env.PHOTO_KEY!
-const PhotoDelete = process.env.PHOTODELETE!
-const PhotoPost = process.env.PHOTOPOST!
+import { domainPath, photoDeletePath, photoPostPath, photoKeyPath } from "../path.server";
+
+const Domain = domainPath();
+const PhotoKey = photoKeyPath();
+const PhotoPost = photoPostPath();
+const PhotoDelete = photoDeletePath();
 
 export default class ImageAPI {
     static async uploadImage(file: File, fileName: string) {

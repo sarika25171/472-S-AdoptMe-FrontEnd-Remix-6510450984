@@ -1,7 +1,9 @@
 import Pet from "~/models/pet";
 
-const Domain = process.env.DOMAIN!
-const Photo = process.env.PHOTO!
+import { domainPath, photoPath } from "../path.server";
+
+const Domain = domainPath();
+const Photo = photoPath();
 
 const apiPath = `${Domain}/pet`;
 

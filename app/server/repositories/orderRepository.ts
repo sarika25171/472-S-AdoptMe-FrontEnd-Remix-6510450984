@@ -1,6 +1,7 @@
 import Order from "~/models/order";
+import { domainPath } from "../path.server";
 
-const Domain = process.env.DOMAIN!
+const Domain = domainPath();
 
 const apiPath = `${Domain}/order`;
 

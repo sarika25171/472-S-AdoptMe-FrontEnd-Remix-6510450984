@@ -1,4 +1,6 @@
-const Domain = process.env.DOMAIN!
+import { domainPath } from "../path.server";
+
+const Domain = domainPath();
 
 const apiPath = `${Domain}/adoption`;
 

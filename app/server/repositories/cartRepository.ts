@@ -1,6 +1,8 @@
 import {Cart, CartItem } from "~/models/cart";
+import { domainPath } from "../path.server";
 
-const Domain = process.env.DOMAIN!;
+const Domain = domainPath();
+
 const apiPath = `${Domain}/cart`;
 
 export default class CartAPI {

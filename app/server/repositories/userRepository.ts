@@ -1,8 +1,8 @@
 import User from "~/models/user";
+import { domainPath, photoPath } from "../path.server";
 
-const Domain = process.env.DOMAIN!
-const Photo = process.env.PHOTO!
-
+const Domain = domainPath();
+const Photo = photoPath();
 const apiPath = `${Domain}/user`;
 
 export default class UserAPI {

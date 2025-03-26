@@ -1,5 +1,6 @@
 import product from "~/models/product";
 import  ProductCategory  from "~/models/productCategory";
+import { domainPath } from "../path.server";
 
 interface ProductCategoryDetails extends Partial<ProductCategory>{
 	id: number;
@@ -8,7 +9,8 @@ interface ProductCategoryDetails extends Partial<ProductCategory>{
 	product: product[] | null;
 }
 
-const Domain = process.env.DOMAIN!
+
+const Domain = domainPath();
 const apiPath = `${Domain}/product-category`;
 
 export default class ProductCategoryAPI {
