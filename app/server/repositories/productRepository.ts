@@ -1,5 +1,5 @@
 import product from "~/models/product";
-import { domainPath } from "../path.server";
+import { domainPath } from "../config.server";
 
 const Domain = domainPath();
 const apiPath = `${Domain}/product`;

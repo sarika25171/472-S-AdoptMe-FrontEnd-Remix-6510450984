@@ -1,5 +1,5 @@
 import User from "~/models/user";
-import { domainPath, photoS3Path } from "../path.server";
+import { domainPath, photoS3Path } from "../config.server";
 
 const Domain = domainPath();
 const PhotoS3 = photoS3Path();
@@ -7,29 +7,40 @@ const apiPath = `${Domain}/user`;
 
 export default class UserAPI {
     static async getUser() : Promise<User[]> {
-        const res = await fetch(`${apiPath}/getAll`, {method: "POST"})
-        const data : User[] = await res.json();
-        return data;
+        try {
+            const res = await fetch(`${apiPath}/getAll`, {method: "POST"})
+            const data : User[] = await res.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            throw error;
+        }
     }
     
     static async getUserByID(userID : string) : Promise<User> {
-        const res = await fetch(`${apiPath}/getById`, {
-            method: "POST",
-            body: JSON.stringify({
+        try {
+            const res = await fetch(`${apiPath}/getById`, {
+                method: "POST",
+                body: JSON.stringify({
                 user_id : userID,
             })
         })
         const data = await res.json();
         if(!data)
-            throw new Error("User not found");
-        return data;
+                throw new Error("User not found");
+            return data;
+        } catch (error) {
+            console.error('Error fetching user by ID:', error);
+            throw error;
+        }
     }
 
     static async getUserByUsername(username : string) : Promise<User> {
-        const res = await fetch(`${apiPath}/getByUsername`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
+        try {
+            const res = await fetch(`${apiPath}/getByUsername`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
                 username : username,
             })
         })
@@ -37,6 +48,10 @@ export default class UserAPI {
         if(!data)
             throw new Error("User not found");
         return data;
+        } catch (error) {
+            console.error('Error fetching user by username:', error);
+            throw error;
+        }
     }
     
     static async userSignUp(
@@ -48,9 +63,10 @@ export default class UserAPI {
         phoneNumber: string,
         salary: string
     ) {
-        const res = await fetch(`${apiPath}/register`, {
-            method: "POST",
-            body: JSON.stringify({
+        try {
+            const res = await fetch(`${apiPath}/register`, {
+                method: "POST",
+                body: JSON.stringify({
                 username: username.trim(),
                 password: password.trim(),
                 email: email.trim(),
@@ -66,15 +82,20 @@ export default class UserAPI {
         const data = await res.json();
         if(!res.ok) return { error: data.message };
         return data;
+        } catch (error) {
+            console.error('Error signing up user:', error);
+            throw error;
+        }
     }
     
     static async userLogin(
         username: string, 
         password: string
     ) : Promise<User> {
-        const res = await fetch(`${apiPath}/login`, {
-            method: "POST",
-            body : JSON.stringify({
+        try {
+            const res = await fetch(`${apiPath}/login`, {
+                method: "POST",
+                body : JSON.stringify({
                 username : username,
                 password: password,
             }),
@@ -84,6 +105,10 @@ export default class UserAPI {
         if(data.error)
             throw new Error(data.error);
         return data;
+        } catch (error) {
+            console.error('Error logging in user:', error);
+            throw error;
+        }
     }
     
     static async updateUser(
@@ -98,9 +123,10 @@ export default class UserAPI {
             salary?: number;
         }
     ) {
-        const res = await fetch(`${apiPath}/update`, {
-            method: "PATCH",
-            body: JSON.stringify({
+        try {
+            const res = await fetch(`${apiPath}/update`, {
+                method: "PATCH",
+                body: JSON.stringify({
                 ...updates
             }),
             headers: { "Content-Type": "application/json" },
@@ -111,6 +137,10 @@ export default class UserAPI {
             return { error: data.message };
         }
         return data;
+        } catch (error) {
+            console.error('Error updating user:', error);
+            throw error;
+        }
     }
 
 }
