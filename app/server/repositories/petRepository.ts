@@ -9,7 +9,7 @@ export default class PetAPI {
     static async getAll() : Promise<Pet[]> {
         const res = await fetch(`${apiPath}/getAll`, { method: "GET" });
         const data = await res.json();
-        
+
         if (!res.ok) {
             throw new Error("Failed to fetch pets");
         }
@@ -19,7 +19,7 @@ export default class PetAPI {
     static async getPetByID(id: number) {
         const res = await fetch(`${apiPath}/getById/${id}`, { method: "GET" });
         const data = await res.json();
-        
+
         if (!res.ok) {
             return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
         }
@@ -63,13 +63,13 @@ export default class PetAPI {
         if (!res.ok) {
             return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
         }
-    
+
         return data;
     }
 
     static async updatePetByID(id: number) {
         const res = await fetch(`${apiPath}/updatePet`, {
-            method: "PUT",
+            method: "PATCH",
             body: JSON.stringify({
                 pet_id: id,
                 adopted: true,
@@ -80,7 +80,7 @@ export default class PetAPI {
         if (!res.ok) {
             return { error: `Failed to fetch pet: ${res.status} ${res.statusText}` };
         }
-    
+
         return data;
     }
 

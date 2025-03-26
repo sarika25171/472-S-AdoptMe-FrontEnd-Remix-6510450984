@@ -18,7 +18,7 @@ export default class AdoptionAPI {
     }
 
     static async createAdoption(
-        added_user: string, 
+        added_user: string,
         pet_id: number
     ) {
         const res = await fetch(`${apiPath}/createAdoption`, {
@@ -53,7 +53,7 @@ export default class AdoptionAPI {
         adoption_id: number,
     ) {
         const res = await fetch(`${apiPath}/adopted`, {
-            method: "PUT",
+            method: "PATCH",
             body : JSON.stringify({
                 id : adoption_id,
             }),

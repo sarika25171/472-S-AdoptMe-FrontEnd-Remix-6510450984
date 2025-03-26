@@ -65,7 +65,7 @@ export default class ProductCategoryAPI {
 		description?: string,
 	) {
 		const res = await fetch(`${apiPath}/updateProductCategory`, {
-			method: "PUT",
+			method: "PATCH",
 			body: JSON.stringify({
 				id: id,
 				name: name,
