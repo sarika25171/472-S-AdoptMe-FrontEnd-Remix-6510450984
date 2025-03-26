@@ -1,10 +1,9 @@
-import { ActionFunctionArgs } from "@remix-run/node";
-import { Form, json, Link, redirect, useActionData } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { Form, json, Link, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
+import { photoPath } from "~/server/path.server";
 import { UserAPI } from "~/server/repository";
-
-const Photo = process.env.PHOTO!;
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -38,8 +37,14 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
+  return { Photo };
+}
+
 export default function SignUpView() {
   const actionData = useActionData<typeof action>() || null;
+  const { Photo } = useLoaderData<typeof loader>();
 
   return (
     <div

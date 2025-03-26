@@ -8,8 +8,7 @@ import { useState } from "react";
 import { ImageAPI, UserAPI } from "~/server/repository";
 import UploadButton from "~/components/upload_button";
 import { getSession } from "~/server/session";
-
-const Photo = process.env.PHOTO!;
+import { photoPath } from "~/server/path.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -42,6 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
   const session = await getSession(request.headers.get("Cookie"));
   const username = session.get("username");
   if (!username) return redirect("/signin");
@@ -61,7 +61,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     salary: currentUser.salary,
   };
 
-  return { currentUser, userInfo, currentUserId, username };
+  return { Photo, currentUser, userInfo, currentUserId, username };
 }
 
 export default function ProfilePage() {
@@ -107,6 +107,7 @@ export default function ProfilePage() {
 // }
 
 function BodyPart() {
+  const { Photo } = useLoaderData<typeof loader>();
   const { userInfo, currentUserId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const isUpdating = fetcher.state !== "idle";

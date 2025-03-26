@@ -30,6 +30,7 @@ export default function Base() {
   const [select, setSelect] = useState("home");
   const [signOut, setSignOut] = useState<boolean>(false);
   const cartFetcher = useFetcher<{ cart: Cart }>();
+  console.log("username : ", username);
 
   useEffect(() => {
     // Fetch cart data when component mounts
@@ -131,7 +132,7 @@ export default function Base() {
             </Form>
           )}
           <button className="hover:scale-110 duration-200">
-            <Link to={username ? "/profile" : "/signin"}>
+            <Link to={username == undefined ? "/signin" : "/profile"}>
               <IconProfile
                 colorCode={primaryOrangeColor}
                 width="24"

@@ -1,12 +1,11 @@
 import LongCard from "./longCard";
 
-const Photo = process.env.PHOTO!
-
 interface props {
     type : string,
+    Photo : string
 }
 
-export default function LongCardCol({type} : props) {
+export default function LongCardCol({type, Photo} : props) {
     console.log("type : "+type);
     if(type == "Dogs") {
         return(

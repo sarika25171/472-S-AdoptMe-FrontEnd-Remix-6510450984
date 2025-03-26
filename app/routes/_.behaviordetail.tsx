@@ -1,9 +1,15 @@
-import { useSearchParams } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import BehaviorDetail from "~/components/behaviorDetail";
+import { photoPath } from "~/server/path.server";
 
-const Photo = process.env.PHOTO!
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
+  return { Photo };
+}
 
 export default function BehaviorCommonPage() {
+  const { Photo } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
   const topic = searchParams.get("topic");

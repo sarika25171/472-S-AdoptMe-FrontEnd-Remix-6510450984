@@ -1,10 +1,16 @@
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import BehaviorAnimal from "~/components/behaviorAnimal";
 import LongCard from "~/components/longCard";
+import { photoPath } from "~/server/path.server";
 
-const Photo = process.env.PHOTO!
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Photo = photoPath();
+  return { Photo };
+}
 
 export default function BehaviorMainPage() {
-    
+    const { Photo } = useLoaderData<typeof loader>();
     return(
         <div className="flex flex-col justify-center items-center w-full min-h-screen p-10 space-y-8">
             <h1 className="font-bold text-black text-[64px]">Behavior</h1>
