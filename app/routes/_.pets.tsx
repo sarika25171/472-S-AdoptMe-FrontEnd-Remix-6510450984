@@ -7,10 +7,10 @@ import IconCat from "~/components/icons/iconCat";
 import IconPaw from "~/components/icons/iconPaw";
 import IconRabbit from "~/components/icons/iconRabbit";
 import AnimatedComponent from "~/components/animations/animatedComponent";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { PetAPI } from "~/server/repository";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import prefetchImage from "~/server/services/imagePrefetcher";
+import { PetAPI } from "~/server/repository";
 
 export async function loader({request} : LoaderFunctionArgs) {
   let pets: Pet[] = await PetAPI.getAll();

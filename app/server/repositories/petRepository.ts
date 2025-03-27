@@ -23,15 +23,13 @@ export default class PetAPI {
     }
   }
 
-  static async getPetByID(id: number) {
+  static async getPetByID(id: number) : Promise<Pet>  {
     try {
       const res = await fetch(`${apiPath}/getById/${id}`, { method: "GET" });
       const data = await res.json();
 
       if (!res.ok) {
-        return {
-          error: `Failed to fetch pet: ${res.status} ${res.statusText}`,
-        };
+        throw new Error(`Failed to fetch pet: ${res.status} ${res.statusText}`);
       }
       return data;
     } catch (error) {

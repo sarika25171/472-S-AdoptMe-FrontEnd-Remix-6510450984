@@ -1,13 +1,12 @@
 import { domainPath } from "../config.server";
 
-const Domain = domainPath();
-
-const apiPath = `${Domain}/adoption`;
-
 export default class AdoptionAPI {
+    private static apiPath = `${domainPath()}/adoption`;
+
     static async getAdoption() {
+        console.log("apiPathAdoption : ", this.apiPath);
         try {
-            const res = await fetch(`${apiPath}/getAll`, {method : "GET"});
+            const res = await fetch(`${this.apiPath}/getAll`, {method : "GET"});
             const data = await res.json();
             if(!res.ok) return {error : data.message};
             return data;
@@ -19,7 +18,7 @@ export default class AdoptionAPI {
 
     static async getAdoptionByPetID(id : number) {
         try {
-            const res = await fetch(`${apiPath}/getByPetId/${id}`, {method : "GET"});
+            const res = await fetch(`${this.apiPath}/getByPetId/${id}`, {method : "GET"});
             const data = await res.json();
             if(!res.ok) return {error : data.message};
             return data;
@@ -34,7 +33,7 @@ export default class AdoptionAPI {
         pet_id: number
     ) {
         try {
-            const res = await fetch(`${apiPath}/createAdoption`, {
+            const res = await fetch(`${this.apiPath}/createAdoption`, {
                 method: "POST",
                 body : JSON.stringify({
                 added_user : added_user,
@@ -70,7 +69,7 @@ export default class AdoptionAPI {
         adoption_id: number,
     ) {
         try {
-            const res = await fetch(`${apiPath}/adopted`, {
+            const res = await fetch(`${this.apiPath}/adopted`, {
                 method: "PATCH",
                 body : JSON.stringify({
                 id : adoption_id,
@@ -88,7 +87,7 @@ export default class AdoptionAPI {
 
     static async deleteAdoptionByID(id : number) {
         try {
-            const res = await fetch(`${apiPath}/delete`, {
+            const res = await fetch(`${this.apiPath}/delete`, {
                 method: "DELETE",
                 body: JSON.stringify({
                 pet_id : id,
