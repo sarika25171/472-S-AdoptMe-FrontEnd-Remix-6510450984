@@ -73,12 +73,7 @@ export default class ProductAPI {
 
 	static async updateProduct(
 		id: number,
-		product_category_id: number,
-		name: string,
-		imageurl: string,
-		description: string,
-		price: number,
-		stock: number,
+		Product: Partial<product>,
 	) {
 		try {
 			const res = await fetch(`${apiPath}/updateProduct`, {
@@ -88,18 +83,13 @@ export default class ProductAPI {
 				},
 				body: JSON.stringify({
 				id: id,
-				product_category_id: product_category_id,
-				name: name,
-				imageurl: imageurl,
-				description: description,
-				price: price,
-				stock: stock,
+				Product: Product,
 			}),
 		});
 
 		const data = await res.json();
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			throw new Error(`Failed to update product category: ${res.status} ${res.statusText}`);
 		}
 		return data;
 		} catch (error) {
@@ -112,12 +102,15 @@ export default class ProductAPI {
 		try {
 			const res = await fetch(`${apiPath}/deleteProduct`, {
 			method: "DELETE",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				id: id,
 			}),
 		});
 
+		console.log(res);
 		const data = await res.json();
+		console.log(data);
 		if (!res.ok) {
 				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
 			}
