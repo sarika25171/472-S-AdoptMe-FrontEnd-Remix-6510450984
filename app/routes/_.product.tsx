@@ -12,6 +12,7 @@ import { ProductAPI } from "~/server/repository";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Button } from "@mui/material";
 import { getSession } from "~/server/session";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 export function CreatePorudct() {
   return (
@@ -26,7 +27,10 @@ export function CreatePorudct() {
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const isAdmin = session.get("isAdmin");
-  const products: Product[] = await ProductAPI.getAll();
+  let products: Product[] = await ProductAPI.getAll();
+  for (let product of  products) {
+    product.imageurl = await prefetchImage(product.imageurl);
+  }
   return { products, isAdmin };
 }
 

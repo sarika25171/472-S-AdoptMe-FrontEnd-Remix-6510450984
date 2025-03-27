@@ -1,63 +1,71 @@
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSession } from "~/server/session";
 import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { ImageAPI, ProductAPI } from "~/server/repository";
 
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log("action addpet");
-  const formData = await request.formData();
-  const action = formData.get("_action");
-  if (action === "add") {
-	const name = formData.get("name") as string;
-	const product_category_id = Number(formData.get("category") as string);
-	const price = Number(formData.get("price") as string);
-	const stock = Number(formData.get("stock") as string);
-	const description = formData.get("description") as string;
-	const image = formData.get("image") as File | null;
-	const imageName = formData.get("imageName") as string | null;
+	console.log("action addpet");
+	const formData = await request.formData();
+	const action = formData.get("_action");
+	if (action === "add") {
+		const name = formData.get("name") as string;
+		const product_category_id = Number(formData.get("category") as string);
+		const price = Number(formData.get("price") as string);
+		const stock = Number(formData.get("stock") as string);
+		const description = formData.get("description") as string;
+		const image = formData.get("image") as File | null;
 
-	if (!image) {
-	  return { error: "Please upload an image." };
+
+		console.log("image:", image);
+		console.log(typeof(price), typeof(stock));
+		if (!image) {
+			return json({ error: "Please upload an image." }, { status: 400 });
+		}
+
+		if (price <= 0) {
+			return json({ error: "Price must be greater than 0." }, { status: 400 });
+		}
+
+		if (stock <= 0) {
+			return json({ error: "Stock must be greater than 0." }, { status: 400 });
+		}
+
+		console.log("After validation");
+		let imageurl = "product-" + name.trim() + "-photo.jpg";
+		imageurl = imageurl.replace(/[\s/\\]/g, '_');
+		console.log("Image URL:", imageurl);
+		try {
+			const res = await ProductAPI.createProduct(
+				product_category_id,
+				name,
+				imageurl,
+				description,
+				price,
+				stock
+			);
+			console.log("Product created:", res);
+			const ress = await ImageAPI.uploadImage(image, imageurl);
+			console.log("Imaged:", ress);
+
+			return redirect("/product");
+		} catch (error) {
+			return json({ error: "Failed to add product.", details: error }, { status: 500 });
+		}
 	}
 
-	if(!imageName)
-	  return {error: "No image name."}
-
-	if (price <= 0)
-		return { error: "Price must be greater than 0." };
-	if (price <= 0)
-		return { error: "Stock must be greater than 0." };
-
-	try {
-	  await ProductAPI.createProduct(
-		product_category_id,
-		name,
-		imageName,
-		description,
-		price,
-		stock
-	  );
-	  await ImageAPI.uploadImage(image, imageName);
-
-	  return redirect("/product");
-	} catch (error) {
-	  return json({ error: "Failed to add product.", details: error }, { status: 500 });
-	}
-  }
-
-  return json({ error: "Invalid action" }, { status: 400 });
+	return json({ error: "Invalid action" }, { status: 400 });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
 	const isAdmin = session.get("isAdmin");
 	return { isAdmin };
-  }
+}
 
 export default function CreateProductPage() {
-  	// const { isAdmin } = useLoaderData<typeof loader>();
+	// const { isAdmin } = useLoaderData<typeof loader>();
 
 	// if (!isAdmin) {
 	// 	console.log("User is not an admin",isAdmin);
@@ -65,13 +73,12 @@ export default function CreateProductPage() {
 	// }
 
 	const [image, setImage] = useState<File | null>(null);
-	const [imageName, setImageName] = useState<string | null>(null);
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 	const fetcher = useFetcher<typeof action>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const errorMessage = fetcher.data?.error || "";
 	const tailwindIn = "w-full bg-white border-4 rounded-xl px-4 py-2 text-black/80 focus:outline-none focus:border-blue-600";
-
 
 	const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 		console.log("handleFileSelect triggered");
@@ -86,12 +93,20 @@ export default function CreateProductPage() {
 			const newPreviewUrl = URL.createObjectURL(file);
 			console.log("Created new preview URL:", newPreviewUrl);
 			setImagePreview(newPreviewUrl);
-			setImageName(file.name);
 			setImage(file);
 		} else {
 			console.log("No file selected");
 		}
 	};
+
+	useEffect(() => {
+		console.log("imagePreview : ", imagePreview);
+		return () => {
+			if (imagePreview) {
+				URL.revokeObjectURL(imagePreview);
+			}
+		};
+	}, [imagePreview]);
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -100,20 +115,22 @@ export default function CreateProductPage() {
 			return;
 		}
 
-		setIsSubmitting(true)
+		setIsSubmitting(true);
 		const formData = new FormData(event.currentTarget);
-		formData.append("_action", "add"); // Add the action parameter
-		formData.append("image", image); // Append actual file
-
-		if (imageName) {
-			formData.append("imageName", imageName); // Append image name
-		}
+		formData.append("_action", "add");
+		formData.append("image", image);
 
 		fetcher.submit(formData, {
 			method: "post",
 			encType: "multipart/form-data",
 		});
 	};
+
+	useEffect(() => {
+		if (fetcher.state === "idle") {
+			setIsSubmitting(false);
+		}
+	}, [fetcher.state]);
 
 	return (
 		<div className="w-svw min-h-screen flex justify-center items-center">
@@ -182,7 +199,7 @@ export default function CreateProductPage() {
 									Price
 									<input
 										type="number"
-										name="Price"
+										name="price"
 										placeholder="ex. 100 ฿"
 										className={`${tailwindIn}`}
 										required
@@ -193,7 +210,7 @@ export default function CreateProductPage() {
 									Stock:
 									<input
 										type="number"
-										name="Stock"
+										name="stock"
 										placeholder="ex. 10"
 										className={`${tailwindIn}`}
 										required
@@ -210,7 +227,9 @@ export default function CreateProductPage() {
 										required
 									/>
 								</label>
-
+								<div className="text-red-500 font-bold py-2">
+									{errorMessage && <p>{errorMessage}</p>}
+								</div>
 								<button
 									type="submit"
 									disabled={isSubmitting}
@@ -219,7 +238,7 @@ export default function CreateProductPage() {
 									name="_action"
 									value="add"
 								>
-									{isSubmitting ? "Adding..." : "Add Pet for Adoption"}
+									{isSubmitting ? "Adding..." : "Add Product"}
 								</button>
 							</div>
 						</div>

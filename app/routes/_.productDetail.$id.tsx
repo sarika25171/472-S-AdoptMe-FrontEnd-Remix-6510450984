@@ -5,6 +5,7 @@ import ProductAPI from "~/server/repositories/productRepository";
 import { getSession } from "~/server/session";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
@@ -14,6 +15,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const isAdmin = session.get("isAdmin");
   const id = Number(params.id);
   const product = await ProductAPI.getByID(id);
+  product.imageurl = await prefetchImage(product.imageurl);
   if (!product) {
     throw new Response("Product not found", { status: 404 });
   }
