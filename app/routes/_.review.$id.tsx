@@ -18,7 +18,7 @@ export default function Review() {
     
     const handleSubmit = async () => {
         console.log(rating.toString());
-        console.log(comment);
+        console.log( comment);
 
         try {
             await OrderAPI.updateOrder(order.id, { rating: rating.toString(), comment });
