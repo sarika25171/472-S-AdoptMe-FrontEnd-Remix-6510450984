@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node";
+import { useLoaderData, Form } from "@remix-run/react";
 import Order from "~/models/order";
 import { OrderAPI } from "~/server/repository";
 import { useState } from "react";
@@ -8,6 +8,25 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const productId = Number(params.id);
   const reviews: Order[] = await OrderAPI.getByProductId(productId);
   return { reviews };
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const reviewId = formData.get("reviewId");
+  const reply = formData.get("reply");
+
+  if (!reviewId || !reply) {
+    return json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  try {
+    await OrderAPI.updateOrder(Number(reviewId), { reply_admin: reply as string });
+    alert("Update successful")
+    return json({ success: true });
+  } catch (error) {
+    console.error("Failed to submit review", error);
+    return json({ error: "Failed to submit review" }, { status: 500 });
+  }
 }
 
 export default function ReviewAll() {
@@ -19,20 +38,6 @@ export default function ReviewAll() {
       ...prev,
       [id]: value,
     }));
-  };
-
-  const handleSubmit = async (id: number) => {
-    try {
-      if (!replies[id]) {
-        alert("Please enter a reply before submitting.");
-        return;
-      }
-      await OrderAPI.updateOrder(id, { reply_admin: replies[id] }); // ใช้ค่าที่เก็บใน state
-      alert("Review submitted successfully");
-    } catch (error) {
-      console.error("Failed to submit review", error);
-      alert("Failed to submit review");
-    }
   };
 
   return (
@@ -50,20 +55,22 @@ export default function ReviewAll() {
                 Date: {new Date(review.createdAt).toLocaleDateString()}
               </p>
               {review.reply_admin === null ? (
-                <div className="mt-4">
+                <Form method="post" className="mt-4">
+                  <input type="hidden" name="reviewId" value={review.id} />
                   <textarea
                     className="w-full p-2 border rounded-md"
+                    name="reply"
                     placeholder="Reply to this review..."
                     value={replies[review.id] || ""}
                     onChange={(e) => handleReplyChange(review.id, e.target.value)}
                   />
                   <button
+                    type="submit"
                     className="bg-primary-orange text-white py-2 px-6 rounded-md hover:bg-orange-900 mt-2"
-                    onClick={() => handleSubmit(review.id)}
                   >
                     Send
                   </button>
-                </div>
+                </Form>
               ) : (
                 <div className="mt-4 p-2 border rounded-md bg-gray-100">
                   <p className="text-sm text-gray-700">Admin Reply:</p>
