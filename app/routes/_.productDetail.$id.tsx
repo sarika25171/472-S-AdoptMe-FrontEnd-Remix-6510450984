@@ -23,10 +23,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: LoaderFunctionArgs) {
-  console.log("action");
-  if (request.method !== "DELETE") {
-    throw new Response("Method Not Allowed", { status: 405 });
-  }
   const id = Number(params.id);
   console.log("delete", id);
   await ProductAPI.deleteProduct(id);
@@ -88,7 +84,8 @@ export function UserProductButton({ status }: { status: ProductStatus }) {
   } else {
     text = "Order Here";
     color = "bg-primary-green";
-    link = "/test";
+    // need to add to ter path
+    link = "";
   }
 
   return (

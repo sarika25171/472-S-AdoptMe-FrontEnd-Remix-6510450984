@@ -4,6 +4,7 @@ import { useLoaderData, useActionData, useNavigation, useFetcher } from "@remix-
 import { CartAPI } from "~/server/repository";
 import type { Cart } from "~/models/cart";
 import { getSession } from "~/server/session";
+import { ShoppingCart } from "lucide-react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
@@ -91,9 +92,12 @@ export default function Cart() {
 		fetcher.submit(formData, { method: "post" });
 	};
 
+	console.log("cart : ", cart);
+	console.log("cartItems : ", cart.items);
+
 	return (
 		<div className="container mx-auto p-4">
-			<h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
+			<h1 className="text-4xl font-bold mb-6 text-primary-orange flex">Shopping Cart <span className="translate-y-2 translate-x-2"><ShoppingCart className="w-8 h-8" /></span></h1>
 			
 			{actionData && 'error' in actionData && (
 				<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -101,7 +105,7 @@ export default function Cart() {
 				</div>
 			)}
 			
-			{cart.items.length === 0 ? (
+			{cart.items === undefined ? (
 				<div className="text-center py-8">
 					<p className="text-gray-500">Your cart is empty</p>
 				</div>

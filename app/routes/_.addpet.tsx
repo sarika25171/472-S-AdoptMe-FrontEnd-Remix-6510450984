@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const spayed = formData.get("spayed") as string;
     const detail = formData.get("detail") as string;
     const image = formData.get("image") as File | null;
-
+    
     if (!image) {
       return { error: "Please upload an image." };
     }
