@@ -7,13 +7,15 @@ import {
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import PetAPI from "~/server/repositories/petRepository";
-import { ImageAPI } from "~/server/repository";
+import { AdoptionAPI, ImageAPI } from "~/server/repository";
 import { getSession } from "~/server/session";
 
 export async function action({ request }: ActionFunctionArgs) {
   console.log("action addpet");
   const formData = await request.formData();
   const action = formData.get("_action");
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
   if (action === "add") {
     const name = formData.get("name") as string;
     const type = formData.get("type") as string;
@@ -45,6 +47,12 @@ export async function action({ request }: ActionFunctionArgs) {
         detail
       );
       console.log("resCreatePet : ", resCreatePet);
+      try {
+        const resCreateAdoption = await AdoptionAPI.createAdoption(userId!, resCreatePet.pet_id);
+        console.log("resCreateAdoption : ", resCreateAdoption);
+      } catch (error) {
+        console.error("Error creating adoption:", error);
+      }
       try {
         const resUploadImage = await ImageAPI.uploadImage(image, name);
         

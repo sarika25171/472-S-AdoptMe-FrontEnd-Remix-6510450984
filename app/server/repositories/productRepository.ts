@@ -47,6 +47,9 @@ export default class ProductAPI {
 		try {
 			const res = await fetch(`${apiPath}/createProduct`, {
 				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
 				body: JSON.stringify({
 				product_category_id: product_category_id,
 				name: name,
@@ -80,6 +83,9 @@ export default class ProductAPI {
 		try {
 			const res = await fetch(`${apiPath}/updateProduct`, {
 				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
 				body: JSON.stringify({
 				id: id,
 				product_category_id: product_category_id,

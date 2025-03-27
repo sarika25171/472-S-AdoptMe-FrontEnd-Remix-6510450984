@@ -1,12 +1,13 @@
 import { domainPath } from "../config.server";
 
-export default class AdoptionAPI {
-    private static apiPath = `${domainPath()}/adoption`;
+const Domain = domainPath();
 
+const apiPath = `${Domain}/adoption`;
+
+export default class AdoptionAPI {
     static async getAdoption() {
-        console.log("apiPathAdoption : ", this.apiPath);
         try {
-            const res = await fetch(`${this.apiPath}/getAll`, {method : "GET"});
+            const res = await fetch(`${apiPath}/getAll`, {method : "GET"});
             const data = await res.json();
             if(!res.ok) return {error : data.message};
             return data;
@@ -18,9 +19,9 @@ export default class AdoptionAPI {
 
     static async getAdoptionByPetID(id : number) {
         try {
-            const res = await fetch(`${this.apiPath}/getByPetId/${id}`, {method : "GET"});
+            const res = await fetch(`${apiPath}/getByPetId/${id}`, {method : "GET"});
             const data = await res.json();
-            if(!res.ok) return {error : data.message};
+            if(!res.ok) return {error : data};
             return data;
         } catch (error) {
             console.error('Error fetching adoption by pet ID:', error);
@@ -29,21 +30,20 @@ export default class AdoptionAPI {
     }
 
     static async createAdoption(
-        added_user: string,
+        user_id: string,
         pet_id: number
     ) {
         try {
-            const res = await fetch(`${this.apiPath}/createAdoption`, {
+            const res = await fetch(`${apiPath}/createAdoption`, {
                 method: "POST",
                 body : JSON.stringify({
-                added_user : added_user,
+                user_id : user_id,
                 pet_id : pet_id,
             }),
             headers: {"Content-Type": "application/json"},
         });
         const data = await res.json();
-        if(!res.ok) return {error : data.message};
-        return data;
+        if(!res.ok) return {error : data}
         } catch (error) {
             console.error('Error creating adoption:', error);
             return { error: 'Failed to create adoption' };
@@ -69,7 +69,7 @@ export default class AdoptionAPI {
         adoption_id: number,
     ) {
         try {
-            const res = await fetch(`${this.apiPath}/adopted`, {
+            const res = await fetch(`${apiPath}/adopted`, {
                 method: "PATCH",
                 body : JSON.stringify({
                 id : adoption_id,
@@ -87,7 +87,7 @@ export default class AdoptionAPI {
 
     static async deleteAdoptionByID(id : number) {
         try {
-            const res = await fetch(`${this.apiPath}/delete`, {
+            const res = await fetch(`${apiPath}/delete`, {
                 method: "DELETE",
                 body: JSON.stringify({
                 pet_id : id,
