@@ -1,8 +1,9 @@
 import product from "~/models/product";
-import { domainPath } from "../config.server";
+import { domainPath, photoS3Path } from "../config.server";
 
 const Domain = domainPath();
 const apiPath = `${Domain}/product`;
+const PHOTOS3 = photoS3Path();
 
 export default class ProductAPI {
 
@@ -53,7 +54,7 @@ export default class ProductAPI {
 				body: JSON.stringify({
 				product_category_id: product_category_id,
 				name: name,
-				imageurl: imageurl,
+				imageurl: PHOTOS3 + imageurl + "-photo.jpg",
 				description: description,
 				price: price,
 				stock: stock,

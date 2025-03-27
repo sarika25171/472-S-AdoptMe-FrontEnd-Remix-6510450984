@@ -68,7 +68,7 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
               setStage(false);
             }}
           >
-            Cancle
+            Cancel
           </button>
         </div>
       </div>
