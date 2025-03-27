@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		}
 
 		console.log("After validation");
-		let imageurl = "product-" + name.trim() + "-photo.jpg";
+		let imageurl = "product-" + name.trim();
 		imageurl = imageurl.replace(/[\s/\\]/g, '_');
 		console.log("Image URL:", imageurl);
 		try {
@@ -149,7 +149,7 @@ export default function CreateProductPage() {
 								/>
 							) : (
 								<div className="w-[400px] h-[400px] border-2 border-black rounded-xl flex items-center justify-center">
-									<p className="text-gray-500">No image uploaded</p>
+									<p className="text-red-500">No image uploaded</p>
 								</div>
 							)}
 							<label
