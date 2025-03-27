@@ -10,4 +10,7 @@ export default interface Order {
     order_status: OrderStatus;
     order_date: Date;
     total_price: number;
+    rating: String;
+    comment: String;
+    reply_admin: String;
 }

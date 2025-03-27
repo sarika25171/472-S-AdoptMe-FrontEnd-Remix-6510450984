@@ -94,4 +94,14 @@ export default class OrderAPI {
       throw error;
     }
   }
+  static async getByProductId(id: number): Promise<Order[]> {
+    const res = await fetch(`${apiPath}/getByProductId/${id}`, {
+        method: "GET"
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        throw new Error(`Failed to fetch order: ${res.status} ${res.statusText}`);
+    }
+    return data;
+}
 }

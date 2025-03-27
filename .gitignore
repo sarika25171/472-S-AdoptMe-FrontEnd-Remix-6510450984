@@ -6,3 +6,5 @@ node_modules
 
 server/domain.ts
 bun.lock
+
+.DS_Store

@@ -8,4 +8,4 @@ import UserAPI from "./repositories/userRepository"
 import CartAPI from "./repositories/cartRepository"
 
 
-export { ImageAPI, UserAPI, PetAPI, AdoptionAPI, ProductAPI, ProductCategoryAPI, CartAPI, OrderAPI }
+export { ImageAPI, UserAPI, PetAPI, AdoptionAPI,ProductAPI,ProductCategoryAPI, OrderAPI};
