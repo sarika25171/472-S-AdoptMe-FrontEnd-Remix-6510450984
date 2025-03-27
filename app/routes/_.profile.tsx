@@ -1,5 +1,6 @@
 import {
   ActionFunctionArgs,
+  json,
   LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
@@ -8,14 +9,16 @@ import { useState } from "react";
 import { ImageAPI, UserAPI } from "~/server/repository";
 import UploadButton from "~/components/upload_button";
 import { getSession } from "~/server/session";
-import { photoPath } from "~/server/path.server";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const action = formData.get("_action");
 
   if (action === "update") {
+    const currentUserId = formData.get("currentUserId") as string;
     const updatedUser = {
+      user_id: currentUserId,
       firstName: formData.get("first_name") as string,
       username: formData.get("username") as string,
       email: formData.get("email") as string,
@@ -24,9 +27,14 @@ export async function action({ request }: ActionFunctionArgs) {
       salary: Number(formData.get("salary")),
     };
 
-    const currentUserId = formData.get("currentUserId") as string;
-
-    await UserAPI.updateUser(currentUserId, updatedUser);
+    
+    try {
+      const resUpdateUser = await UserAPI.updateUser(updatedUser);
+      console.log("Update user response :", resUpdateUser);
+    } catch (error) {
+      console.error("Update user error:", error);
+      return json({ error: "Failed to update user. Please try again." }, { status: 500 });
+    }
 
     const imageFile = formData.get("image") as File;
     if (imageFile) {
@@ -41,7 +49,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const Photo = photoPath();
   const session = await getSession(request.headers.get("Cookie"));
   const username = session.get("username");
   if (!username) return redirect("/signin");
@@ -49,19 +56,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const currentUser = await UserAPI.getUserByUsername(username);
 
   if (!currentUser) return redirect("/signin");
-  console.log(currentUser);
   const currentUserId: string = currentUser.user_id;
+  const img = await prefetchImage(currentUser.photo_url);
   const userInfo = {
     username: currentUser.username,
     email: currentUser.email,
-    photo: currentUser.photo_url,
+    photo: img,
     phoneNo: currentUser.phone_number,
     firstName: currentUser.first_name,
     lastName: currentUser.last_name,
     salary: currentUser.salary,
   };
 
-  return { Photo, currentUser, userInfo, currentUserId, username };
+  return { currentUser, userInfo, currentUserId, username };
 }
 
 export default function ProfilePage() {
@@ -73,48 +80,14 @@ export default function ProfilePage() {
   );
 }
 
-// function Body() {
-//   const { userInfo } = useLoaderData<typeof loader>();
-//   const fetcher = useFetcher();
-//   const isUpdating = fetcher.state !== "idle";
-//   const [edit, setEdit] = useState(false);
-//   const [imagePreview, setImagePreview] = useState<string>(
-//     Photo + userInfo.photo
-//   ); // State for image preview
-
-//   const handleFileSelect = (file: File | null) => {
-//     if (file) {
-//       setImagePreview(URL.createObjectURL(file)); // Generate a URL for image preview
-//       setImage(file);
-//     } else {
-//       setImagePreview(Photo + userInfo.photo); // Clear preview if no file is selected
-//     }
-//   };
-//   <div className="flex flex-col justify-start items-center space-y-4 p-10 w-full min-h-screen">
-//     <img className="rounded-full" src={imagePreview} alt="Profile" />
-//     {edit && (
-//       <UploadButton
-//         text="Upload Photo"
-//         color="bg-primary-orange"
-//         onFileSelect={handleFileSelect}
-//       />
-//     )}
-
-//     <FormPart/>
-
-//     {edit ? <></> : <></>}
-//   </div>;
-// }
-
 function BodyPart() {
-  const { Photo } = useLoaderData<typeof loader>();
   const { userInfo, currentUserId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const isUpdating = fetcher.state !== "idle";
   const [edit, setEdit] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(
-    Photo + userInfo.photo
+    userInfo.photo
   );
   const [formData, setFormData] = useState(userInfo);
   const tailwindIn =
@@ -125,7 +98,7 @@ function BodyPart() {
       setImagePreview(URL.createObjectURL(file));
       setImage(file);
     } else {
-      setImagePreview(Photo + userInfo.photo);
+      setImagePreview(userInfo.photo);
     }
   };
 
@@ -136,13 +109,11 @@ function BodyPart() {
   return (
     <div className="flex flex-col justify-start items-center space-y-4 p-10 w-full min-h-screen">
       <img className="rounded-full" src={imagePreview} alt="Profile" />
-      {edit && (
         <UploadButton
           text="Upload Photo"
           onFileSelect={handleFileSelect}
           color="bg-primary-orange"
         />
-      )}
       <fetcher.Form
         method="patch"
         className="flex flex-col space-y-2 items-center w-full"
@@ -233,75 +204,75 @@ function BodyPart() {
   );
 }
 
-function FormPart() {
-  const { userInfo } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof action>();
-  return (
-    <fetcher.Form
-      method="patch"
-      className="flex flex-row space-x-8 px-24 w-full"
-    >
-      <div className="flex flex-col space-y-2 w-full">
-        <label>
-          First Name
-          <input
-            type="text"
-            name="first_name"
-            placeholder="First Name"
-            value={userInfo.firstName}
-          />
-        </label>
-        <label>
-          Username
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={userInfo.username}
-          />
-        </label>
-        <label>
-          Email
-          <input
-            type="text"
-            name="email"
-            placeholder="E-mail"
-            value={userInfo.email}
-          />
-        </label>
-      </div>
-      <div className="flex flex-col space-y-2 w-full">
-        <label>
-          Last Name
-          <input
-            type="text"
-            name="last_name"
-            placeholder="Last Name"
-            value={userInfo.lastName}
-          />
-        </label>
-        <label>
-          Phone Number
-          <input
-            type="text"
-            name="phone_number"
-            placeholder="08xxxxxxxx"
-            value={userInfo.phoneNo}
-          />
-        </label>
-        <label>
-          Salary
-          <input
-            type="text"
-            name="salary"
-            placeholder="12000"
-            value={userInfo.salary}
-          />
-        </label>
-      </div>
-      <button type="submit" name="_action" value="update">
-        Update
-      </button>
-    </fetcher.Form>
-  );
-}
+// function FormPart() {
+//   const { userInfo } = useLoaderData<typeof loader>();
+//   const fetcher = useFetcher<typeof action>();
+//   return (
+//     <fetcher.Form
+//       method="patch"
+//       className="flex flex-row space-x-8 px-24 w-full"
+//     >
+//       <div className="flex flex-col space-y-2 w-full">
+//         <label>
+//           First Name
+//           <input
+//             type="text"
+//             name="first_name"
+//             placeholder="First Name"
+//             value={userInfo.firstName}
+//           />
+//         </label>
+//         <label>
+//           Username
+//           <input
+//             type="text"
+//             name="username"
+//             placeholder="Username"
+//             value={userInfo.username}
+//           />
+//         </label>
+//         <label>
+//           Email
+//           <input
+//             type="text"
+//             name="email"
+//             placeholder="E-mail"
+//             value={userInfo.email}
+//           />
+//         </label>
+//       </div>
+//       <div className="flex flex-col space-y-2 w-full">
+//         <label>
+//           Last Name
+//           <input
+//             type="text"
+//             name="last_name"
+//             placeholder="Last Name"
+//             value={userInfo.lastName}
+//           />
+//         </label>
+//         <label>
+//           Phone Number
+//           <input
+//             type="text"
+//             name="phone_number"
+//             placeholder="08xxxxxxxx"
+//             value={userInfo.phoneNo}
+//           />
+//         </label>
+//         <label>
+//           Salary
+//           <input
+//             type="text"
+//             name="salary"
+//             placeholder="12000"
+//             value={userInfo.salary}
+//           />
+//         </label>
+//       </div>
+//       <button type="submit" name="_action" value="update">
+//         Update
+//       </button>
+//     </fetcher.Form>
+//   );
+// }

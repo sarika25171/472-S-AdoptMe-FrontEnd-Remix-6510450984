@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 import BehaviorDetail from "~/components/behaviorDetail";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const Photo = photoPath();
@@ -26,7 +26,6 @@ export default function BehaviorCommonPage() {
   } else {
     image = img;
   }
-  console.log("img : " + img);
 
   return (
     <div className="flex flex-col justify-start items-center bg-primary-white-tone w-auto min-h-screen m-10 p-10 space-y-8 rounded-2xl">

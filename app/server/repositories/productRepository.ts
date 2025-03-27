@@ -1,5 +1,5 @@
 import product from "~/models/product";
-import { domainPath } from "../path.server";
+import { domainPath } from "../config.server";
 
 const Domain = domainPath();
 const apiPath = `${Domain}/product`;
@@ -7,23 +7,33 @@ const apiPath = `${Domain}/product`;
 export default class ProductAPI {
 
 	static async getAll(): Promise<product[]> {
-		const res = await fetch(`${apiPath}/getAll`, { method: "GET" });
-		const data = await res.json();
+		try {
+			const res = await fetch(`${apiPath}/getAll`, { method: "GET" });
+			const data = await res.json();
 
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			}
+			return data;
+		} catch (error) {
+			console.error('Error fetching products:', error);
+			throw error;
 		}
-		return data;
 	}
 
 	static async getByID(id: number): Promise<product> {
-		const res = await fetch(`${apiPath}/getById/${id}`, { method: "GET" });
-		const data = await res.json();
+		try {
+			const res = await fetch(`${apiPath}/getById/${id}`, { method: "GET" });
+			const data = await res.json();
 
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			}
+			return data;
+		} catch (error) {
+			console.error('Error fetching product by ID:', error);
+			throw error;
 		}
-		return data;
 	}
 
 	static async createProduct(
@@ -34,10 +44,13 @@ export default class ProductAPI {
 		price: number,
 		stock: number,
 	) {
-		const res = await fetch(`${apiPath}/createProduct`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
+		try {
+			const res = await fetch(`${apiPath}/createProduct`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
 				product_category_id: product_category_id,
 				name: name,
 				imageurl: imageurl,
@@ -49,19 +62,26 @@ export default class ProductAPI {
 
 		const data = await res.json();
 		if (!res.ok) {
-			throw new Error(`Failed to create product category: ${res.status} ${res.statusText}`);
+				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			}
+			return data;
+		} catch (error) {
+			console.error('Error creating product:', error);
+			throw error;
 		}
-		return data;
 	}
 
 	static async updateProduct(
 		id: number,
 		Product: Partial<product>,
 	) {
-		const res = await fetch(`${apiPath}/updateProduct`, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
+		try {
+			const res = await fetch(`${apiPath}/updateProduct`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
 				id: id,
 				Product: Product,
 			}),
@@ -72,10 +92,15 @@ export default class ProductAPI {
 			throw new Error(`Failed to update product category: ${res.status} ${res.statusText}`);
 		}
 		return data;
+		} catch (error) {
+			console.error('Error updating product:', error);
+			throw error;
+		}
 	}
 
 	static async deleteProduct(id: number) {
-		const res = await fetch(`${apiPath}/deleteProduct`, {
+		try {
+			const res = await fetch(`${apiPath}/deleteProduct`, {
 			method: "DELETE",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -87,8 +112,12 @@ export default class ProductAPI {
 		const data = await res.json();
 		console.log(data);
 		if (!res.ok) {
-			throw new Error(`Failed to delete product: ${res.status} ${res.statusText}`);
+				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			}
+			return data;
+		} catch (error) {
+			console.error('Error deleting product:', error);
+			throw error;
 		}
-		return data;
 	}
 }

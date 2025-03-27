@@ -4,11 +4,12 @@ import AnimatedComponent from "~/components/animations/animatedComponent";
 import ProductAPI from "~/server/repositories/productRepository";
 import { getSession } from "~/server/session";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
 
-export async function loader({ request,params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const isAdmin = session.get("isAdmin");
   const id = Number(params.id);
@@ -16,36 +17,64 @@ export async function loader({ request,params }: LoaderFunctionArgs) {
   if (!product) {
     throw new Response("Product not found", { status: 404 });
   }
-  return { product,isAdmin };
+  return { product, isAdmin };
 }
 
-export async function action({request, params }: LoaderFunctionArgs) {
+export async function action({ request, params }: LoaderFunctionArgs) {
   console.log("action");
   if (request.method !== "DELETE") {
     throw new Response("Method Not Allowed", { status: 405 });
   }
   const id = Number(params.id);
+  console.log("delete", id);
   await ProductAPI.deleteProduct(id);
   return redirect("/Product");
 }
 
-export function AdminProductButton({productId}: {productId: number}){
-  const fetcher = useFetcher<typeof action>();
+export function AdminProductButton({ setStage }: { setStage: (value: boolean) => void }) {
 
   return (
-    <fetcher.Form method="delete">
     <button
-      type="submit"
-      value={productId}
-      className="bg-red-500 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 hover:scale-110 duration-200"
+      onClick={async () => {
+        setStage(true);
+      }}
+      className="bg-red-500 flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2"
     >
       Delete Product
     </button>
-    </fetcher.Form>
   )
 }
 
-export function UserProductButton({status}: {status: ProductStatus}){
+export function ComfrimPopup({ productId,setStage }: { productId:number ,setStage: (value: boolean) => void }) {
+  const fetcher = useFetcher<typeof action>();
+
+  return (
+    <div className="fixed z-50 -translate-x-[100%] -translate-y-[50%]">
+      <div className="flex flex-col bg-gray-500 rounded-3xl w-[600px] h-[300px] justify-center items-center space-y-4">
+        <h1 className="text-black font-bold text-2xl">Are you sure you want to delete this product?</h1>
+        <div className="flex flex-row justify-center items-center space-x-10">
+          <fetcher.Form method="delete">
+            <button
+              type="submit"
+              value={productId}
+              >
+              Yes, Delete
+            </button>
+          </fetcher.Form>
+          <button
+            onClick={async () => {
+              setStage(false);
+            }}
+          >
+            Cancle
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function UserProductButton({ status }: { status: ProductStatus }) {
   let text = "";
   let color = "";
   let link = "";
@@ -71,9 +100,10 @@ export function UserProductButton({status}: {status: ProductStatus}){
   );
 }
 
-export default  function ProductDetailPage() {
+export default function ProductDetailPage() {
 
-  const { isAdmin,product } = useLoaderData<typeof loader>();
+  const { isAdmin, product } = useLoaderData<typeof loader>();
+  const [Popup, setPopup] = useState<boolean>(false);
 
   let category
   if (product.product_category_id === 1) {
@@ -86,8 +116,7 @@ export default  function ProductDetailPage() {
     category = "Other";
   }
   return (
-    <div className="w-svw min-h-screen flex justify-center items-center">
-      <div className="grid grid-flow-col grid-cols-1">
+    <div className="w-full min-h-screen flex justify-center items-center">
         <div
           className="row-start-1 col-start-1 flex flex-row bg-primary-white-tone rounded-3xl w-[1500px] h-[900px] drop-shadow-lg p-2 justify-evenly items-center space-x-4 animate-fade-in"
         >
@@ -124,12 +153,14 @@ export default  function ProductDetailPage() {
                 <h1 className="text-black font-bold text-xl">Stock:</h1>
                 <h1 className="text-gray-400 text-xl">{product.stock}</h1>
               </div>
-              {isAdmin && <AdminProductButton productId={product.id} />}
+              {isAdmin && <AdminProductButton setStage={setPopup} />}
               {!isAdmin && <UserProductButton status={product.status} />}
             </div>
           </AnimatedComponent>
+          <AnimatedComponent>
+            {Popup && <ComfrimPopup productId={product.id} setStage={setPopup} />}
+          </AnimatedComponent>
         </div>
       </div>
-    </div>
   );
 }

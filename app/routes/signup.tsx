@@ -2,8 +2,9 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, Link, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 import { UserAPI } from "~/server/repository";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -18,7 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const phoneNumber = formData.get("phone_no") as string;
     const salary = formData.get("salary") as string;
     if (confirmPassword === password) {
-      UserAPI.userSignUp(
+      const resCreateUser = await UserAPI.userSignUp(
         username,
         password,
         email,
@@ -27,6 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
         phoneNumber,
         salary
       );
+      console.log("resCreateUser : ", resCreateUser);
       return redirect("/signin");
     } else {
       return json(
@@ -39,12 +41,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const Photo = photoPath();
-  return { Photo };
+  const dogPhoto = await prefetchImage(Photo + "dog-in-the-air.jpg");
+  return { Photo, dogPhoto };
 }
 
 export default function SignUpView() {
   const actionData = useActionData<typeof action>() || null;
-  const { Photo } = useLoaderData<typeof loader>();
+  const { Photo, dogPhoto } = useLoaderData<typeof loader>();
 
   return (
     <div
@@ -199,7 +202,7 @@ export default function SignUpView() {
           </div>
         </Form>
         {/* Image */}
-        <img src={Photo + "dog-in-the-air.jpg"} />
+        <img src={dogPhoto} />
       </div>
     </div>
   );

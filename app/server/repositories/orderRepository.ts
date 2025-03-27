@@ -1,73 +1,97 @@
 import Order from "~/models/order";
-import { domainPath } from "../path.server";
+import { domainPath } from "../config.server";
 
 const Domain = domainPath();
 
 const apiPath = `${Domain}/order`;
 
 export default class OrderAPI {
-    static async getAll(): Promise<Order[]> {
-        const res = await fetch(`${apiPath}/getAll`, {
-            method: "GET"
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error(`Failed to fetch orders: ${res.status} ${res.statusText}`);
-        }
-        return data;
+  static async getAll(): Promise<Order[]> {
+    try {
+      const res = await fetch(`${apiPath}/getAll`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch orders: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
     }
+  }
 
-    static async getById(id: number): Promise<Order> {
-        const res = await fetch(`${apiPath}/getById/${id}`, {
-            method: "GET"
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error(`Failed to fetch order: ${res.status} ${res.statusText}`);
-        }
-        return data;
+  static async getById(id: number): Promise<Order> {
+    try {
+      const res = await fetch(`${apiPath}/getById/${id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch order: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      throw error;
     }
+  }
 
-    static async createOrder(
-        user_id: string,
-        product_id: number,
-        quantity: number,
-        total_price: number
-    ) {
-        const res = await fetch(`${apiPath}/createOrder`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id,
-                product_id,
-                quantity,
-                total_price
-            })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error(`Failed to create order: ${res.status} ${res.statusText}`);
-        }
-        return data;
+  static async createOrder(
+    user_id: string,
+    product_id: number,
+    quantity: number,
+    total_price: number
+  ) {
+    try {
+      const res = await fetch(`${apiPath}/createOrder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id,
+          product_id,
+          quantity,
+          total_price,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to create order: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
     }
+  }
 
-    static async updateOrder(
-        id: number,
-        order: Partial<Order>
-    ) {
-        const res = await fetch(`${apiPath}/updateOrder`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                id,
-                order
-            })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error(`Failed to update order: ${res.status} ${res.statusText}`);
-        }
-        return data;
+  static async updateOrder(id: number, order: Partial<Order>) {
+    try {
+      const res = await fetch(`${apiPath}/updateOrder`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          order,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to update order: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error updating order:", error);
+      throw error;
     }
+  }
 }
-

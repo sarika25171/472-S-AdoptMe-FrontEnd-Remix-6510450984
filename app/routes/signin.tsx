@@ -10,8 +10,9 @@ import {
 } from "@remix-run/react";
 import IconPassword from "~/components/icons/iconPassword";
 import IconProfile from "~/components/icons/iconProfile";
-import { photoPath } from "~/server/path.server";
+import { photoPath } from "~/server/config.server";
 import { UserAPI } from "~/server/repository";
+import prefetchImage from "~/server/services/imagePrefetcher";
 import { commitSession, getSession } from "~/server/session";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -48,7 +49,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const Photo = photoPath();
-  return { Photo };
+  const dogPhoto = await prefetchImage(Photo + "dog-in-the-air.jpg");
+  return { Photo, dogPhoto };
 }
 
 export default function SignInView() {
@@ -75,12 +77,12 @@ export default function SignInView() {
 function FormBody() {
   const fetcher = useFetcher<typeof action>();
   const actionData = useActionData<typeof action>() || null;
-  const { Photo } = useLoaderData<typeof loader>();
+  const { Photo, dogPhoto } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex flex-row p-0 space-x-0 bg-white space-y-0 w-auto h-auto border rounded-3xl overflow-clip drop-shadow-2xl">
       {/* Image */}
-      <img src={Photo + "dog-in-the-air.jpg"} />
+      <img src={dogPhoto} />
 
       {/* Content */}
       <div className="flex flex-col justify-center items-center space-y-10 px-64 py-32">
