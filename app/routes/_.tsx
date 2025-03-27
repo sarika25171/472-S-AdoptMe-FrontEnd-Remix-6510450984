@@ -77,7 +77,7 @@ export default function Base() {
           {isAdmin && (
             <RouteButton
               text="Admin"
-              destination="/admin"
+              destination="/admin/dashboard"
               setSelect={setSelect}
               select={select}
             />
@@ -140,7 +140,7 @@ export default function Base() {
             </Link>
           </button>
           {username && (
-            <Link to="/cart" className="relative">
+            <Link to="/cart" className="relative hover:scale-110 duration-200">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"

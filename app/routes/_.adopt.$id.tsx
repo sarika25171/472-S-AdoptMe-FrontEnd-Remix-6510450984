@@ -28,18 +28,18 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const pet = await PetAPI.getPetByID(Number(params.id));
   if (!pet) throw new Response("Pet not found", { status: 404 });
   const adoption = await AdoptionAPI.getAdoptionByPetID(pet.pet_id);
-  console.log("adoption : ", adoption);
+  // console.log("adoption : ", adoption);
   if (!adoption) throw new Response("Adoption not found", { status: 404 });
-  console.log("adoption.user_id : ", adoption.user_id);
+  // console.log("adoption.user_id : ", adoption.user_id);
   const owner = await UserAPI.getUserByID(adoption.user_id);
-  console.log("owner response: ", owner);
+  // console.log("owner response: ", owner);
   if (!owner) throw new Response("User not found", { status: 404 });
   const session = await getSession(request.headers.get("Cookie"));
   const username = session.get("username");
   const img = await prefetchImage(pet.photo_url);
-  console.log("username : ", username);
-  console.log("owner's username : ", owner.username);
-  console.log("username == owner's username : ", username == owner.username);
+  // console.log("username : ", username);
+  // console.log("owner's username : ", owner.username);
+  // console.log("username == owner's username : ", username == owner.username);
   return { pet, owner, adoption, username, img };
 }
 

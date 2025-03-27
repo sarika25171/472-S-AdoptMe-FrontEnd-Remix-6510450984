@@ -5,6 +5,7 @@ import PetAPI from "./repositories/petRepository"
 import ProductCategoryAPI from "./repositories/productCategoryRepository"
 import ProductAPI from "./repositories/productRepository"
 import UserAPI from "./repositories/userRepository"
+import CartAPI from "./repositories/cartRepository"
 
 
-export { ImageAPI, UserAPI, PetAPI, AdoptionAPI,ProductAPI,ProductCategoryAPI }
+export { ImageAPI, UserAPI, PetAPI, AdoptionAPI, ProductAPI, ProductCategoryAPI, CartAPI, OrderAPI }

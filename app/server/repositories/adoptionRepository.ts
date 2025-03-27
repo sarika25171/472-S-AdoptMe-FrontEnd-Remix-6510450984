@@ -50,21 +50,6 @@ export default class AdoptionAPI {
         }
     }
 
-    // static async updateAdoption(
-    //     adoption_id: number,
-    // ) {
-    //     const res = await fetch(`${apiPath}/updateAdoption`, {
-    //         method: "PUT",
-    //         body : JSON.stringify({
-    //             id : adoption_id,
-    //         }),
-    //         headers: {"Content-Type": "application/json"},
-    //     });
-    //     const data = await res.json();
-    //     if(!res.ok) return {error : data.message};
-    //     return data
-    // }
-
     static async updateAdopted(
         adoption_id: number,
     ) {
