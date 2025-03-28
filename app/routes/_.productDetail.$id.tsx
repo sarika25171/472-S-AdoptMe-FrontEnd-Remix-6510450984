@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, Form } from "@remix-run/react";
 import AnimatedComponent from "~/components/animations/animatedComponent";
 import ProductAPI from "~/server/repositories/productRepository";
 import { getSession } from "~/server/session";
@@ -12,6 +12,7 @@ export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
   const isAdmin = session.get("isAdmin");
   const id = Number(params.id);
   const product = await ProductAPI.getByID(id);
@@ -19,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!product) {
     throw new Response("Product not found", { status: 404 });
   }
-  return { product, isAdmin };
+  return { product, isAdmin, userId };
 }
 
 export async function action({ request, params }: LoaderFunctionArgs) {
@@ -72,30 +73,36 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
   )
 }
 
-export function UserProductButton({ status }: { status: ProductStatus }) {
+export function UserProductButton({ status, productId }: { status: ProductStatus; productId: number }) {
+  const { userId } = useLoaderData<typeof loader>();
   let text = "";
   let color = "";
-  let link = "";
+  let disabled = false;
+  const fetcher = useFetcher();
 
   if (status === "OUT_OF_STOCK") {
     text = "Out of Stock";
     color = "bg-primary-gray";
-    link = "";
+    disabled = true;
   } else {
-    text = "Order Here";
-    color = "bg-primary-green";
-    // need to add to ter path
-    link = "";
+    text = "Add to Cart";
+    color = "bg-green-400";
+    disabled = userId ? false : true;
   }
 
   return (
-    <Link to={link}>
+    <fetcher.Form method="post" action="/cart">
+      <input type="hidden" name="intent" value="add" />
+      <input type="hidden" name="productId" value={productId} />
+      <input type="hidden" name="quantity" value="1" />
       <button
-        className={`${color} flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2`}
+        type="submit"
+        disabled={disabled}
+        className={`${color} flex flex-row hover:scale-110 duration-200 space-x-2 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         {text}
       </button>
-    </Link>
+    </fetcher.Form>
   );
 }
 
@@ -153,7 +160,7 @@ export default function ProductDetailPage() {
                 <h1 className="text-gray-400 text-xl">{product.stock}</h1>
               </div>
               {isAdmin && <AdminProductButton setStage={setPopup} />}
-              {!isAdmin && <UserProductButton status={product.status} />}
+              {!isAdmin && <UserProductButton status={product.status} productId={product.id} />}
             </div>
           </AnimatedComponent>
           <AnimatedComponent>
