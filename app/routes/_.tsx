@@ -112,6 +112,12 @@ export default function Base() {
             setSelect={setSelect}
             select={select}
           />
+          <RouteButton
+            text="Emergency"
+            destination="/Emergency"
+            setSelect={setSelect}
+            select={select}
+          />
         </div>
 
         {/* Icon Buttons */}
