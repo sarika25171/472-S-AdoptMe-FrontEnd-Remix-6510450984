@@ -61,6 +61,9 @@ export async function action({ request }: ActionFunctionArgs) {
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
 	const isAdmin = session.get("isAdmin");
+	if (!isAdmin) {
+		return redirect("/");
+	}
 	return { isAdmin };
 }
 

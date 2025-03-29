@@ -32,9 +32,9 @@ export async function action({ request }: ActionFunctionArgs) {
           const order = await OrderAPI.createOrder(userId, productId, quantity!, total_price, session_id);
           const updateProduct = await ProductAPI.orderProduct(productId, quantity!);
           const cart = await CartAPI.clearCart(userId);
-          console.log("order: ",order);
-          console.log("updateProduct: ",updateProduct);
-          console.log("cart: ",cart);
+          // console.log("order: ",order);
+          // console.log("updateProduct: ",updateProduct);
+          // console.log("cart: ",cart);
         });
 
         console.log(`New order created for user ${userId}`);

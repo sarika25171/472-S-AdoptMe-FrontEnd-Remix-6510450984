@@ -1,6 +1,16 @@
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { useState } from "react";
 import AdminLink from "~/components/admin_link";
+import { getSession } from "~/server/session";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  if (!userId) {
+    return redirect("/");
+  }
+}
 
 export default function AdminPage() {
   const [select, setSelect] = useState("Dashboard");
