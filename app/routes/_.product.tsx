@@ -16,10 +16,10 @@ import prefetchImage from "~/server/services/imagePrefetcher";
 
 export function CreatePorudct() {
   return (
-    <Link to="/createproduct">
-      <Button className="flex flex-row hover:scale-110 duration-200 space-x-2 text-black font-bold shadow-lg  bg-green-400 rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2">
-        Add Product
-      </Button>
+    <Link to="/createproduct"
+    className="flex hover:scale-110 duration-200 space-x-2 text-black font-bold shadow-lg bg-green-400 rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 animate-scale-out-in"
+    >
+        <h1>Add Product</h1>
     </Link>
   );
 }

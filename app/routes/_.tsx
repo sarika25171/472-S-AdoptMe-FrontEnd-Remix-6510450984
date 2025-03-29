@@ -110,14 +110,14 @@ export default function Base() {
               select={select}
             />
             <RouteButton
-              text="Add Pet"
-              destination="/addpet"
+              text="Products"
+              destination="/Product"
               setSelect={setSelect}
               select={select}
             />
             <RouteButton
-              text="Products"
-              destination="/Product"
+              text="History"
+              destination="/history/list"
               setSelect={setSelect}
               select={select}
             />
