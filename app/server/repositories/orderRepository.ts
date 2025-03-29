@@ -124,4 +124,51 @@ export default class OrderAPI {
     }
     return data;
 }
+static async addComment(id: number, rating: string, comment: string) {
+  try {
+    const res = await fetch(`${apiPath}/addComment`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id,
+        rating,
+        comment,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(
+        `Failed to add comment: ${res.status} ${res.statusText}`
+      );
+    }
+    return data;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw error;
+  }
+}
+
+static async addReplyAdmin(id: number, reply_admin: string) {
+  try {
+    const res = await fetch(`${apiPath}/addReplyAdmin`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id,
+        reply_admin,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(
+        `Failed to add admin reply: ${res.status} ${res.statusText}`
+      );
+    }
+    return data;
+  } catch (error) {
+    console.error("Error adding admin reply:", error);
+    throw error;
+  }
+}
+
 }

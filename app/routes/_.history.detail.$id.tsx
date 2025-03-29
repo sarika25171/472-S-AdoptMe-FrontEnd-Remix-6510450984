@@ -48,6 +48,12 @@ export default function HistoryDetail() {
             >
               ← Back to History
             </Link>
+            <Link
+                to={`/review/${order.id}`}
+                className="mb-4 px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition"
+              >
+                Review
+            </Link>
           </div>
         </AnimatedComponent>
       </div>
