@@ -1,6 +1,21 @@
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { useState } from "react";
 import AdminLink from "~/components/admin_link";
+import { getSession } from "~/server/session";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const isAdmin = session.get("isAdmin");
+  if(!isAdmin) {
+    return redirect("/");
+  }
+  const url = new URL(request.url);
+  if (url.pathname === "/admin" || url.pathname === "/admin/") {
+    return redirect("/admin/dashboard");
+  }
+  return null;
+}
 
 export default function AdminPage() {
   const [select, setSelect] = useState("Dashboard");

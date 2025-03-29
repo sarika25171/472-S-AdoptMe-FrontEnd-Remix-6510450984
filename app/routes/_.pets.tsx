@@ -8,7 +8,7 @@ import IconPaw from "~/components/icons/iconPaw";
 import IconRabbit from "~/components/icons/iconRabbit";
 import AnimatedComponent from "~/components/animations/animatedComponent";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import prefetchImage from "~/server/services/imagePrefetcher";
 import { PetAPI } from "~/server/repository";
 
@@ -78,6 +78,12 @@ export default function PetsPage() {
             colorCode={select === "Others" ? "#ffffff" : "#000000"}
           />
         </FilterButton>
+        <Link 
+        to="/addpet"
+        className="flex hover:scale-110 duration-200 space-x-2 text-black font-bold shadow-lg bg-green-400 rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 animate-scale-out-in"
+        >
+          <h1>Add Pet</h1>
+        </Link>
       </div>
 
       <div className="grid grid-flow-dense grid-cols-6 gap-16">

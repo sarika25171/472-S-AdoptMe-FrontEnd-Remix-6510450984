@@ -24,6 +24,24 @@ export default class OrderAPI {
     }
   }
 
+  static async getByUserId(user_id: string): Promise<Order[]> {
+    try {
+      const res = await fetch(`${apiPath}/getByUserId/${user_id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch orders for user ${user_id}: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error fetching orders by user ID:", error);
+      throw error;
+    }
+  }
+
   static async getById(id: number): Promise<Order> {
     try {
       const res = await fetch(`${apiPath}/getById/${id}`, {
@@ -46,7 +64,8 @@ export default class OrderAPI {
     user_id: string,
     product_id: number,
     quantity: number,
-    total_price: number
+    total_price: number,
+    session_id: string
   ) {
     try {
       const res = await fetch(`${apiPath}/createOrder`, {
@@ -57,6 +76,7 @@ export default class OrderAPI {
           product_id,
           quantity,
           total_price,
+          session_id,
         }),
       });
       const data = await res.json();
