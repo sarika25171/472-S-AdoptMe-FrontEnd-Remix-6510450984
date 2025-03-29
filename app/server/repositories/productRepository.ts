@@ -99,7 +99,7 @@ export default class ProductAPI {
 		}
 	}
 
-	static async OrderProduct(
+	static async orderProduct(
 		id: number,
 		total: number,
 	){
@@ -114,8 +114,9 @@ export default class ProductAPI {
 			}),
 		});
 		const data = await res.json();
+		console.log("data order product: ",data);
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${data.error}`);
+			throw new Error(`Failed to fetch order product: ${res.status} ${data.error}`);
 		}
 		return data;
 	}

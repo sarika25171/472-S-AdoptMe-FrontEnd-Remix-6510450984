@@ -7,7 +7,7 @@ export default interface Pet {
   breed: string,
   sex: string,
   photo_url: string,
-  weight: 7,
+  weight: number,
   adopted: boolean,
   spayed: boolean,
   description: string,

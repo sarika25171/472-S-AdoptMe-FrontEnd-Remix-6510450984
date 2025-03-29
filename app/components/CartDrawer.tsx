@@ -30,6 +30,17 @@ export default function CartDrawer({ carts, isOpen, onClose }: CartDrawerProps) 
     });
   };
 
+  const handleCheckout = () => {
+    const formData = new FormData();
+    formData.append("intent", "checkout");
+    formData.append("carts", JSON.stringify(carts));
+    
+    fetcher.submit(formData, {
+      method: "post",
+      action: "/cart"
+    });
+  }
+
   const handleRemoveItem = (productId: number) => {
     const formData = new FormData();
     formData.append("intent", "remove");
@@ -166,10 +177,11 @@ export default function CartDrawer({ carts, isOpen, onClose }: CartDrawerProps) 
             <button
               className="w-full px-4 py-2 bg-primary-orange text-white rounded hover:bg-opacity-90 transition-colors"
               disabled={isSubmitting || carts.length === 0}
+              onClick={handleCheckout}
             >
               Checkout
             </button>
-            
+
           </div>
         </div>
       </div>

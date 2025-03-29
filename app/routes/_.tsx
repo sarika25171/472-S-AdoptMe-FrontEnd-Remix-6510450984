@@ -58,7 +58,7 @@ export default function Base() {
     <div
       className={`bg-[url('${Photo}bg-adoptme.png')] w-svw h-svh justify-center items-center overflow-auto`}
     >
-      <div className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-sm shadow-md">
+      <div className="fixed top-0 left-0 right-0 z-30 bg-primary-cream/80 backdrop-blur-sm shadow-md">
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           {/* Home */}
           <Link

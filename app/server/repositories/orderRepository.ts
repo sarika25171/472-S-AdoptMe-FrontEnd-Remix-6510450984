@@ -46,7 +46,8 @@ export default class OrderAPI {
     user_id: string,
     product_id: number,
     quantity: number,
-    total_price: number
+    total_price: number,
+    session_id: string
   ) {
     try {
       const res = await fetch(`${apiPath}/createOrder`, {
@@ -57,6 +58,7 @@ export default class OrderAPI {
           product_id,
           quantity,
           total_price,
+          session_id,
         }),
       });
       const data = await res.json();
