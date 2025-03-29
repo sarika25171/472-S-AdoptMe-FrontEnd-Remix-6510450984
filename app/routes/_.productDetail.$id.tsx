@@ -6,6 +6,7 @@ import { getSession } from "~/server/session";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import prefetchImage from "~/server/services/imagePrefetcher";
+import { FacebookShareButton, TwitterShareButton, LineShareButton } from "react-share";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
@@ -71,6 +72,40 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
       </div>
     </div>
   )
+}
+function ShareButtons({ url, title }: { url: string; title: string }) {
+  return (
+    <div className="flex space-x-2">
+      <FacebookShareButton url={url}>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">Facebook</button>
+      </FacebookShareButton>
+
+      <TwitterShareButton url={url} title={title}>
+        <button className="bg-sky-500 text-white px-4 py-2 rounded-lg">Twitter</button>
+      </TwitterShareButton>
+
+      <LineShareButton url={url} title={title}>
+        <button className="bg-green-500 text-white px-4 py-2 rounded-lg">LINE</button>
+      </LineShareButton>
+    </div>
+  );
+}
+function CopyLinkButton({ url }: { url: string }) {
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(url)
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleCopy}
+        className="bg-stone-600 text-white px-4 py-2 rounded-lg hover:bg-black"
+      >
+        Copy Link
+      </button>
+    </div>
+  );
 }
 
 export function UserProductButton({ status, productId }: { status: ProductStatus; productId: number }) {
@@ -161,6 +196,16 @@ export default function ProductDetailPage() {
               </div>
               {isAdmin && <AdminProductButton setStage={setPopup} />}
               {!isAdmin && <UserProductButton status={product.status} productId={product.id} />}
+              <Link
+                  to={`/reviewAll/${product.id}`}
+                  className="bg-primary-orange hover:bg-orange-900 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 hover:scale-110 duration-200"
+                >
+                  View Reviews
+              </Link>
+
+              <ShareButtons url={`http://localhost:5173/productDetail/${product.id}`} title={`Product name: ${product.name}`} />
+              <CopyLinkButton url={`http://localhost:5173/productDetail/${product.id}`} />
+
             </div>
           </AnimatedComponent>
           <AnimatedComponent>
