@@ -7,6 +7,7 @@ import { Link } from "@remix-run/react";
 import { useState } from "react";
 import prefetchImage from "~/server/services/imagePrefetcher";
 import { FacebookShareButton, TwitterShareButton, LineShareButton } from "react-share";
+import { frontendUrlPath } from "~/server/config.server";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
@@ -18,10 +19,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = Number(params.id);
   const product = await ProductAPI.getByID(id);
   product.imageurl = await prefetchImage(product.imageurl);
+  const frontendURL = frontendUrlPath();
   if (!product) {
     throw new Response("Product not found", { status: 404 });
   }
-  return { product, isAdmin, userId };
+  return { product, isAdmin, userId, frontendURL };
 }
 
 export async function action({ request, params }: LoaderFunctionArgs) {
@@ -78,16 +80,16 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
 function ShareButtons({ url, title }: { url: string; title: string }) {
   return (
     <div className="flex space-x-2">
-      <FacebookShareButton url={url}>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">Facebook</button>
+      <FacebookShareButton url={url} className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">Facebook</span>
       </FacebookShareButton>
 
-      <TwitterShareButton url={url} title={title}>
-        <button className="bg-sky-500 text-white px-4 py-2 rounded-lg">Twitter</button>
+      <TwitterShareButton url={url} title={title} className="bg-sky-500 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">Twitter</span>
       </TwitterShareButton>
 
-      <LineShareButton url={url} title={title}>
-        <button className="bg-green-500 text-white px-4 py-2 rounded-lg">LINE</button>
+      <LineShareButton url={url} title={title} className="bg-green-500 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">LINE</span>
       </LineShareButton>
     </div>
   );
@@ -145,7 +147,7 @@ export function UserProductButton({ status, productId }: { status: ProductStatus
 
 export default function ProductDetailPage() {
 
-  const { isAdmin, product } = useLoaderData<typeof loader>();
+  const { isAdmin, product, frontendURL } = useLoaderData<typeof loader>();
   const [Popup, setPopup] = useState<boolean>(false);
 
   let category
@@ -205,8 +207,8 @@ export default function ProductDetailPage() {
                   View Reviews
               </Link>
 
-              <ShareButtons url={`http://localhost:5173/productDetail/${product.id}`} title={`Product name: ${product.name}`} />
-              <CopyLinkButton url={`http://localhost:5173/productDetail/${product.id}`} />
+              <ShareButtons url={`${frontendURL}/productDetail/${product.id}`} title={`Product name: ${product.name}`} />
+              <CopyLinkButton url={`${frontendURL}/productDetail/${product.id}`} />
 
             </div>
           </AnimatedComponent>
