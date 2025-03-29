@@ -99,6 +99,27 @@ export default class ProductAPI {
 		}
 	}
 
+	static async OrderProduct(
+		id: number,
+		total: number,
+	){
+		const res = await fetch(`${apiPath}/orderProduct`, {
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: id,
+				total: total,
+			}),
+		});
+		const data = await res.json();
+		if (!res.ok) {
+			throw new Error(`Failed to fetch product category: ${res.status} ${data.error}`);
+		}
+		return data;
+	}
+
 	static async deleteProduct(id: number) {
 		try {
 			const res = await fetch(`${apiPath}/deleteProduct`, {
