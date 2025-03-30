@@ -26,25 +26,6 @@ export default function AdminEmergencyManagement() {
   const { emergencyLocations, isAdmin } = useLoaderData<typeof loader>();
   const [locations, setLocations] = useState<Emergency[]>(emergencyLocations);
 
-  useEffect(() => {
-    // Refresh data when component mounts or when returning from MapHub
-    const fetchLocations = async () => {
-      try {
-        const updatedLocations = await EmergencyAPI.getAllEmergencies();
-        setLocations(updatedLocations);
-      } catch (error) {
-        console.error("Error refreshing locations:", error);
-      }
-    };
-    
-    fetchLocations();
-    
-    // Poll for updates every 30 seconds to catch changes made on MapHub
-    const intervalId = setInterval(fetchLocations, 30000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
-
   const handleMapHubAction = () => {
     // Navigate directly to the MapHub embed URL
     window.open("https://maphub.net/embed_h/nqewvFBEVe2HSW40?panel=1&panel_closed=1", '_blank');

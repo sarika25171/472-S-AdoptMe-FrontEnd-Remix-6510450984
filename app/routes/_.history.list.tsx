@@ -10,14 +10,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   if (!userId) {
-    return redirect("/");
+    return redirect("/signin");
   }
   let orders = await OrderAPI.getByUserId(userId);
   let orderProducts: Map<Order, Product> = new Map();
-  for (let order of orders) {
-    let product = await ProductAPI.getByID(order.product_id);
-    product.imageurl = await prefetchImage(product.imageurl);
-    orderProducts.set(order, product);
+  if(orders.length === 0) {
+    orderProducts = new Map();
+  } else {
+    for (let order of orders) {
+      let product = await ProductAPI.getByID(order.product_id);
+      product.imageurl = await prefetchImage(product.imageurl);
+      orderProducts.set(order, product);
+    }
   }
   return { orderProducts: Array.from(orderProducts.entries()) };
 }
@@ -26,7 +30,11 @@ export default function HistoryList() {
     const { orderProducts } = useLoaderData<typeof loader>();
     return (
       <div className="p-8">
-        <h1 className="text-6xl font-bold text-center text-blue-600 mb-8">Order History</h1>
+        {orderProducts.length > 0 && <h1 className="text-6xl font-bold text-center text-blue-600 mb-8">Order History</h1>}
+        {orderProducts.length === 0 && (
+          <h1 className="text-6xl font-bold text-center text-blue-600 mb-8">No orders found</h1>
+        )}
+        {orderProducts.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {orderProducts.map(([order, product]) => (
             <HistoryItem
@@ -36,6 +44,7 @@ export default function HistoryList() {
             />
           ))}
         </div>
+        )}
       </div>
     );
   }

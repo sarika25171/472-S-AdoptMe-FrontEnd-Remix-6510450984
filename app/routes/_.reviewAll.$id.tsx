@@ -3,11 +3,14 @@ import { useLoaderData, Form } from "@remix-run/react";
 import Order from "~/models/order";
 import { OrderAPI } from "~/server/repository";
 import { useState } from "react";
+import { getSession } from "~/server/session";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const isAdmin = session.get("isAdmin");
   const productId = Number(params.id);
   const reviews: Order[] = await OrderAPI.getByProductId(productId);
-  return { reviews };
+  return { reviews, isAdmin };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -30,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function ReviewAll() {
-  const { reviews } = useLoaderData<typeof loader>();
+  const { reviews, isAdmin } = useLoaderData<typeof loader>();
   const [replies, setReplies] = useState<Record<number, string>>({});
 
   const handleReplyChange = (id: number, value: string) => {
@@ -54,7 +57,7 @@ export default function ReviewAll() {
               <p className="text-xs text-gray-400 mt-4">
                 Date: {new Date(review.createdAt).toLocaleDateString()}
               </p>
-              {review.reply_admin === null ? (
+              {review.reply_admin === null && isAdmin ? (
                 <Form method="post" className="mt-4">
                   <input type="hidden" name="reviewId" value={review.id} />
                   <textarea

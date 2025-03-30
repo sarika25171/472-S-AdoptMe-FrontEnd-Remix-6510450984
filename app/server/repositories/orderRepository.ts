@@ -30,6 +30,11 @@ export default class OrderAPI {
         method: "GET",
       });
       const data = await res.json();
+      console.log("res", res);
+      console.log("data", data);
+      if(res.status === 404) {
+        return [];
+      }
       if (!res.ok) {
         throw new Error(
           `Failed to fetch orders for user ${user_id}: ${res.status} ${res.statusText}`
