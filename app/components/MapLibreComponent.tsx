@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Map, Marker, NavigationControl, Popup } from '@vis.gl/react-maplibre';
+import { Map, Marker, NavigationControl, Popup, useMap } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { EmergencyPlace } from "~/components/emergencyCard";    
 
@@ -35,6 +35,8 @@ export default function MapLibreComponent({
   const mapRef = useRef(null);
   
   // Find center of the map based on emergency places
+//   const [popupLocation, setPopupLocation] = useState(middleOfThailand);
+  const map = useMap();
   const center = getCenterCoordinates(emergencyPlaces);
   
   // Type-specific marker colors

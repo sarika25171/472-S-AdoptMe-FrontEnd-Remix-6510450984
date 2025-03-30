@@ -5,22 +5,14 @@ import { EmergencyAPI } from "~/server/repository";
 import { EmergencyCard, EmergencyPlace } from "~/components/emergencyCard";
 import FilterButton from "~/components/filter_button";
 import MapLibreComponent from "~/components/MapLibreComponent";
+import { get } from "node_modules/axios/index.cjs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const emergencyData = await EmergencyAPI.getAllEmergencies();
     
-    // Transform the data to match what your components expect
-    const emergencyPlaces = emergencyData.map(item => ({
-      id: item.emergency_id.toString(),
-      name: item.name,
-      address: item.address,
-      phone: item.phone_number,
-      
-      // Add any other fields your components need
-    }));
-    
+    const emergencyPlaces = await EmergencyAPI.getAllEmergencies();
     return { emergencyPlaces };
-  }
+}
 
 export default function EmergencyPage() {
   const { emergencyPlaces } = useLoaderData<typeof loader>();
@@ -58,15 +50,9 @@ export default function EmergencyPage() {
       </div>
       
       {/* Map Component */}
-      <div className="w-full">
-        <MapLibreComponent 
-          emergencyPlaces={filteredPlaces} 
-          height={500}
-          onMarkerClick={handleMarkerClick}
-        />
-      </div>
+      <iframe width="768" height="576" src="https://maphub.net/embed_h/nqewvFBEVe2HSW40?panel=1&panel_closed=1" frameBorder="0"></iframe>
       
-      {/* List of Emergency Cards */}
+      {/* List of Emergency Cards
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {filteredPlaces.map((place: EmergencyPlace) => (
           <div 
@@ -80,13 +66,13 @@ export default function EmergencyPage() {
             />
           </div>
         ))}
-      </div>
+      </div> */}
       
-      {filteredPlaces.length === 0 && (
+      {/* {filteredPlaces.length === 0 && (
         <div className="text-center p-10 text-gray-500">
           No emergency locations found for the selected filter.
         </div>
-      )}
+      )} */}
     </div>
   );
 }

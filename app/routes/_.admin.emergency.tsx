@@ -4,9 +4,10 @@ import type { LoaderFunction, ActionFunction, LoaderFunctionArgs } from "@remix-
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { EmergencyAPI } from "~/server/repository";
 import { getSession } from "~/server/session";
+import { Emergency } from "~/models/emergency";
 
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
-  let emergencyLocations = await EmergencyAPI.getAll();
+  let emergencyLocations = await EmergencyAPI.getAllEmergencies();
   const session = await getSession(request.headers.get("Cookie"));
   const isAdmin = session.get("isAdmin");
   if (!isAdmin) {
@@ -17,12 +18,18 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const locationId = Number(formData.get("locationId"));
+  const locationId = String(formData.get("emergency_id"));
 
   if (!locationId) return json({ error: "Invalid location ID" }, { status: 400 });
 
   try {
     await EmergencyAPI.deleteLocationByID(locationId);
+
+    const emergency = await EmergencyAPI.getEmergencyById(locationId);
+    if (emergency?.id) {
+      await EmergencyAPI.deleteLocationByID(emergency.id);
+    }
+
     return json({ success: true });
   } catch (error) {
     return json({ error: "Failed to delete location" }, { status: 500 });
@@ -34,7 +41,7 @@ export default function AdminEmergencyManagement() {
   const fetcher = useFetcher();
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", flex: 1 },
+    { field: "emergency_id", headerName: "ID", flex: 1 },
     { field: "name", headerName: "Name", flex: 2 },
     { field: "address", headerName: "Address", flex: 3 },
     { field: "phone", headerName: "Phone", flex: 2 },
@@ -59,7 +66,8 @@ export default function AdminEmergencyManagement() {
       <h1 className="text-4xl font-bold">Emergency Locations Management</h1>
       <div className="w-4/5">
         <DataGrid
-          rows={emergencyLocations.map((loc) => ({ ...loc, id: loc.location_id }))}
+          rows={emergencyLocations.map((location: Emergency) => ({ ...location, id: location.id }))}
+          rowHeight={100}
           columns={columns}
           sx={{ backgroundColor: "#FFFFFF" }}
         />
