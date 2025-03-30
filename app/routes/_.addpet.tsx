@@ -56,7 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
       try {
         const resUploadImage = await ImageAPI.uploadImage(image, name);
         
-        console.log("resUploadImage : ", resUploadImage);
+        // console.log("resUploadImage : ", resUploadImage);
       } catch(error) {
         console.error("Error uploading image:", error);
       }
