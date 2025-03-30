@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const spayed = formData.get("spayed") as string;
     const detail = formData.get("detail") as string;
     const image = formData.get("image") as File | null;
-
+    
     if (!image) {
       return { error: "Please upload an image." };
     }
@@ -75,6 +75,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  if (!userId) {
+    return redirect("/signin");
+  }
   const username = session.get("username");
   return { username };
 }

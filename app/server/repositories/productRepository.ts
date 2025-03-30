@@ -1,8 +1,9 @@
 import product from "~/models/product";
-import { domainPath } from "../config.server";
+import { domainPath, photoS3Path } from "../config.server";
 
 const Domain = domainPath();
 const apiPath = `${Domain}/product`;
+const PHOTOS3 = photoS3Path();
 
 export default class ProductAPI {
 
@@ -53,7 +54,7 @@ export default class ProductAPI {
 				body: JSON.stringify({
 				product_category_id: product_category_id,
 				name: name,
-				imageurl: imageurl,
+				imageurl: PHOTOS3 + imageurl + "-photo.jpg",
 				description: description,
 				price: price,
 				stock: stock,
@@ -73,12 +74,7 @@ export default class ProductAPI {
 
 	static async updateProduct(
 		id: number,
-		product_category_id: number,
-		name: string,
-		imageurl: string,
-		description: string,
-		price: number,
-		stock: number,
+		Product: Partial<product>,
 	) {
 		try {
 			const res = await fetch(`${apiPath}/updateProduct`, {
@@ -88,18 +84,13 @@ export default class ProductAPI {
 				},
 				body: JSON.stringify({
 				id: id,
-				product_category_id: product_category_id,
-				name: name,
-				imageurl: imageurl,
-				description: description,
-				price: price,
-				stock: stock,
+				Product: Product,
 			}),
 		});
 
 		const data = await res.json();
 		if (!res.ok) {
-			throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
+			throw new Error(`Failed to update product category: ${res.status} ${res.statusText}`);
 		}
 		return data;
 		} catch (error) {
@@ -108,16 +99,41 @@ export default class ProductAPI {
 		}
 	}
 
+	static async orderProduct(
+		id: number,
+		total: number,
+	){
+		const res = await fetch(`${apiPath}/orderProduct`, {
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: id,
+				total: total,
+			}),
+		});
+		const data = await res.json();
+		console.log("data order product: ",data);
+		if (!res.ok) {
+			throw new Error(`Failed to fetch order product: ${res.status} ${data.error}`);
+		}
+		return data;
+	}
+
 	static async deleteProduct(id: number) {
 		try {
 			const res = await fetch(`${apiPath}/deleteProduct`, {
 			method: "DELETE",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				id: id,
 			}),
 		});
 
+		console.log(res);
 		const data = await res.json();
+		console.log(data);
 		if (!res.ok) {
 				throw new Error(`Failed to fetch product category: ${res.status} ${res.statusText}`);
 			}
