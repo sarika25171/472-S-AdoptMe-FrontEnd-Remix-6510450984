@@ -98,14 +98,6 @@ export default function AdminEmergencyManagement() {
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         />
       </div>
-      
-      <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 w-4/5 mt-6">
-        <p className="text-yellow-700">
-          <strong>Note:</strong> To add or delete locations, click the respective button above. 
-          You will be redirected to MapHub where you can manage the emergency locations. 
-          Any changes you make will be updated in this application automatically.
-        </p>
-      </div>
     </div>
   );
 }
