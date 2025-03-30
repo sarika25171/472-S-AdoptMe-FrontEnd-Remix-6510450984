@@ -12,6 +12,7 @@ export default function AdminLink({ text, value, select, setSelect }: props) {
     const routeMap: { [key: string]: string } = {
         "Dashboard": "/admin/dashboard",
         "Pet Management": "/admin/petmanagement",
+        "Emergency": "/admin/emergency"
     };
     
     return (
