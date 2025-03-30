@@ -20,7 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    await OrderAPI.updateOrder(Number(reviewId), { reply_admin: reply as string });
+    await OrderAPI.addReplyAdmin(Number(reviewId), reply as string );
     alert("Update successful")
     return json({ success: true });
   } catch (error) {

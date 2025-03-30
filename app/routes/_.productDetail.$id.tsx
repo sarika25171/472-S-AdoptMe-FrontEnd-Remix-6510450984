@@ -6,6 +6,8 @@ import { getSession } from "~/server/session";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import prefetchImage from "~/server/services/imagePrefetcher";
+import { FacebookShareButton, TwitterShareButton, LineShareButton } from "react-share";
+import { frontendUrlPath } from "~/server/config.server";
 
 
 export type ProductStatus = 'AVAILABLE' | 'OUT_OF_STOCK';
@@ -17,10 +19,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = Number(params.id);
   const product = await ProductAPI.getByID(id);
   product.imageurl = await prefetchImage(product.imageurl);
+  const frontendURL = frontendUrlPath();
   if (!product) {
     throw new Response("Product not found", { status: 404 });
   }
-  return { product, isAdmin, userId };
+  return { product, isAdmin, userId, frontendURL };
 }
 
 export async function action({ request, params }: LoaderFunctionArgs) {
@@ -74,6 +77,40 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
     </div>
   )
 }
+function ShareButtons({ url, title }: { url: string; title: string }) {
+  return (
+    <div className="flex space-x-2">
+      <FacebookShareButton url={url} className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">Facebook</span>
+      </FacebookShareButton>
+
+      <TwitterShareButton url={url} title={title} className="bg-sky-500 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">Twitter</span>
+      </TwitterShareButton>
+
+      <LineShareButton url={url} title={title} className="bg-green-500 text-white px-4 py-2 rounded-lg">
+        <span className="text-lg font-semibold">LINE</span>
+      </LineShareButton>
+    </div>
+  );
+}
+function CopyLinkButton({ url }: { url: string }) {
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(url)
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleCopy}
+        className="bg-stone-600 text-white px-4 py-2 rounded-lg hover:bg-black"
+      >
+        Copy Link
+      </button>
+    </div>
+  );
+}
 
 export function UserProductButton({ status, productId }: { status: ProductStatus; productId: number }) {
   const { userId } = useLoaderData<typeof loader>();
@@ -110,7 +147,7 @@ export function UserProductButton({ status, productId }: { status: ProductStatus
 
 export default function ProductDetailPage() {
 
-  const { isAdmin, product } = useLoaderData<typeof loader>();
+  const { isAdmin, product, frontendURL } = useLoaderData<typeof loader>();
   const [Popup, setPopup] = useState<boolean>(false);
 
   let category
@@ -163,6 +200,16 @@ export default function ProductDetailPage() {
               </div>
               {isAdmin && <AdminProductButton setStage={setPopup} />}
               {!isAdmin && <UserProductButton status={product.status} productId={product.id} />}
+              <Link
+                  to={`/reviewAll/${product.id}`}
+                  className="bg-primary-orange hover:bg-orange-900 text-white font-bold shadow-lg rounded-3xl text-2xl justify-center items-center w-fit h-fit px-6 py-2 hover:scale-110 duration-200"
+                >
+                  View Reviews
+              </Link>
+
+              <ShareButtons url={`${frontendURL}/productDetail/${product.id}`} title={`Product name: ${product.name}`} />
+              <CopyLinkButton url={`${frontendURL}/productDetail/${product.id}`} />
+
             </div>
           </AnimatedComponent>
           <AnimatedComponent>
