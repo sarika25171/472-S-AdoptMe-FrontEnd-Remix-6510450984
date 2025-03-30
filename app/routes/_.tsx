@@ -15,7 +15,7 @@ import { Cart } from "~/models/cart";
 import { photoPath } from "~/server/config.server";
 import { getSession } from "~/server/session";
 import CartDrawer from "~/components/CartDrawer";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { CartAPI } from "~/server/repository";
 
 

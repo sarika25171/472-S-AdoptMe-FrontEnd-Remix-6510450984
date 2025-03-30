@@ -1,12 +1,18 @@
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
-import type { LoaderFunction, ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { 
+  LoaderFunction, 
+  ActionFunction, 
+  LoaderFunctionArgs 
+} from "@remix-run/node";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { EmergencyAPI } from "~/server/repository";
 import { getSession } from "~/server/session";
 import { Emergency } from "~/models/emergency";
 
-export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
+export const loader: LoaderFunction = async ({ 
+  request 
+}: LoaderFunctionArgs) => {
   let emergencyLocations = await EmergencyAPI.getAllEmergencies();
   const session = await getSession(request.headers.get("Cookie"));
   const isAdmin = session.get("isAdmin");
@@ -52,7 +58,7 @@ export default function AdminEmergencyManagement() {
       flex: 1,
       renderCell: (params) => (
         <fetcher.Form method="post">
-          <input type="hidden" name="locationId" value={params.row.id} />
+          <input type="hidden" name="locationId" value={params.row.emergency_id} />
           <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded-lg">
             Delete
           </button>
@@ -66,7 +72,7 @@ export default function AdminEmergencyManagement() {
       <h1 className="text-4xl font-bold">Emergency Locations Management</h1>
       <div className="w-4/5">
         <DataGrid
-          rows={emergencyLocations.map((location: Emergency) => ({ ...location, id: location.id }))}
+          rows={emergencyLocations.map((location: Emergency) => ({ ...location, emergency_id: location.id }))}
           rowHeight={100}
           columns={columns}
           sx={{ backgroundColor: "#FFFFFF" }}

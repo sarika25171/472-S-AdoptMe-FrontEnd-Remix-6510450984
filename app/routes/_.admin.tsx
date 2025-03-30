@@ -37,6 +37,13 @@ export default function AdminPage() {
           setSelect={setSelect}
         >
         </AdminLink>
+        <AdminLink
+          text="Emergency"
+          value="Emergency"
+          select={select}
+          setSelect={setSelect}
+        >
+        </AdminLink>
       </div>
       <Outlet />
     </div>
