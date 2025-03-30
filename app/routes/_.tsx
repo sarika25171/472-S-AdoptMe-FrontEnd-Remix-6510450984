@@ -17,7 +17,6 @@ import { getSession } from "~/server/session";
 import CartDrawer from "~/components/CartDrawer";
 import { ShoppingCart } from "lucide-react";
 import { CartAPI } from "~/server/repository";
-import prefetchImage from "~/server/services/imagePrefetcher";
 
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -111,17 +110,23 @@ export default function Base() {
               select={select}
             />
             <RouteButton
-              text="Add Pet"
-              destination="/addpet"
-              setSelect={setSelect}
-              select={select}
-            />
-            <RouteButton
               text="Products"
               destination="/Product"
               setSelect={setSelect}
               select={select}
             />
+            <RouteButton
+              text="History"
+              destination="/history/list"
+              setSelect={setSelect}
+              select={select}
+            />
+            <RouteButton
+            text="Emergency"
+            destination="/Emergency"
+            setSelect={setSelect}
+            select={select}
+          />
           </div>
 
           {/* Icon Buttons */}

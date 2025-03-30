@@ -24,6 +24,24 @@ export default class OrderAPI {
     }
   }
 
+  static async getByUserId(user_id: string): Promise<Order[]> {
+    try {
+      const res = await fetch(`${apiPath}/getByUserId/${user_id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch orders for user ${user_id}: ${res.status} ${res.statusText}`
+        );
+      }
+      return data;
+    } catch (error) {
+      console.error("Error fetching orders by user ID:", error);
+      throw error;
+    }
+  }
+
   static async getById(id: number): Promise<Order> {
     try {
       const res = await fetch(`${apiPath}/getById/${id}`, {

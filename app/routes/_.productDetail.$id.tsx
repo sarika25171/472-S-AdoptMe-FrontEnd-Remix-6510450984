@@ -49,18 +49,20 @@ export function ComfrimPopup({ productId,setStage }: { productId:number ,setStag
 
   return (
     <div className="fixed z-50 -translate-x-[100%] -translate-y-[50%]">
-      <div className="flex flex-col bg-gray-500 rounded-3xl w-[600px] h-[300px] justify-center items-center space-y-4">
+      <div className="flex flex-col bg-gray-100 shadow-xl shadow-black/40 rounded-3xl w-[600px] h-[300px] justify-center items-center space-y-4">
         <h1 className="text-black font-bold text-2xl">Are you sure you want to delete this product?</h1>
         <div className="flex flex-row justify-center items-center space-x-10">
           <fetcher.Form method="delete">
             <button
               type="submit"
               value={productId}
+              className="rounded-md bg-red-500 text-white font-bold shadow-lg px-6 py-2"
               >
               Yes, Delete
             </button>
           </fetcher.Form>
           <button
+            className="rounded-md bg-white text-black font-bold shadow-lg px-6 py-2"
             onClick={async () => {
               setStage(false);
             }}
