@@ -5,6 +5,7 @@ import { CartAPI } from "~/server/repository";
 import { getSession } from "~/server/session";
 import { Cart } from "~/models/cart";
 import { frontendUrlPath } from "~/server/config.server";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
@@ -15,7 +16,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	}
 	
 	const cart = await CartAPI.getCart(userId);
-	return { cart };
+	const newCart = cart.map(async (cart) => {
+		cart.product.imageurl = await prefetchImage(cart.product.imageurl);
+		return cart;
+	})
+	return { cart: newCart };
 }
 
 export async function action({ request }: ActionFunctionArgs) {

@@ -12,7 +12,7 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log("Webhook Secret:", webhookSecret);
 
   try {
-    const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+    const event = await stripe.webhooks.constructEventAsync(payload, signature, webhookSecret);
 
     console.log("Received Event:", event.type);
 
