@@ -17,6 +17,7 @@ import { getSession } from "~/server/session";
 import CartDrawer from "~/components/CartDrawer";
 import { ShoppingCart } from "lucide-react";
 import { CartAPI } from "~/server/repository";
+import prefetchImage from "~/server/services/imagePrefetcher";
 
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -30,10 +31,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const userId = session.get("userId");
   let carts: Cart[] = [];
   if (userId) {
-    carts = await CartAPI.getCart(userId);
+    let carts = await CartAPI.getCart(userId);
+  
+    carts = await Promise.all(
+      carts.map(async (cart) => {
+        cart.product.imageurl = await prefetchImage(cart.product.imageurl);
+        return cart; // Return the modified cart
+      })
+    );
+  
     // console.log(`Cart(${username}):`, carts);
   }
-  
   return { Photo, username, isAdmin, carts };
 }
 
