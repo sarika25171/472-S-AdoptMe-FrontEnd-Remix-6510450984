@@ -33,13 +33,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (userId) {
     let carts = await CartAPI.getCart(userId);
   
-    carts = await Promise.all(
-      carts.map(async (cart) => {
+    
+      const newPromiseCarts = carts.map(async (cart) => {
         cart.product.imageurl = await prefetchImage(cart.product.imageurl);
         return cart; // Return the modified cart
       })
-    );
-  
+    const newCarts = await Promise.all(newPromiseCarts);
+    return { Photo, username, isAdmin, carts: newCarts };
     // console.log(`Cart(${username}):`, carts);
   }
   return { Photo, username, isAdmin, carts };
