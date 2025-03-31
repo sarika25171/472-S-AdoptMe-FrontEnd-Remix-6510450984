@@ -19,7 +19,6 @@ import { ShoppingCart } from "lucide-react";
 import { CartAPI } from "~/server/repository";
 import prefetchImage from "~/server/services/imagePrefetcher";
 
-
 export async function loader({ request }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get("Cookie");
   console.log("Request Cookie Header:", cookieHeader);
@@ -27,19 +26,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const username = session.get("username");
   const isAdmin = session.get("isAdmin");
   const Photo = photoPath();
-  
+
   const userId = session.get("userId");
   let carts: Cart[] = [];
   if (userId) {
-    let carts = await CartAPI.getCart(userId);
-  
-    
-      const newPromiseCarts = carts.map(async (cart) => {
-        cart.product.imageurl = await prefetchImage(cart.product.imageurl);
-        return cart; // Return the modified cart
-      })
-    const newCarts = await Promise.all(newPromiseCarts);
-    return { Photo, username, isAdmin, carts: newCarts };
+    carts = await CartAPI.getCart(userId);
+
+    const newPromiseCarts = carts.map(async (cart) => {
+      cart.product.imageurl = await prefetchImage(cart.product.imageurl);
+      return cart;
+    });
+    carts = await Promise.all(newPromiseCarts);
+    return { Photo, username, isAdmin, carts };
     // console.log(`Cart(${username}):`, carts);
   }
   return { Photo, username, isAdmin, carts };
@@ -130,11 +128,11 @@ export default function Base() {
               select={select}
             />
             <RouteButton
-            text="Emergency"
-            destination="/Emergency"
-            setSelect={setSelect}
-            select={select}
-          />
+              text="Emergency"
+              destination="/Emergency"
+              setSelect={setSelect}
+              select={select}
+            />
           </div>
 
           {/* Icon Buttons */}
@@ -152,7 +150,7 @@ export default function Base() {
                 />
               </button>
             )}
-            
+
             {/* Profile Button */}
             <Link to="/profile" className="p-2 hover:bg-gray-100 rounded-full">
               <IconProfile
@@ -174,7 +172,6 @@ export default function Base() {
                 </span>
               )}
             </button>
-            
           </div>
         </div>
       </div>
@@ -202,7 +199,7 @@ export default function Base() {
 
       {/* Cart Drawer */}
       <CartDrawer
-        carts={ cartsFetcher.data?.carts as unknown as Cart[] ?? carts }
+        carts={carts as unknown as Cart[] ?? (cartsFetcher.data?.carts as unknown as Cart[])}
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
       />
